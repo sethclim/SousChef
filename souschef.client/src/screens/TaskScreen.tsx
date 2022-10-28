@@ -1,10 +1,13 @@
-import {SafeAreaView, StatusBar} from 'react-native';
+import {SafeAreaView} from 'react-native';
 import Section from '../components/Section';
+import {TaskScreenNavigationProp} from '../navigation/types';
 
-const Task = ({navigation, route}) => {
+const TaskScreen = ({navigation, route}: TaskScreenNavigationProp) => {
+  const {name: taskName} = route.params;
+
   return (
     <SafeAreaView>
-      <Section>
+      <Section title={taskName}>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ac tempor
         felis, nec consectetur orci. Phasellus eu magna turpis. Duis at magna
         neque. Ut volutpat nunc velit, vel euismod urna finibus volutpat. Aenean
@@ -21,4 +24,4 @@ const Task = ({navigation, route}) => {
   );
 };
 
-export default Task;
+export default TaskScreen;
