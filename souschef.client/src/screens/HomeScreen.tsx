@@ -10,6 +10,10 @@ const HomeScreen = ({navigation, route}: HomeScreenNavigationProp) => {
         title="Press Me"
         onPress={() => navigation.navigate('TaskScreen', {name: 'Task #1'})}
       />
+      <Button
+        title="Login Screen"
+        onPress={() => navigation.navigate('LoginScreen')}
+      />
     </View>
   );
 };
