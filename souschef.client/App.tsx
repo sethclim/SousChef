@@ -17,7 +17,7 @@ const App = () => {
 
   return (
     <ThemeContext.Provider value={darkMode ? darkTheme : theme}>
-      <RootNavigator />;
+      <RootNavigator />
     </ThemeContext.Provider>
   );
 };
