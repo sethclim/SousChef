@@ -4,7 +4,7 @@ import {useColorScheme} from 'react-native';
 
 import {theme, darkTheme} from './src/styles/theme';
 
-const ThemeContext = React.createContext({});
+export const ThemeContext = React.createContext(theme);
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(false);

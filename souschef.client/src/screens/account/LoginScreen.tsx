@@ -1,5 +1,6 @@
 import React from 'react';
-import {View, Text, Button, TextInput, StyleSheet} from 'react-native';
+import {View, Text, Button} from 'react-native';
+import {Input} from '../../components';
 import {LoginScreenNavigationProp} from '../../navigation/types';
 
 const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
@@ -24,14 +25,8 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
     <View style={{flex: 1, paddingTop: 10}}>
       <Text>Login</Text>
       <Text>{error}</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={onChangeEmail}
-        value={email}
-        placeholder={'Email'}
-      />
-      <TextInput
-        style={styles.input}
+      <Input onChangeText={onChangeEmail} value={email} placeholder={'Email'} />
+      <Input
         onChangeText={onChangePassword}
         value={password}
         placeholder={'Password'}
@@ -40,14 +35,5 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
-});
 
 export default LoginScreen;
