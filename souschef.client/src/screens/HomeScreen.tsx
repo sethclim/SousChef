@@ -11,8 +11,12 @@ const HomeScreen = ({navigation, route}: HomeScreenNavigationProp) => {
         onPress={() => navigation.navigate('TaskScreen', {name: 'Task #1'})}
       />
       <Button
-        title="Login Screen"
+        title="Login"
         onPress={() => navigation.navigate('LoginScreen')}
+      />
+      <Button
+        title="Signup Screen"
+        onPress={() => navigation.navigate('SignupScreen')}
       />
     </View>
   );
