@@ -1,16 +1,14 @@
-// import React from 'react';
-import {PreMealListScreenNavigationProp} from '../navigation/types';
-
-// const PreMealListScreen = ({navigation, route}: PreMealListScreenNavigationProp) =>{
-
-
-
-// };
-
 import React from 'react';
 import { Component } from 'react';
 import {StyleSheet,Text,View,Alert,TextInput,FlatList} from 'react-native';
 import ReactSearchBox from "react-search-box";
+import {PreMealListScreenNavigationProp} from '../navigation/types';
+
+const PreMealListScreen = ({navigation, route}: PreMealListScreenNavigationProp) =>{
+
+    SearchPrevMeals;
+};
+
 export default class SearchPrevMeals extends Component {
  
      data = [
@@ -35,10 +33,19 @@ export default class SearchPrevMeals extends Component {
      render() {
         return (
           <ReactSearchBox
-            placeholder="Search Meals"
-            data={this.data}
-            callback={(record: any) => console.log(record)}
-          />
+                placeholder="Search Meals"
+                data={this.data} onSelect={function (record: {
+                    item: {
+                        key: string;
+                        // const PreMealListScreen = ({navigation, route}: PreMealListScreenNavigationProp) =>{
+                        // };
+                        value: string;
+                    };
+                }): void {
+                    throw new Error('Function not implemented.');
+                } } onChange={function (value: string): void {
+                    throw new Error('Function not implemented.');
+                } }/>
         );
       };
     };
