@@ -12,7 +12,7 @@ const PreMealListScreen = ({navigation, route}: PreMealListScreenNavigationProp)
 export default class SearchPrevMeals extends Component {
  
      data = [
-       {key:"1", 
+       {key:"", 
         value: "Cheese cake"},
        {key:"2", 
         value: "Potato Skins"},
