@@ -10,8 +10,8 @@ const HomeStackNavigator = () => {
   return (
     <HomeStack.Navigator>
       <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
-      <HomeStack.Screen name="LoginScreen" component={LoginScreen} />
-      <HomeStack.Screen name="SignupScreen" component={SignupScreen} />
+      <HomeStack.Screen name="Login" component={LoginScreen} />
+      <HomeStack.Screen name="Signup" component={SignupScreen} />
       <HomeStack.Screen name="TaskScreen" component={TaskScreen} />
       <HomeStack.Screen name="PreMealListScreen" component={PreMealListScreen}/>
     </HomeStack.Navigator>

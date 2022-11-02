@@ -35,7 +35,7 @@ const Input: React.FC<Props> = ({
           backgroundColor: themeFromContext.colors.background,
         }}
         placeholder={placeholder}
-        placeholderTextColor={themeFromContext.colors.primary}
+        placeholderTextColor={themeFromContext.colors.lightText}
         onChangeText={onChangeText}
         value={value}
       />
