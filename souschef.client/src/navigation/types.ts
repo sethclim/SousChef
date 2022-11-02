@@ -7,6 +7,7 @@ export type HomeStackNavigatorParamList = {
   TaskScreen: {
     name: string;
   };
+  PreMealListScreen: undefined;
 };
 
 export type HomeScreenNavigationProp = NativeStackScreenProps<
@@ -27,4 +28,9 @@ export type LoginScreenNavigationProp = NativeStackScreenProps<
 export type SignupScreenNavigationProp = NativeStackScreenProps<
   HomeStackNavigatorParamList,
   'Signup'
+>;
+
+export type PreMealListScreenNavigationProp = NativeStackScreenProps<
+  HomeStackNavigatorParamList, 
+  'PreMealListScreen'
 >;
