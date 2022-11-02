@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, Button} from 'react-native';
+import {View, Text, Button, StyleSheet} from 'react-native';
 import {Input} from '../../components';
 import {LoginScreenNavigationProp} from '../../navigation/types';
 
@@ -22,18 +22,38 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
   };
 
   return (
-    <View style={{flex: 1, paddingTop: 10}}>
+    <View style={{flex: 1, paddingTop: 10, justifyContent: 'center',}}>
       <Text>Login</Text>
-      <Text>{error}</Text>
-      <Input onChangeText={onChangeEmail} value={email} placeholder={'Email'} />
+      {/* <Text>{error}</Text> */}
+      <Input onChangeText={onChangeEmail} value={email} placeholder={'Email'} errormsg={error}/>
       <Input
         onChangeText={onChangePassword}
         value={password}
         placeholder={'Password'}
       />
-      <Button title="Login" onPress={() => login()} />
+      <Button
+       color="#FB6A69"
+       title="Login" 
+       onPress={() => login()} />
+      <Text style={styles.title}>Or</Text>
+      <Text style={styles.title}>Not A Member<Text style={styles.link} onPress={()=>navigation.navigate('Signup')}> Register </Text></Text>      
+
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+
+  title: {
+    textAlign: 'center',
+    marginVertical: 8,
+  },
+  link: {
+    color: 'blue',
+    fontWeight: 'bold',
+  },
+
+});
+
 
 export default LoginScreen;

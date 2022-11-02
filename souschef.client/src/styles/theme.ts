@@ -1,9 +1,10 @@
 const palette = {
   purple: '#5A31F4',
-  green: '#0ECD9D',
-  red: '#CD0E61',
-  black: '#0B0B0B',
-  white: '#F0F2F3',
+  green:  '#0ECD9D',
+  red:    '#CD0E61',
+  black:  '#0B0B0B',
+  white:  '#F0F2F3',
+  grey:   '#2F394A'
 };
 
 export const theme = {
@@ -13,6 +14,7 @@ export const theme = {
     primary: palette.purple,
     success: palette.green,
     danger: palette.red,
+    lightText: palette.grey,
   },
   spacing: {
     s: 8,
