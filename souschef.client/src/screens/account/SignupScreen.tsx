@@ -1,6 +1,6 @@
 import React from 'react';
-import {View, Text, Button, StyleSheet} from 'react-native';
-import {Input} from '../../components';
+import {View, Text, StyleSheet} from 'react-native';
+import {Input, Button} from '../../components';
 import {SignupScreenNavigationProp} from '../../navigation/types';
 
 const LoginScreen = ({navigation, route}: SignupScreenNavigationProp) => {
@@ -30,7 +30,7 @@ const LoginScreen = ({navigation, route}: SignupScreenNavigationProp) => {
         value={passwordConfirm}
         placeholder={'Confirm Password'}
       />
-      <Button title="Signup" onPress={() => signup()} />
+      <Button title="Signup" bkColor="#2E9DFB" textColor='white' onPress={() => signup()} />
       <Text style={styles.title}>Already A Member<Text style={styles.link} onPress={()=>navigation.navigate('Login')}> Login </Text></Text>   
     </View>
   );

@@ -1,12 +1,15 @@
-import React from 'react';
-import {View, Text, Button, StyleSheet} from 'react-native';
-import {Input} from '../../components';
+import React, { useContext } from 'react';
+import {View, Text, StyleSheet} from 'react-native';
+import { ThemeContext } from '../../../App';
+import {Input, Button} from '../../components';
 import {LoginScreenNavigationProp} from '../../navigation/types';
 
 const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
   const [email, onChangeEmail] = React.useState('');
   const [password, onChangePassword] = React.useState('');
   const [error, setError] = React.useState('');
+
+  const themeFromContext = useContext(ThemeContext);
 
   let fakeLogin = {
     pass: '123',
@@ -24,7 +27,6 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
   return (
     <View style={{flex: 1, paddingTop: 10, justifyContent: 'center',}}>
       <Text>Login</Text>
-      {/* <Text>{error}</Text> */}
       <Input onChangeText={onChangeEmail} value={email} placeholder={'Email'} errormsg={error}/>
       <Input
         onChangeText={onChangePassword}
@@ -32,7 +34,8 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
         placeholder={'Password'}
       />
       <Button
-       color="#FB6A69"
+       bkColor="#FB6A69"
+       textColor="white"
        title="Login" 
        onPress={() => login()} />
       <Text style={styles.title}>Or</Text>
