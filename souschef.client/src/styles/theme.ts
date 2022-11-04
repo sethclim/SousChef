@@ -1,10 +1,16 @@
-const palette = {
+type RGB = `rgb(${number}, ${number}, ${number})`;
+type RGBA = `rgb(${number}, ${number}, ${number}, ${number})`;
+type HEX = `#${string}`;
+
+export type Color = RGB | RGBA | HEX;
+
+const palette: {[key: string]: Color} = {
   purple: '#5A31F4',
-  green:  '#0ECD9D',
-  red:    '#CD0E61',
-  black:  '#0B0B0B',
-  white:  '#F0F2F3',
-  grey:   '#2F394A'
+  green: '#0ECD9D',
+  red: '#CD0E61',
+  black: '#0B0B0B',
+  white: '#F0F2F3',
+  grey: '#2F394A',
 };
 
 export const theme = {

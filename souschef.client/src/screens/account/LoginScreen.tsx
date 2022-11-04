@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React, {useContext} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import { ThemeContext } from '../../../App';
+import {ThemeContext} from '../../../App';
 import {Input, Button} from '../../components';
 import {LoginScreenNavigationProp} from '../../navigation/types';
 
@@ -25,28 +25,38 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
   };
 
   return (
-    <View style={{flex: 1, paddingTop: 10, justifyContent: 'center',}}>
+    <View style={{flex: 1, paddingTop: 10, justifyContent: 'center'}}>
       <Text>Login</Text>
-      <Input onChangeText={onChangeEmail} value={email} placeholder={'Email'} errormsg={error}/>
+      <Input
+        onChangeText={onChangeEmail}
+        value={email}
+        placeholder={'Email'}
+        errormsg={error}
+      />
       <Input
         onChangeText={onChangePassword}
         value={password}
         placeholder={'Password'}
       />
       <Button
-       bkColor="#FB6A69"
-       textColor="white"
-       title="Login" 
-       onPress={() => login()} />
+        bgColor="#FB6A69"
+        textColor="#FFFFFF"
+        title="Login"
+        onPress={() => login()}
+      />
       <Text style={styles.title}>Or</Text>
-      <Text style={styles.title}>Not A Member<Text style={styles.link} onPress={()=>navigation.navigate('Signup')}> Register </Text></Text>      
-
+      <Text style={styles.title}>
+        Not A Member
+        <Text style={styles.link} onPress={() => navigation.navigate('Signup')}>
+          {' '}
+          Register{' '}
+        </Text>
+      </Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-
   title: {
     textAlign: 'center',
     marginVertical: 8,
@@ -55,8 +65,6 @@ const styles = StyleSheet.create({
     color: 'blue',
     fontWeight: 'bold',
   },
-
 });
-
 
 export default LoginScreen;
