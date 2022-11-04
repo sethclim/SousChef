@@ -1,3 +1,4 @@
+import React from 'react';
 import {SafeAreaView} from 'react-native';
 import Section from '../components/Section';
 import {TaskScreenNavigationProp} from '../navigation/types';
