@@ -21,6 +21,7 @@ export const theme = {
     success: palette.green,
     danger: palette.red,
     lightText: palette.grey,
+    blue: '#2E9DFB',
   },
   spacing: {
     s: 8,

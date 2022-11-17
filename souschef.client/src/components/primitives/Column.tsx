@@ -1,7 +1,7 @@
 import React, {type PropsWithChildren} from 'react';
 import Frame, {IFrameProps} from './Frame';
 
-interface IRowProps extends IFrameProps {
+interface IColumnProps extends IFrameProps {
   justifyContent?:
     | 'flex-start'
     | 'flex-end'
@@ -12,23 +12,25 @@ interface IRowProps extends IFrameProps {
   alignItems?: 'center' | 'stretch' | 'flex-start' | 'flex-end' | 'baseline';
 }
 
-type RowProps = IRowProps;
+type ColumnProps = IColumnProps;
 
-const rowDefaultProps: IRowProps = {
+const columnDefaultProps: IColumnProps = {
   horizontalResizing: 'hug',
   verticalResizing: 'hug',
   justifyContent: 'center',
   alignItems: 'center',
 };
 
-const Row: React.FC<PropsWithChildren<RowProps>> = (propsIn: IRowProps) => {
-  const props = {...rowDefaultProps, ...propsIn};
+const Column: React.FC<PropsWithChildren<ColumnProps>> = (
+  propsIn: IColumnProps,
+) => {
+  const props = {...columnDefaultProps, ...propsIn};
   return (
     <Frame
       {...props}
       style={[
         {
-          flexDirection: 'row',
+          flexDirection: 'column',
           justifyContent: props.justifyContent,
           alignItems: props.alignItems,
         },
@@ -39,4 +41,4 @@ const Row: React.FC<PropsWithChildren<RowProps>> = (propsIn: IRowProps) => {
   );
 };
 
-export default Row;
+export default Column;

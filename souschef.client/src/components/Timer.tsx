@@ -1,25 +1,35 @@
 import React from 'react';
 import CircularProgress from 'react-native-circular-progress-indicator';
-import {theme} from '../styles/theme';
+import {theme, Color} from '../styles/theme';
 
 export type TimerProps = {
-  seconds: number;
+  seconds?: number;
   onFinished?: (() => void) | undefined;
+  primaryColor?: Color;
+  secondaryColor?: Color;
 };
 
-const Timer: React.FC<TimerProps> = props => {
+const timerDefaultProps: TimerProps = {
+  seconds: 60,
+  onFinished: () => {},
+  primaryColor: '#2E9DFB',
+  secondaryColor: '#92C9F8',
+};
+
+const Timer: React.FC<TimerProps> = (propsIn: TimerProps) => {
+  const props = {...timerDefaultProps, ...propsIn};
   return (
     <CircularProgress
       value={0}
       initialValue={props.seconds}
       maxValue={props.seconds}
       radius={150}
-      duration={props.seconds * 1000}
+      duration={(props.seconds ?? 60) * 1000}
       progressValueColor={theme.colors.lightText}
       progressValueStyle={{fontWeight: 'normal'}}
       progressValueFontSize={42}
-      activeStrokeColor={'#FFD5A3'}
-      activeStrokeSecondaryColor={'#FFA740'}
+      activeStrokeColor={props.primaryColor}
+      activeStrokeSecondaryColor={props.secondaryColor}
       activeStrokeWidth={16}
       inActiveStrokeColor={'#d9d9d9'}
       inActiveStrokeWidth={16}
