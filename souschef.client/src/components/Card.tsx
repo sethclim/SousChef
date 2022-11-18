@@ -1,10 +1,10 @@
 import React, {type PropsWithChildren} from 'react';
 import {theme} from '../styles/theme';
-import Frame, {IFrameProps} from './primitives/Frame';
+import Stack, {IStackProps} from './primitives/Stack';
 
-export type CardProps = IFrameProps;
+export type CardProps = IStackProps;
 
-export const cardDefaultProps: IFrameProps = {
+export const cardDefaultProps: IStackProps = {
   bgColor: '#fff',
   paddingHorizontal: theme.spacing.m,
   paddingVertical: theme.spacing.m,
@@ -14,13 +14,9 @@ export const cardDefaultProps: IFrameProps = {
   elevation: 4,
 };
 
-const Card: React.FC<PropsWithChildren<CardProps>> = (propsIn: IFrameProps) => {
+const Card: React.FC<PropsWithChildren<CardProps>> = (propsIn: IStackProps) => {
   const props = {...cardDefaultProps, ...propsIn};
-  return (
-    <Frame {...props} style={props.style}>
-      {props.children}
-    </Frame>
-  );
+  return <Stack {...props}>{props.children}</Stack>;
 };
 
 export default Card;

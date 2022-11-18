@@ -1,10 +1,9 @@
 import React, {useRef, useState, type PropsWithChildren} from 'react';
-import {Animated, LayoutAnimation, StyleSheet, Text, View} from 'react-native';
+import {Animated, LayoutAnimation, StyleSheet, Text} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {theme} from '../styles/theme';
 import Card, {CardProps} from './Card';
 import {OpacityPressable} from './pressable';
-import Column from './primitives/Column';
 import Row from './primitives/Row';
 
 interface IAccordionCardProps extends CardProps {
@@ -12,20 +11,6 @@ interface IAccordionCardProps extends CardProps {
 }
 
 type AccordionCardProps = IAccordionCardProps;
-
-const toggleAnimation = {
-  duration: 300,
-  update: {
-    duration: 300,
-    property: LayoutAnimation.Properties.opacity,
-    type: LayoutAnimation.Types.easeInEaseOut,
-  },
-  delete: {
-    duration: 200,
-    property: LayoutAnimation.Properties.opacity,
-    type: LayoutAnimation.Types.easeInEaseOut,
-  },
-};
 
 const AccordionCard: React.FC<PropsWithChildren<AccordionCardProps>> = (
   props: IAccordionCardProps,
@@ -35,40 +20,37 @@ const AccordionCard: React.FC<PropsWithChildren<AccordionCardProps>> = (
     props.children,
   );
   const animationController = useRef(new Animated.Value(0)).current;
+
   const toggleAccordian = () => {
-    const config = {
-      duration: 300,
+    Animated.timing(animationController, {
       toValue: showContent ? 0 : 1,
+      duration: 200,
       useNativeDriver: true,
-    };
-    Animated.timing(animationController, config).start();
-    LayoutAnimation.configureNext(toggleAnimation);
-    setShowContent(!showContent);
+    }).start(() => {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      setShowContent(!showContent);
+    });
   };
 
   const arrowTransform = animationController.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '-180deg'],
   });
+
   return (
-    <Card {...props} style={props.style}>
-      <Column horizontalResizing="fill" style={{overflow: 'hidden'}}>
-        <OpacityPressable horizontalResizing="fill" onPress={toggleAccordian}>
-          <Row
-            horizontalResizing="fill"
-            justifyContent="space-between"
-            style={{marginBottom: theme.spacing.s}}>
-            <Text style={styles.cardHeader}>{props.title}</Text>
-            <Animated.View style={{transform: [{rotateZ: arrowTransform}]}}>
-              <MaterialIcons
-                name="keyboard-arrow-down"
-                style={styles.dropdownIcon}
-              />
-            </Animated.View>
-          </Row>
-        </OpacityPressable>
-        {showContent ? children[1] ?? null : children[0] ?? null}
-      </Column>
+    <Card {...props} justifyContent="flex-start">
+      <OpacityPressable horizontalResizing="fill" onPress={toggleAccordian}>
+        <Row horizontalResizing="fill" justifyContent="space-between">
+          <Text style={styles.cardHeader}>{props.title}</Text>
+          <Animated.View style={{transform: [{rotateZ: arrowTransform}]}}>
+            <MaterialIcons
+              name="keyboard-arrow-down"
+              style={styles.dropdownIcon}
+            />
+          </Animated.View>
+        </Row>
+      </OpacityPressable>
+      {showContent ? children[1] ?? null : children[0] ?? null}
     </Card>
   );
 };

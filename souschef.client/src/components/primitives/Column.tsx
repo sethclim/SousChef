@@ -1,43 +1,17 @@
 import React, {type PropsWithChildren} from 'react';
-import Frame, {IFrameProps} from './Frame';
+import Stack, {IStackProps} from './Stack';
 
-interface IColumnProps extends IFrameProps {
-  justifyContent?:
-    | 'flex-start'
-    | 'flex-end'
-    | 'center'
-    | 'space-between'
-    | 'space-around'
-    | 'space-evenly';
-  alignItems?: 'center' | 'stretch' | 'flex-start' | 'flex-end' | 'baseline';
-}
-
+export interface IColumnProps
+  extends Omit<IStackProps, 'direction' | 'parentDirection'> {}
 type ColumnProps = IColumnProps;
 
-const columnDefaultProps: IColumnProps = {
-  horizontalResizing: 'hug',
-  verticalResizing: 'hug',
-  justifyContent: 'center',
-  alignItems: 'center',
-};
-
 const Column: React.FC<PropsWithChildren<ColumnProps>> = (
-  propsIn: IColumnProps,
+  props: IColumnProps,
 ) => {
-  const props = {...columnDefaultProps, ...propsIn};
   return (
-    <Frame
-      {...props}
-      style={[
-        {
-          flexDirection: 'column',
-          justifyContent: props.justifyContent,
-          alignItems: props.alignItems,
-        },
-        props.style,
-      ]}>
+    <Stack {...props} direction="column">
       {props.children}
-    </Frame>
+    </Stack>
   );
 };
 

@@ -1,41 +1,15 @@
 import React, {type PropsWithChildren} from 'react';
-import Frame, {IFrameProps} from './Frame';
+import Stack, {IStackProps} from './Stack';
 
-interface IRowProps extends IFrameProps {
-  justifyContent?:
-    | 'flex-start'
-    | 'flex-end'
-    | 'center'
-    | 'space-between'
-    | 'space-around'
-    | 'space-evenly';
-  alignItems?: 'center' | 'stretch' | 'flex-start' | 'flex-end' | 'baseline';
-}
-
+export interface IRowProps
+  extends Omit<IStackProps, 'direction' | 'parentDirection'> {}
 type RowProps = IRowProps;
 
-const rowDefaultProps: IRowProps = {
-  horizontalResizing: 'hug',
-  verticalResizing: 'hug',
-  justifyContent: 'center',
-  alignItems: 'center',
-};
-
-const Row: React.FC<PropsWithChildren<RowProps>> = (propsIn: IRowProps) => {
-  const props = {...rowDefaultProps, ...propsIn};
+const Row: React.FC<PropsWithChildren<RowProps>> = (props: IRowProps) => {
   return (
-    <Frame
-      {...props}
-      style={[
-        {
-          flexDirection: 'row',
-          justifyContent: props.justifyContent,
-          alignItems: props.alignItems,
-        },
-        props.style,
-      ]}>
+    <Stack {...props} direction="row">
       {props.children}
-    </Frame>
+    </Stack>
   );
 };
 

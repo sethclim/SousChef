@@ -1,9 +1,12 @@
 import React, {type PropsWithChildren} from 'react';
 import {Animated, TouchableOpacity} from 'react-native';
-import Frame from '../primitives/Frame';
+import {makeStackComponent} from '../primitives/Stack';
 import {IPressable} from './type';
 
 type SpringPressableProps = IPressable;
+
+const AnimatedViewStack = makeStackComponent(Animated.View);
+const TouchableOpacityStack = makeStackComponent(TouchableOpacity);
 
 const SpringPressable: React.FC<PropsWithChildren<SpringPressableProps>> = (
   props: IPressable,
@@ -28,17 +31,15 @@ const SpringPressable: React.FC<PropsWithChildren<SpringPressableProps>> = (
   };
 
   return (
-    <Frame {...props}>
-      <Animated.View style={{transform: [{scale}]}}>
-        <TouchableOpacity
-          onPress={props.onPress}
-          activeOpacity={1}
-          onPressIn={onPressIn}
-          onPressOut={onPressOut}>
-          {props.children}
-        </TouchableOpacity>
-      </Animated.View>
-    </Frame>
+    <AnimatedViewStack {...props} style={{transform: [{scale}]}}>
+      <TouchableOpacityStack
+        {...props}
+        activeOpacity={1}
+        onPressIn={onPressIn}
+        onPressOut={onPressOut}>
+        {props.children}
+      </TouchableOpacityStack>
+    </AnimatedViewStack>
   );
 };
 
