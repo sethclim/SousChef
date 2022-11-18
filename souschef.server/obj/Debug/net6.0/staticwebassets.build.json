@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "zpFmRnJ5zQmGtbBpx23cxUyufndlU6qk5DV/7xE0jzk=",
+  "Source": "souschef.server",
+  "BasePath": "_content/souschef.server",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
