@@ -1,6 +1,7 @@
 using SousChef.Data;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,8 +13,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddEntityFrameworkNpgsql().AddDbContext<PostGresDBContext>(opt =>
         opt.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")));
 
-builder.Services.AddIdentityCore<ApplicationUser>()
+builder.Services.AddDefaultIdentity<ApplicationUser>()
                 .AddEntityFrameworkStores<PostGresDBContext>();
+
+//builder.Services.AddScoped<SignInManager<ApplicationUser>>();
+
 
 
 var app = builder.Build();
