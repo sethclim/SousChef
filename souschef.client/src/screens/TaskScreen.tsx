@@ -1,162 +1,192 @@
 import React from 'react';
-import {SafeAreaView, View, StyleSheet, Text} from 'react-native';
-import {IconButton, Timer, ChatBubble, Card, Section, Row} from '../components';
+import {StyleSheet, Text, View} from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {
+  AccordionCard,
+  Card,
+  Column,
+  IconButton,
+  Row,
+  SafeArea,
+  Timer,
+} from '../components';
+import CircularButton from '../components/CircularButton';
+import {OpacityPressable, SpringPressable} from '../components/pressable';
 import {TaskScreenNavigationProp} from '../navigation/types';
 import {theme} from '../styles/theme';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {Logo} from '../res';
 
 const TaskScreen = ({navigation, route}: TaskScreenNavigationProp) => {
   const {name: taskName} = route.params;
+
+  // TO-DO: Plug variables from route.params
+  const difficulty = 1; // [0-3]
   const timerInSeconds = 0 * 3600 + 5 * 60 + 0; // hr + min + sec
+  const estimatedTimeInSeconds = 0 * 3600 + 30 * 60 + 0; // hr + min + sec
+  const taskOverview = 'Chop the carrots into thin slices.';
+  const taskDetails =
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sedodio suscipit nunc suscipit varius a vitae nisi. Sed auctor non risus et hendrerit. Nullam erat nisi, vehicula faucibus posuere eu, aliquet in orci. Aenean consectetur scelerisque ex sit amet condimentum.';
+  const taskCompleted = () => {
+    console.log('Task Completed');
+  };
+  const requestNewTask = () => {
+    console.log('Request New Task');
+  };
+  const viewMore = () => {
+    console.log('View More');
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.timerContainer}>
+    <SafeArea horizontalPadding={theme.spacing.m}>
+      <Column
+        horizontalResizing="fill"
+        justifyContent="flex-start"
+        paddingVertical={theme.spacing.xl}>
         <Timer seconds={timerInSeconds} />
-      </View>
-      <View style={styles.cardContainer}>
-        <Row
-          style={{
-            width: '100%',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            paddingHorizontal: 16,
-            paddingVertical: 8,
-          }}>
-          <Row>
-            <MaterialIcons name="timer" style={styles.timerIcon} />
-            <Text style={styles.timerText}>{timerInSeconds / 60} min</Text>
+        <Column
+          verticalResizing="fill"
+          horizontalResizing="fill"
+          paddingVertical={theme.spacing.m}>
+          <Row
+            horizontalResizing="fill"
+            justifyContent="space-between"
+            paddingHorizontal={theme.spacing.s}
+            paddingVertical={theme.spacing.s}>
+            <Row>
+              <MaterialIcons name="timer" style={styles.timerIcon} />
+              <Text style={styles.timerText}>{timerInSeconds / 60}min</Text>
+            </Row>
+            <Row>
+              <MaterialIcons
+                name="star"
+                style={[
+                  styles.starIcon,
+                  difficulty <= 0 ? styles.starEmptyIcon : {},
+                ]}
+              />
+              <MaterialIcons
+                name="star"
+                style={[
+                  styles.starIcon,
+                  difficulty <= 1 ? styles.starEmptyIcon : {},
+                ]}
+              />
+              <MaterialIcons
+                name="star"
+                style={[
+                  styles.starIcon,
+                  difficulty <= 2 ? styles.starEmptyIcon : {},
+                ]}
+              />
+            </Row>
           </Row>
-          <Row>
-            <MaterialIcons name="star" style={[styles.star]} />
-            <MaterialIcons
-              name="star"
-              style={[styles.star, styles.starEmpty]}
-            />
-            <MaterialIcons
-              name="star"
-              style={[styles.star, styles.starEmpty]}
-            />
-          </Row>
-        </Row>
+          <AccordionCard title="Your Task">
+            <Column verticalResizing="fill" horizontalResizing="fill">
+              <Text style={styles.cardDescription}>{taskOverview}</Text>
+              <Row
+                horizontalResizing="fill"
+                paddingHorizontal={theme.spacing.m}>
+                <SpringPressable
+                  horizontalResizing="fill"
+                  verticalResizing="fill"
+                  onPress={taskCompleted}
+                  style={{marginRight: theme.spacing.s}}>
+                  <IconButton
+                    iconName="check"
+                    text="Complete Task"
+                    paddingVertical={theme.spacing.s}
+                    paddingHorizontal={theme.spacing.m}
+                    horizontalResizing="fill"
+                    verticalResizing="fill"
+                  />
+                </SpringPressable>
+                <SpringPressable onPress={requestNewTask}>
+                  <CircularButton iconName="reload" />
+                </SpringPressable>
+              </Row>
+            </Column>
+            <Column horizontalResizing="fill" paddingVertical={theme.spacing.s}>
+              <Text style={styles.cardDescription}>{taskDetails}</Text>
+              <Row
+                horizontalResizing="fill"
+                paddingHorizontal={theme.spacing.m}>
+                <SpringPressable
+                  horizontalResizing="fill"
+                  verticalResizing="fill"
+                  onPress={taskCompleted}
+                  style={{marginRight: theme.spacing.s}}>
+                  <IconButton
+                    iconName="check"
+                    text="Complete Task"
+                    paddingVertical={theme.spacing.s}
+                    paddingHorizontal={theme.spacing.m}
+                    horizontalResizing="fill"
+                    verticalResizing="fill"
+                  />
+                </SpringPressable>
+                <SpringPressable onPress={requestNewTask}>
+                  <CircularButton iconName="reload" />
+                </SpringPressable>
+              </Row>
+            </Column>
+          </AccordionCard>
+        </Column>
         <Card>
-          <Row style={[{justifyContent: 'flex-end'}]}>
-            <IconButton
-              iconName="information-outline"
-              text="More details"
-              size={16}
-              bgColor="#0000"
-              color="#2e9dfb"
-              style={{}}
-            />
-          </Row>
-          <Text style={[styles.cardText]}>
-            Chop the carrots into thin slices.
-          </Text>
-          <Row style={styles.cardItem}>
-            <IconButton
-              iconName="check"
-              bgColor="#3ddc84"
-              text="MARK COMPLETED"
-              size={24}
-              style={{borderRadius: 128, elevation: 4, marginRight: 8}}
-            />
-            <IconButton iconName="refresh" bgColor="#A89C9C" size={24} />
-          </Row>
+          <OpacityPressable horizontalResizing="fill" onPress={viewMore}>
+            <Row horizontalResizing="fill" justifyContent="space-between">
+              <Row>
+                <MaterialIcons name="access-time" style={styles.timeIcon} />
+                <Text style={[{fontWeight: 'bold'}, styles.timeText]}>
+                  Est. Meal Time:{' '}
+                </Text>
+                <Text style={styles.timeText}>
+                  {estimatedTimeInSeconds / 60}min
+                </Text>
+              </Row>
+              <Text style={styles.viewMore}>View more</Text>
+            </Row>
+          </OpacityPressable>
         </Card>
-        <View style={styles.chatBotContainer}>
-          <Row>
-            <View
-              style={{
-                marginBottom: 32,
-                marginRight: 8,
-                justifyContent: 'flex-end',
-                alignItems: 'flex-end',
-              }}>
-              <ChatBubble
-                text="I am your virtual cooking assistant?"
-                left={false}
-              />
-              <ChatBubble
-                text="How can I help?"
-                left={false}
-                style={{
-                  marginTop: 8,
-                }}
-              />
-            </View>
-            <View style={[styles.chatBot, {marginTop: 96}]}>
-              <Logo />
-            </View>
-          </Row>
-        </View>
-      </View>
-    </SafeAreaView>
+      </Column>
+    </SafeArea>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
-  timerContainer: {
-    marginVertical: 16,
-  },
-  cardContainer: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    width: '100%',
-    paddingHorizontal: 16,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  cardItem: {
-    marginTop: 16,
-  },
-  cardText: {
-    fontSize: 32,
-    textAlign: 'center',
+  cardDescription: {
+    fontSize: 18,
+    marginVertical: theme.spacing.m,
+    alignSelf: 'stretch',
+    textAlign: 'left',
     color: theme.colors.lightText,
   },
-  timerIcon: {color: theme.colors.lightText, textAlign: 'center', fontSize: 28},
+  timerIcon: {color: theme.colors.lightText, textAlign: 'center', fontSize: 24},
   timerText: {
     color: theme.colors.lightText,
     textAlign: 'center',
-    marginLeft: 8,
-    fontSize: 18,
+    marginLeft: 6,
+    fontSize: 16,
   },
-  star: {
+  starIcon: {
     color: '#ffcd3c',
-    fontSize: 32,
+    fontSize: 30,
     elevation: 4,
     shadowRadius: 8,
     shadowColor: '#000',
   },
-  starEmpty: {
+  starEmptyIcon: {
     color: '#fae199',
   },
-  chatBotContainer: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-    padding: 16,
+  dropdownIcon: {color: '#979CA5', fontSize: 36},
+  timeIcon: {color: theme.colors.lightText, textAlign: 'center', fontSize: 28},
+  timeText: {
+    fontSize: 16,
+    color: theme.colors.lightText,
+    marginLeft: 6,
   },
-  chatBot: {
-    backgroundColor: '#ffcd3c',
-    borderRadius: 128,
-    width: 64,
-    height: 64,
-    justifyContent: 'center',
-    alignItems: 'center',
+  viewMore: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: theme.colors.blue,
   },
 });
 

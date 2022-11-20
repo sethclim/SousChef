@@ -1,22 +1,22 @@
 import React, {type PropsWithChildren} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {theme} from '../styles/theme';
+import Stack, {IStackProps} from './primitives/Stack';
 
-export type CardProps = {
-  style?: object;
+export type CardProps = IStackProps;
+
+export const cardDefaultProps: IStackProps = {
+  bgColor: '#fff',
+  paddingHorizontal: theme.spacing.m,
+  paddingVertical: theme.spacing.m,
+  horizontalResizing: 'fill',
+  verticalResizing: 'hug',
+  borderRadius: theme.spacing.m,
+  elevation: 4,
 };
 
-const Card: React.FC<PropsWithChildren<CardProps>> = ({style, children}) => {
-  return <View style={[styles.cardContainer, style]}>{children}</View>;
+const Card: React.FC<PropsWithChildren<CardProps>> = (propsIn: IStackProps) => {
+  const props = {...cardDefaultProps, ...propsIn};
+  return <Stack {...props}>{props.children}</Stack>;
 };
-
-const styles = StyleSheet.create({
-  cardContainer: {
-    width: '100%',
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 16,
-    elevation: 4,
-  },
-});
 
 export default Card;

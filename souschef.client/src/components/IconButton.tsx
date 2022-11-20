@@ -1,100 +1,57 @@
 import React from 'react';
-import {
-  Animated,
-  GestureResponderEvent,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  Text,
-} from 'react-native';
-import {Color} from '../styles/theme';
+import {StyleSheet, Text} from 'react-native';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Color} from '../styles/theme';
+import {Row} from './index';
+import {IFrameProps} from './primitives/Frame';
 
-export type IconButtonProps = {
+interface IIconButtonProps extends IFrameProps {
+  text: string;
   iconName: string;
-  text?: string;
-  onPress?: ((event: GestureResponderEvent) => void) | undefined;
   color?: Color;
-  bgColor?: Color;
   size?: number;
-  style?: object;
-  iconStyling?: object;
+  textStyle?: object;
+  iconStyle?: object;
+}
+
+type IconButtonProps = IIconButtonProps;
+
+const iconButtonDefaultProps: IIconButtonProps = {
+  text: 'Placeholder',
+  iconName: 'check',
+  color: '#fff',
+  bgColor: '#3ddc84',
+  size: 18,
+  borderRadius: 128,
+  elevation: 4,
 };
 
-const IconButton: React.FC<IconButtonProps> = ({
-  iconName,
-  text,
-  onPress,
-  color = '#FFFFFF',
-  bgColor = '#FB6A69',
-  size = 20,
-  style = {borderRadius: 128, elevation: 4},
-  iconStyling,
-}) => {
-  const animation = new Animated.Value(0);
-  const inputRange = [0, 1];
-  const outputRange = [1, 0.8];
-  const scale = animation.interpolate({inputRange, outputRange});
-
-  const onPressIn = () => {
-    Animated.spring(animation, {
-      toValue: 1,
-      useNativeDriver: true,
-    }).start();
-  };
-  const onPressOut = () => {
-    Animated.spring(animation, {
-      toValue: 0,
-      useNativeDriver: true,
-    }).start();
-  };
-
+const IconButton: React.FC<IconButtonProps> = (propsIn: IIconButtonProps) => {
+  const props = {...iconButtonDefaultProps, ...propsIn};
   return (
-    <Animated.View style={{transform: [{scale}]}}>
-      <TouchableOpacity
-        onPress={onPress}
-        activeOpacity={1}
-        onPressIn={onPressIn}
-        onPressOut={onPressOut}
+    <Row {...props}>
+      <MaterialCommunityIcon
+        name={props.iconName}
+        color={props.color}
         style={{
-          width: size ? (text ? 'auto' : size * 2) : 16,
-          height: size ? size * 2 : 16,
-          backgroundColor: bgColor,
-          ...style,
-          ...styles.button,
+          fontSize: (props.size ?? 12) * 1.5,
+          ...props.iconStyle,
+        }}
+      />
+      <Text
+        style={{
+          color: props.color,
+          fontSize: props.size,
+          ...styles.buttonText,
         }}>
-        <View style={styles.row}>
-          <MaterialCommunityIcon
-            name={iconName}
-            color={color}
-            style={{
-              fontSize: size,
-              ...iconStyling,
-            }}
-          />
-          {text ? (
-            <Text
-              style={{
-                color: color,
-                fontSize: size * 0.75,
-                ...styles.buttonText,
-              }}>
-              {text}
-            </Text>
-          ) : null}
-        </View>
-      </TouchableOpacity>
-    </Animated.View>
+        {props.text}
+      </Text>
+    </Row>
   );
 };
 
 const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  button: {justifyContent: 'center', alignItems: 'center', padding: 8},
-  buttonText: {textAlign: 'center', paddingLeft: 8},
+  buttonText: {textAlign: 'center', fontWeight: 'bold', marginLeft: 8},
 });
 
 export default IconButton;
