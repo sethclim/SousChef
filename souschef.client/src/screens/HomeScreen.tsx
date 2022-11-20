@@ -7,14 +7,13 @@ const HomeScreen = ({navigation, route}: HomeScreenNavigationProp) => {
     <View style={{flex: 1, paddingTop: 10}}>
       <Text>Home</Text>
       <Button title="Login" onPress={() => navigation.navigate('Login')} />
-      <Button title="Signup" onPress={() => navigation.navigate('Signup')} />
-      {/* <Button
-        title="Meal Prep"
-        onPress={() => navigation.navigate('PreMealListScreen')}
-      /> */}
+      <Button
+        title="Register"
+        onPress={() => navigation.navigate('Register')}
+      />
       <Button
         title="Task"
-        onPress={() => navigation.navigate('TaskScreen', {name: 'Task #1'})}
+        onPress={() => navigation.navigate('Task', {name: 'Task #1'})}
       />
     </View>
   );

@@ -1,64 +1,46 @@
 import React from 'react';
-import {
-  GestureResponderEvent,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {Color} from '../styles/theme';
+import {StyleSheet, Text} from 'react-native';
+import {Color, theme} from '../styles/theme';
+import {Row} from './index';
+import {IFrameProps} from './primitives/Frame';
 
-export type ButtonProps = {
-  title: string;
-  onPress?: ((event: GestureResponderEvent) => void) | undefined;
-  bgColor?: Color;
-  radius?: number;
-  elevation?: number;
-  textColor?: Color;
-  style?: object;
-  textStyling?: object;
-  children?: undefined;
+interface IButtonProps extends IFrameProps {
+  text: string;
+  color?: Color;
+  textStyle?: object;
+}
+
+type ButtonProps = IButtonProps;
+
+const buttonDefaultProps: IButtonProps = {
+  text: 'Placeholder',
+  color: '#fff',
+  bgColor: '#3ddc84',
+  paddingVertical: theme.spacing.m,
+  paddingHorizontal: theme.spacing.m,
+  borderRadius: 16,
 };
 
-const Button: React.FC<ButtonProps> = props => {
+const Button: React.FC<ButtonProps> = (propsIn: IButtonProps) => {
+  const props = {...buttonDefaultProps, ...propsIn};
   return (
-    <TouchableOpacity onPress={props.onPress} style={{padding: 10}}>
-      <View
-        style={{
-          backgroundColor: props.bgColor,
-          borderRadius: props.radius,
-          elevation: props.elevation,
-          ...styles.button,
-          ...props.style,
-        }}>
-        <Text
-          style={{
-            color: props.textColor,
-            ...styles.buttonText,
-            ...props.textStyling,
-          }}>
-          {props.title}
-        </Text>
-      </View>
-    </TouchableOpacity>
+    <Row {...props}>
+      <Text
+        style={[
+          {
+            color: props.color,
+          },
+          styles.buttonText,
+          props.textStyle,
+        ]}>
+        {props.text}
+      </Text>
+    </Row>
   );
 };
 
-Button.defaultProps = {
-  bgColor: '#FB6A69',
-  radius: 12,
-  elevation: 0,
-};
-
 const styles = StyleSheet.create({
-  button: {
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-  },
-  buttonText: {
-    fontSize: 18,
-    textAlign: 'center',
-  },
+  buttonText: {textAlign: 'center', fontWeight: 'bold'},
 });
 
 export default Button;

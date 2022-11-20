@@ -36,7 +36,7 @@ const TaskScreen = ({navigation, route}: TaskScreenNavigationProp) => {
   };
 
   return (
-    <SafeArea horizontalPadding={theme.spacing.m}>
+    <SafeArea>
       <Column
         horizontalResizing="fill"
         justifyContent="flex-start"
@@ -93,8 +93,6 @@ const TaskScreen = ({navigation, route}: TaskScreenNavigationProp) => {
                   <IconButton
                     iconName="check"
                     text="Complete Task"
-                    paddingVertical={theme.spacing.s}
-                    paddingHorizontal={theme.spacing.m}
                     horizontalResizing="fill"
                     verticalResizing="fill"
                   />
@@ -117,8 +115,6 @@ const TaskScreen = ({navigation, route}: TaskScreenNavigationProp) => {
                   <IconButton
                     iconName="check"
                     text="Complete Task"
-                    paddingVertical={theme.spacing.s}
-                    paddingHorizontal={theme.spacing.m}
                     horizontalResizing="fill"
                     verticalResizing="fill"
                   />

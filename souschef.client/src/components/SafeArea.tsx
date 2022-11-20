@@ -1,5 +1,6 @@
 import React, {type PropsWithChildren} from 'react';
 import {SafeAreaView, View} from 'react-native';
+import {theme} from '../styles/theme';
 
 export interface ISafeAreaProps {
   direction?: 'column' | 'row' | 'column-reverse' | 'row-reverse';
@@ -12,7 +13,7 @@ export type SafeAreaProps = ISafeAreaProps;
 
 const safeAreaDefaultProps: ISafeAreaProps = {
   direction: 'column',
-  horizontalPadding: 0,
+  horizontalPadding: theme.spacing.m,
   verticalPadding: 0,
 };
 
