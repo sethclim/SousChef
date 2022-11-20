@@ -3,13 +3,25 @@ import {StyleSheet, Text} from 'react-native';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Button, Card, Column, Input, Row, SafeArea} from '../../components';
 import {OpacityPressable, SpringPressable} from '../../components/pressable';
+import {usePost} from '../../hooks';
 import {LoginScreenNavigationProp} from '../../navigation/types';
 import {theme} from '../../styles/theme';
 
 const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
-  const [email, onChangeEmail] = React.useState('');
-  const [password, onChangePassword] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
+  const {post, error: postError} = usePost(
+    'https://localhost:5001/api/user/login',
+  );
+
+  React.useEffect(() => {
+    setEmail('');
+    setPassword('');
+    setError('');
+    if (route.params.animationID === 1)
+      navigation.setOptions({animation: 'slide_from_left'});
+  }, [navigation]);
 
   const login = () => {
     setError('');
@@ -19,13 +31,17 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
     }
     // Successfully log'd in
     else {
-      navigation.navigate('Home');
+      post({
+        email: email,
+        password: password,
+      }).then(success => {
+        if (success) navigation.replace('Home');
+        else setError((postError as any).toString());
+      });
     }
   };
 
-  const register = () => {
-    navigation.navigate('Register');
-  };
+  const register = () => navigation.replace('Register', {animationID: 1});
 
   return (
     <SafeArea>
@@ -47,7 +63,7 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
             placeholder="Email"
             horizontalResizing="fill"
             onChangeText={value => {
-              onChangeEmail(value);
+              setEmail(value);
             }}
           />
           <Input
@@ -55,7 +71,7 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
             secure={true}
             horizontalResizing="fill"
             onChangeText={value => {
-              onChangePassword(value);
+              setPassword(value);
             }}
             style={{marginTop: 8}}
           />

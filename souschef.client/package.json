@@ -19,8 +19,7 @@
     "react-native-screens": "^3.18.2",
     "react-native-svg": "^12.1.1",
     "react-native-svg-transformer": "^1.0.0",
-    "react-native-vector-icons": "^9.2.0",
-    "react-search-box": "^2.3.0"
+    "react-native-vector-icons": "^9.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

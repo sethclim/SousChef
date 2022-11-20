@@ -3,15 +3,29 @@ import {StyleSheet, Text} from 'react-native';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Button, Card, Column, Input, Row, SafeArea} from '../../components';
 import {OpacityPressable, SpringPressable} from '../../components/pressable';
+import {usePost} from '../../hooks';
 import {RegisterScreenNavigationProp} from '../../navigation/types';
 import {theme} from '../../styles/theme';
 
 const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
-  const [name, onChangeName] = React.useState('');
-  const [email, onChangeEmail] = React.useState('');
-  const [password, onChangePassword] = React.useState('');
-  const [passwordConfirm, onChangePasswordConfirm] = React.useState('');
-  const [error, setError] = React.useState('');
+  const [name, setName] = React.useState<string>('');
+  const [email, setEmail] = React.useState<string>('');
+  const [password, setPassword] = React.useState<string>('');
+  const [passwordConfirm, setPasswordConfirm] = React.useState<string>('');
+  const [error, setError] = React.useState<string>('');
+  const {post, error: postError} = usePost(
+    'https://localhost:5001/api/user/register',
+  );
+
+  React.useEffect(() => {
+    setName('');
+    setEmail('');
+    setPassword('');
+    setPasswordConfirm('');
+    setError('');
+    if (route.params.animationID === 1)
+      navigation.setOptions({animation: 'slide_from_right'});
+  }, [navigation]);
 
   const register = () => {
     setError('');
@@ -30,13 +44,19 @@ const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
     }
     // Successfully registered
     else {
-      navigation.navigate('Home');
+      post({
+        userName: name,
+        email: email,
+        password: password,
+        passwordConfirm: passwordConfirm,
+      }).then(success => {
+        if (success) navigation.replace('Home');
+        else setError((postError as any).toString());
+      });
     }
   };
 
-  const login = () => {
-    navigation.navigate('Login');
-  };
+  const login = () => navigation.replace('Login', {animationID: 1});
 
   return (
     <SafeArea>
@@ -60,14 +80,14 @@ const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
             placeholder="Full name"
             horizontalResizing="fill"
             onChangeText={value => {
-              onChangeName(value);
+              setName(value);
             }}
           />
           <Input
             placeholder="Email"
             horizontalResizing="fill"
             onChangeText={value => {
-              onChangeEmail(value);
+              setEmail(value);
             }}
             style={{marginTop: 8}}
           />
@@ -76,7 +96,7 @@ const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
             secure={true}
             horizontalResizing="fill"
             onChangeText={value => {
-              onChangePassword(value);
+              setPassword(value);
             }}
             style={{marginTop: 8}}
           />
@@ -85,7 +105,7 @@ const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
             secure={true}
             horizontalResizing="fill"
             onChangeText={value => {
-              onChangePasswordConfirm(value);
+              setPasswordConfirm(value);
             }}
             style={{marginTop: 8}}
           />

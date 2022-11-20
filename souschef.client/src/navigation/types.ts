@@ -1,22 +1,22 @@
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 
 export type HomeStackNavigatorParamList = {
+  Welcome: undefined;
+  Login: {
+    animationID: number;
+  };
+  Register: {
+    animationID: number;
+  };
   Home: undefined;
-  Login: undefined;
-  Register: undefined;
   Task: {
     name: string;
   };
 };
 
-export type HomeScreenNavigationProp = NativeStackScreenProps<
+export type WelcomeScreenNavigationProp = NativeStackScreenProps<
   HomeStackNavigatorParamList,
-  'Home'
->;
-
-export type TaskScreenNavigationProp = NativeStackScreenProps<
-  HomeStackNavigatorParamList,
-  'Task'
+  'Welcome'
 >;
 
 export type LoginScreenNavigationProp = NativeStackScreenProps<
@@ -27,4 +27,14 @@ export type LoginScreenNavigationProp = NativeStackScreenProps<
 export type RegisterScreenNavigationProp = NativeStackScreenProps<
   HomeStackNavigatorParamList,
   'Register'
+>;
+
+export type HomeScreenNavigationProp = NativeStackScreenProps<
+  HomeStackNavigatorParamList,
+  'Home'
+>;
+
+export type TaskScreenNavigationProp = NativeStackScreenProps<
+  HomeStackNavigatorParamList,
+  'Task'
 >;
