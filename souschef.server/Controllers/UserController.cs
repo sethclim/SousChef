@@ -94,4 +94,98 @@ public class UserController : Controller
         return Ok(user);
     }
 
+
+    /// <summary>
+    /// Post endpoint to DeleteAccount from the application  
+    /// </summary>
+    /// <param name="LoginDto">Register Dto with all the fields: ie email, and password</param>
+    /// <returns>Returns 200 ok or an error msg and status code</returns>
+    [AllowAnonymous]
+    [HttpPost("delete-account")]
+    public async Task<IActionResult> DeleteAccount([FromBody] LoginDto dto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var user = await _userManager.FindByEmailAsync(dto.Email);
+
+        if (user == null)
+        {
+            return new ContentResult() { Content = "User Not Found", StatusCode = 403 };
+        }
+
+        if (await _userManager.CheckPasswordAsync(user, dto.Password) == false)
+        {
+            return new ContentResult() { Content = "Invalid Password", StatusCode = 403 };
+        }
+
+        var result = await _signinManager.PasswordSignInAsync(user.UserName, dto.Password, false, true);
+
+        if (!result.Succeeded)
+        {
+            return new ContentResult() { Content = "SignIn Failed: Try Again", StatusCode = 403 };
+        }
+        if (result.IsLockedOut)
+        {
+            return new ContentResult() { Content = "Account Locked Out", StatusCode = 403 };
+        }
+
+        await _userManager.DeleteAsync(user);
+
+        return Ok("Account Deleted");
+    }
+
+    /// <summary>
+    /// Post endpoint to EditUserAccount
+    /// </summary>
+    /// <param name="EditDTO"></param>
+    /// <returns>Returns 200 ok or an error msg and status code</returns>
+    [AllowAnonymous]
+    [HttpPost("edit-user-account")]
+    public async Task<IActionResult> EditUserAccount([FromBody] EditDTO dto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var user = await _userManager.FindByEmailAsync(dto.Email);
+
+        if (user == null)
+        {
+            return new ContentResult() { Content = "User Not Found", StatusCode = 403 };
+        }
+
+        if (await _userManager.CheckPasswordAsync(user, dto.Password) == false)
+        {
+            return new ContentResult() { Content = "Invalid Password", StatusCode = 403 };
+        }
+
+        user.UserName = dto.NewName;
+        user.Email    = dto.NewEmail;
+
+        await _userManager.UpdateAsync(user);
+
+        return Ok("Account Updated");
+    }
+
+
+    /// <summary>
+    /// Post endpoint to logout
+    /// </summary>
+    /// <returns>Returns 200 ok</returns>
+    [HttpPost("logout")]
+    public async Task<IActionResult> LogOut()
+    {
+        Console.WriteLine("Log out");
+        
+        //Response.Cookies.Delete("jwt");
+
+        await _signinManager.SignOutAsync();
+        
+        return Ok(new { message="success" });
+    }
+
 }
