@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text} from 'react-native';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Color} from '../styles/theme';
+import {Color, theme} from '../styles/theme';
 import {Row} from './index';
 import {IFrameProps} from './primitives/Frame';
 
@@ -21,6 +21,8 @@ const iconButtonDefaultProps: IIconButtonProps = {
   iconName: 'check',
   color: '#fff',
   bgColor: '#3ddc84',
+  paddingVertical: theme.spacing.s,
+  paddingHorizontal: theme.spacing.m,
   size: 18,
   borderRadius: 128,
   elevation: 4,

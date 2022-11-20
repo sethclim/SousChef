@@ -4,36 +4,51 @@ import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIc
 import {Button, Card, Column, Input, Row, SafeArea} from '../../components';
 import {OpacityPressable, SpringPressable} from '../../components/pressable';
 import {usePost} from '../../hooks';
-import {LoginScreenNavigationProp} from '../../navigation/types';
+import {RegisterScreenNavigationProp} from '../../navigation/types';
 import {theme} from '../../styles/theme';
 
-const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [error, setError] = React.useState('');
+const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
+  const [name, setName] = React.useState<string>('');
+  const [email, setEmail] = React.useState<string>('');
+  const [password, setPassword] = React.useState<string>('');
+  const [passwordConfirm, setPasswordConfirm] = React.useState<string>('');
+  const [error, setError] = React.useState<string>('');
   const {post, error: postError} = usePost(
-    'https://localhost:5001/api/user/login',
+    'https://localhost:5001/api/user/register',
   );
 
   React.useEffect(() => {
+    setName('');
     setEmail('');
     setPassword('');
+    setPasswordConfirm('');
     setError('');
     if (route.params.animationID === 1)
-      navigation.setOptions({animation: 'slide_from_left'});
+      navigation.setOptions({animation: 'slide_from_right'});
   }, [navigation]);
 
-  const login = () => {
+  const register = () => {
     setError('');
     // Empty fields
-    if (email.length === 0 || password.length === 0) {
+    if (
+      name.length === 0 ||
+      email.length === 0 ||
+      password.length === 0 ||
+      passwordConfirm.length === 0
+    ) {
       setError('Please make sure all fields are filled.');
     }
-    // Successfully log'd in
+    // Passwords do not match
+    else if (password !== passwordConfirm) {
+      setError('Please make sure your passwords match!');
+    }
+    // Successfully registered
     else {
       post({
+        userName: name,
         email: email,
         password: password,
+        passwordConfirm: passwordConfirm,
       }).then(success => {
         if (success) navigation.replace('Home');
         else setError((postError as any).toString());
@@ -41,14 +56,16 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
     }
   };
 
-  const register = () => navigation.replace('Register', {animationID: 1});
+  const login = () => navigation.replace('Login', {animationID: 1});
 
   return (
     <SafeArea>
       <Column horizontalResizing="fill" verticalResizing="fill">
         <Column horizontalResizing="fill">
-          <Text style={styles.h1}>Hello Again!</Text>
-          <Text style={styles.h2}>Welcome back, you've been missed!</Text>
+          <Text style={styles.h1}>Welcome!</Text>
+          <Text style={styles.h2}>
+            We're so happy you decided to try out SousChef.
+          </Text>
           {error.length > 0 && (
             <Card style={styles.error}>
               <Column horizontalResizing="fill">
@@ -60,11 +77,19 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
         </Column>
         <Column horizontalResizing="fill" style={{marginVertical: 32}}>
           <Input
+            placeholder="Full name"
+            horizontalResizing="fill"
+            onChangeText={value => {
+              setName(value);
+            }}
+          />
+          <Input
             placeholder="Email"
             horizontalResizing="fill"
             onChangeText={value => {
               setEmail(value);
             }}
+            style={{marginTop: 8}}
           />
           <Input
             placeholder="Password"
@@ -75,23 +100,30 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
             }}
             style={{marginTop: 8}}
           />
+          <Input
+            placeholder="Confirm password"
+            secure={true}
+            horizontalResizing="fill"
+            onChangeText={value => {
+              setPasswordConfirm(value);
+            }}
+            style={{marginTop: 8}}
+          />
         </Column>
-        <SpringPressable onPress={login} horizontalResizing="fill">
+        <SpringPressable onPress={register} horizontalResizing="fill">
           <Button
-            bgColor={theme.colors.red}
+            bgColor={theme.colors.blue}
             horizontalResizing="fill"
             verticalResizing="fixed"
             height={64}
-            text="Login"
+            text="Register"
             textStyle={styles.buttonText}
           />
         </SpringPressable>
         <Row paddingVertical={16}>
-          <Text style={styles.registerText}>Not a member?</Text>
-          <OpacityPressable onPress={register}>
-            <Text style={[styles.registerText, styles.clickableText]}>
-              Register
-            </Text>
+          <Text style={styles.loginText}>Joined us before?</Text>
+          <OpacityPressable onPress={login}>
+            <Text style={[styles.loginText, styles.clickableText]}>Login</Text>
           </OpacityPressable>
         </Row>
       </Column>
@@ -103,9 +135,9 @@ const styles = StyleSheet.create({
   h1: {
     color: theme.colors.lightText,
     fontSize: 28,
-    fontWeight: 'bold',
     alignSelf: 'stretch',
     textAlign: 'center',
+    fontWeight: 'bold',
   },
   h2: {
     color: theme.colors.lightText,
@@ -115,7 +147,7 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.s,
   },
   error: {
-    backgroundColor: theme.colors.blue,
+    backgroundColor: theme.colors.red,
     marginTop: theme.spacing.l,
     elevation: 0,
   },
@@ -129,7 +161,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
-  registerText: {
+  loginText: {
     color: theme.colors.lightText,
     fontSize: 16,
   },
@@ -139,4 +171,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default RegisterScreen;

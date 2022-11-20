@@ -7,7 +7,8 @@ export type Color = RGB | RGBA | HEX;
 const palette: {[key: string]: Color} = {
   purple: '#5A31F4',
   green: '#0ECD9D',
-  red: '#CD0E61',
+  red: '#fb6a69',
+  blue: '#2E9DFB',
   black: '#0B0B0B',
   white: '#F0F2F3',
   grey: '#2F394A',
@@ -21,7 +22,8 @@ export const theme = {
     success: palette.green,
     danger: palette.red,
     lightText: palette.grey,
-    blue: '#2E9DFB',
+    blue: palette.blue,
+    red: palette.red,
   },
   spacing: {
     s: 8,

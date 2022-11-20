@@ -1,46 +1,70 @@
-import React, {useContext} from 'react';
-import {Text, TextInput, View} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, TextInput} from 'react-native';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {ThemeContext} from '../../App';
+import {SpringPressable} from './pressable';
+import {IFrameProps} from './primitives/Frame';
+import Row from './primitives/Row';
 
-export type Props = {
+interface IInputProps extends IFrameProps {
   placeholder: string;
-  onChangeText?: ((text: string) => void) | undefined;
   value?: string | undefined;
-  errormsg?: string | undefined;
+  onChangeText?: ((text: string) => void) | undefined;
+  secure?: boolean;
+  textStyle?: object;
+}
+
+type InputProps = IInputProps;
+
+const inputDefaultProps: IInputProps = {
+  placeholder: 'Placeholder',
+  bgColor: '#fff',
+  paddingHorizontal: 16,
+  paddingVertical: 8,
+  borderRadius: 16,
+  secure: false,
 };
 
-const Input: React.FC<Props> = ({
-  placeholder,
-  onChangeText,
-  value,
-  errormsg,
-}) => {
-  const themeFromContext = useContext(ThemeContext);
-
+const Input: React.FC<InputProps> = (propsIn: IInputProps) => {
+  const props = {...inputDefaultProps, ...propsIn};
+  const [hidden, setHidden] = useState(props.secure);
+  const toggleHidden = () => {
+    setHidden(!hidden);
+  };
   return (
-    <View>
-      <Text
-        style={{
-          color: themeFromContext.colors.danger,
-        }}>
-        {errormsg}
-      </Text>
+    <Row {...props} justifyContent="space-between">
       <TextInput
-        style={{
-          height: 40,
-          margin: 12,
-          borderWidth: 1,
-          padding: 10,
-          backgroundColor: themeFromContext.colors.background,
-        }}
-        placeholder={placeholder}
-        placeholderTextColor={themeFromContext.colors.lightText}
-        onChangeText={onChangeText}
-        value={value}
+        placeholderTextColor="#cbcdd1"
+        placeholder={props.placeholder}
+        value={props.value}
+        onChangeText={props.onChangeText}
+        secureTextEntry={hidden}
+        style={[styles.inputText, props.textStyle]}
       />
-    </View>
+      {props.secure && (
+        <SpringPressable onPress={toggleHidden}>
+          {hidden ? (
+            <MaterialCommunityIcon name="eye" style={styles.icon} />
+          ) : (
+            <MaterialCommunityIcon name="eye-off" style={styles.icon} />
+          )}
+        </SpringPressable>
+      )}
+    </Row>
   );
 };
+
+const styles = StyleSheet.create({
+  inputText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#2f394a',
+    flexGrow: 1,
+  },
+  icon: {
+    fontSize: 28,
+    color: '#cbcdd1',
+  },
+});
 
 export default Input;
