@@ -7,7 +7,7 @@ import Timer from './Timer';
 import Card from './Card';
 import AccordionCard from './AccordionCard';
 import SafeArea from './SafeArea';
-import Frame from './primitives/Frame';
+//import Frame from './primitives/Frame';
 import Row from './primitives/Row';
 import Column from './primitives/Column';
 
@@ -21,7 +21,7 @@ export {
   Card,
   AccordionCard,
   SafeArea,
-  Frame,
+  // Frame,
   Row,
   Column,
 };

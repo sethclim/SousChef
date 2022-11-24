@@ -1,8 +1,8 @@
 import React from 'react';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Color} from '../styles/theme';
-import {Column} from './index';
 import {IFrameProps} from './primitives/Frame';
+import Column from './primitives/Column';
 
 interface ICircularButtonProps extends IFrameProps {
   iconName: string;
