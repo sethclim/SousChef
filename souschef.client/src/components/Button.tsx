@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text} from 'react-native';
 import {Color, theme} from '../styles/theme';
-import {Row} from './index';
+import Row from './primitives/Row';
 import {IFrameProps} from './primitives/Frame';
 
 interface IButtonProps extends IFrameProps {

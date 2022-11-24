@@ -2,8 +2,8 @@ import React from 'react';
 import {StyleSheet, Text} from 'react-native';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Color, theme} from '../styles/theme';
-import {Row} from './index';
 import {IFrameProps} from './primitives/Frame';
+import Row from './primitives/Row';
 
 interface IIconButtonProps extends IFrameProps {
   text: string;

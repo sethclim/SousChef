@@ -11,6 +11,7 @@ RUN dotnet publish -c Release -o out
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
-EXPOSE 5000
+EXPOSE 80
+EXPOSE 443
 COPY --from=build-env /app/out .
 ENTRYPOINT ["dotnet", "souschef.server.dll"]

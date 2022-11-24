@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import {IFrameProps, makeFrameComponent} from './Frame';
 
 export interface IStackProps extends IFrameProps {
-  direction?: 'column' | 'row' | 'column-reverse' | 'row-reverse';
+  dir?: 'column' | 'row' | 'column-reverse' | 'row-reverse';
   justifyContent?:
     | 'flex-start'
     | 'flex-end'
@@ -17,7 +17,7 @@ export interface IStackProps extends IFrameProps {
 export type StackProps = IStackProps;
 
 const stackDefaultProps: IStackProps = {
-  direction: 'column',
+  dir: 'column',
   horizontalResizing: 'hug',
   verticalResizing: 'hug',
   justifyContent: 'center',
@@ -32,9 +32,11 @@ export const makeStackComponent = (Comp: React.ElementType) => {
     const children = React.Children.map(props.children, child => {
       if (React.isValidElement<IStackProps>(child)) {
         return React.cloneElement<IStackProps>(child, {
-          parentDirection: props.direction,
+          parentDirection: props.dir,
         });
-      } else return child;
+      } else {
+        return child;
+      }
     });
 
     const isReversed =
@@ -48,23 +50,23 @@ export const makeStackComponent = (Comp: React.ElementType) => {
       ? props.horizontalResizing
       : props.verticalResizing;
 
-    const Frame = makeFrameComponent(Comp);
+    const F = makeFrameComponent(Comp);
 
     return (
-      <Frame
+      <F
         {...propsIn}
         horizontalResizing={horizontalResizing}
         verticalResizing={verticalResizing}
         style={[
           {
-            flexDirection: props.direction,
+            flexDirection: props.dir,
             justifyContent: props.justifyContent,
             alignItems: props.alignItems,
           },
           props.style,
         ]}>
         {children}
-      </Frame>
+      </F>
     );
   };
 };
@@ -76,7 +78,7 @@ const Stack: React.FC<PropsWithChildren<StackProps>> = (
   const children = React.Children.map(props.children, child => {
     if (React.isValidElement<IStackProps>(child)) {
       return React.cloneElement<IStackProps>(child, {
-        parentDirection: props.direction,
+        parentDirection: props.dir,
       });
     } else return child;
   });
@@ -99,7 +101,7 @@ const Stack: React.FC<PropsWithChildren<StackProps>> = (
       verticalResizing={verticalResizing}
       style={[
         {
-          flexDirection: props.direction,
+          flexDirection: props.dir,
           justifyContent: props.justifyContent,
           alignItems: props.alignItems,
         },

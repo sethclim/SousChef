@@ -18,7 +18,7 @@ const WelcomeScreen = ({navigation, route}: WelcomeScreenNavigationProp) => {
     <SafeArea>
       <Column horizontalResizing="fill" verticalResizing="fill">
         <Column horizontalResizing="fill">
-          <Logo width={350} height={350}></Logo>
+          {/* <Logo width={350} height={350} /> */}
           <Text style={styles.title}>SOUS-CHEF</Text>
         </Column>
         <Row horizontalResizing="fill" style={{marginTop: 64}}>
