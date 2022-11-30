@@ -11,7 +11,9 @@ services:
       - server-network
       restart: always
   web:
-    build: ./api/
+    build: 
+      context: .
+      dockerfile: api/api.Dockerfile
     ports:
       - "5000:5000"
       # - "5001:5001"
