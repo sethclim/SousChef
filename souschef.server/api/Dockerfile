@@ -1,10 +1,13 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 WORKDIR /app
 
+COPY ./souschef.server.sln .
+COPY ./souschef.server.csproj .
+RUN dotnet restore 
+
 # Copy everything from here into the /app on docker 
 COPY . .
 # Restore as distinct layers
-RUN dotnet restore 
 # Build and publish a release
 RUN dotnet publish --no-restore -c Release -o out
 
