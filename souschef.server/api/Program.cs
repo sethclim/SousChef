@@ -20,16 +20,14 @@ builder.Services.AddDefaultIdentity<ApplicationUser>()
 
 var app = builder.Build();
 
+var scope = app.Services.CreateScope();
+await DataHelper.ManageDataAsync(scope.ServiceProvider);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-
-    using(var scope = app.Services.CreateScope())
-    {
-        await DataHelper.ManageDataAsync(scope.ServiceProvider);
-    }
 }
 
 app.UseHttpsRedirection();
