@@ -5,13 +5,21 @@ export const useGet = (url: string) => {
   const [loading, setLoading] = useState<boolean>();
   const [data, setData] = useState<any>(null);
 
-  const get = async () => {
+  const get = async (): Promise<boolean> => {
     try {
       setLoading(true);
       const response = await fetch(url, {method: 'GET'});
-      setData(await response.json());
+
+      if (response.ok) {
+        setData(await response.json());
+        return true;
+      } else {
+        setError(await response.json());
+        return false;
+      }
     } catch (error) {
       setError(error);
+      return false;
     }
   };
 

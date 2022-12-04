@@ -9,7 +9,7 @@ const Column: React.FC<PropsWithChildren<ColumnProps>> = (
   props: IColumnProps,
 ) => {
   return (
-    <Stack {...props} dir="column">
+    <Stack {...props} flexDirection="column">
       {props.children}
     </Stack>
   );

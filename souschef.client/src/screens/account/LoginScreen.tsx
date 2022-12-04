@@ -36,29 +36,34 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
         password: password,
       }).then(success => {
         if (success) navigation.replace('Home');
-        else setError((postError as any).toString());
+        else setError(`${postError}`);
       });
     }
   };
 
   const register = () => navigation.replace('Register', {animationID: 1});
 
+  const skipLogin = () => navigation.replace('Home');
+
   return (
     <SafeArea>
-      <Column horizontalResizing="fill" verticalResizing="fill">
-        <Column horizontalResizing="fill">
+      <Column
+        horizontalResizing="fill"
+        verticalResizing="fill"
+        spacing={theme.spacing.m}>
+        <Column horizontalResizing="fill" spacing={theme.spacing.s}>
           <Text style={styles.h1}>Hello Again!</Text>
           <Text style={styles.h2}>Welcome back, you've been missed!</Text>
           {error.length > 0 && (
             <Card style={styles.error}>
-              <Column horizontalResizing="fill">
+              <Column horizontalResizing="fill" spacing={theme.spacing.s}>
                 <MaterialCommunityIcon name="cancel" style={styles.errorIcon} />
                 <Text style={styles.errorText}>{error}</Text>
               </Column>
             </Card>
           )}
         </Column>
-        <Column horizontalResizing="fill" style={{marginVertical: 32}}>
+        <Column horizontalResizing="fill" spacing={theme.spacing.m}>
           <Input
             placeholder="Email"
             horizontalResizing="fill"
@@ -73,7 +78,6 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
             onChangeText={value => {
               setPassword(value);
             }}
-            style={{marginTop: 8}}
           />
         </Column>
         <SpringPressable onPress={login} horizontalResizing="fill">
@@ -86,7 +90,7 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
             textStyle={styles.buttonText}
           />
         </SpringPressable>
-        <Row paddingVertical={16}>
+        <Row spacing={theme.spacing.s}>
           <Text style={styles.registerText}>Not a member?</Text>
           <OpacityPressable onPress={register}>
             <Text style={[styles.registerText, styles.clickableText]}>
@@ -94,6 +98,11 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
             </Text>
           </OpacityPressable>
         </Row>
+        <OpacityPressable onPress={skipLogin}>
+          <Text style={[styles.registerText, styles.clickableText]}>
+            Bypass Login
+          </Text>
+        </OpacityPressable>
       </Column>
     </SafeArea>
   );
@@ -112,17 +121,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     alignSelf: 'stretch',
     textAlign: 'center',
-    marginTop: theme.spacing.s,
   },
   error: {
     backgroundColor: theme.colors.blue,
-    marginTop: theme.spacing.l,
     elevation: 0,
   },
   errorText: {
     color: '#fff',
     fontSize: 16,
-    marginTop: theme.spacing.s,
   },
   errorIcon: {color: '#fff', fontSize: 36},
   buttonText: {
@@ -135,7 +141,6 @@ const styles = StyleSheet.create({
   },
   clickableText: {
     color: '#2A60A6',
-    marginLeft: 8,
   },
 });
 

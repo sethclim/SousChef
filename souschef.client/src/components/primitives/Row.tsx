@@ -7,7 +7,7 @@ type RowProps = IRowProps;
 
 const Row: React.FC<PropsWithChildren<RowProps>> = (props: IRowProps) => {
   return (
-    <Stack {...props} dir="row">
+    <Stack {...props} flexDirection="row">
       {props.children}
     </Stack>
   );

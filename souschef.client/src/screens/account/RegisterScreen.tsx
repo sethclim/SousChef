@@ -51,7 +51,7 @@ const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
         passwordConfirm: passwordConfirm,
       }).then(success => {
         if (success) navigation.replace('Home');
-        else setError((postError as any).toString());
+        else setError(`${postError}`);
       });
     }
   };
@@ -60,22 +60,25 @@ const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
 
   return (
     <SafeArea>
-      <Column horizontalResizing="fill" verticalResizing="fill">
-        <Column horizontalResizing="fill">
+      <Column
+        horizontalResizing="fill"
+        verticalResizing="fill"
+        spacing={theme.spacing.m}>
+        <Column horizontalResizing="fill" spacing={theme.spacing.s}>
           <Text style={styles.h1}>Welcome!</Text>
           <Text style={styles.h2}>
             We're so happy you decided to try out SousChef.
           </Text>
           {error.length > 0 && (
             <Card style={styles.error}>
-              <Column horizontalResizing="fill">
+              <Column horizontalResizing="fill" spacing={theme.spacing.s}>
                 <MaterialCommunityIcon name="cancel" style={styles.errorIcon} />
                 <Text style={styles.errorText}>{error}</Text>
               </Column>
             </Card>
           )}
         </Column>
-        <Column horizontalResizing="fill" style={{marginVertical: 32}}>
+        <Column horizontalResizing="fill" spacing={theme.spacing.m}>
           <Input
             placeholder="Full name"
             horizontalResizing="fill"
@@ -89,7 +92,6 @@ const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
             onChangeText={value => {
               setEmail(value);
             }}
-            style={{marginTop: 8}}
           />
           <Input
             placeholder="Password"
@@ -98,7 +100,6 @@ const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
             onChangeText={value => {
               setPassword(value);
             }}
-            style={{marginTop: 8}}
           />
           <Input
             placeholder="Confirm password"
@@ -107,7 +108,6 @@ const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
             onChangeText={value => {
               setPasswordConfirm(value);
             }}
-            style={{marginTop: 8}}
           />
         </Column>
         <SpringPressable onPress={register} horizontalResizing="fill">
@@ -120,7 +120,7 @@ const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
             textStyle={styles.buttonText}
           />
         </SpringPressable>
-        <Row paddingVertical={16}>
+        <Row spacing={theme.spacing.s}>
           <Text style={styles.loginText}>Joined us before?</Text>
           <OpacityPressable onPress={login}>
             <Text style={[styles.loginText, styles.clickableText]}>Login</Text>
@@ -144,17 +144,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     alignSelf: 'stretch',
     textAlign: 'center',
-    marginTop: theme.spacing.s,
   },
   error: {
     backgroundColor: theme.colors.red,
-    marginTop: theme.spacing.l,
     elevation: 0,
   },
   errorText: {
     color: '#fff',
     fontSize: 16,
-    marginTop: theme.spacing.s,
   },
   errorIcon: {color: '#fff', fontSize: 36},
   buttonText: {
@@ -167,7 +164,6 @@ const styles = StyleSheet.create({
   },
   clickableText: {
     color: '#2A60A6',
-    marginLeft: 8,
   },
 });
 

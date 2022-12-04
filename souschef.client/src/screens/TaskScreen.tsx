@@ -80,16 +80,19 @@ const TaskScreen = ({navigation, route}: TaskScreenNavigationProp) => {
             </Row>
           </Row>
           <AccordionCard title="Your Task">
-            <Column verticalResizing="fill" horizontalResizing="fill">
+            <Column
+              verticalResizing="fill"
+              horizontalResizing="fill"
+              spacing={theme.spacing.m}>
               <Text style={styles.cardDescription}>{taskOverview}</Text>
               <Row
                 horizontalResizing="fill"
+                spacing={theme.spacing.s}
                 paddingHorizontal={theme.spacing.m}>
                 <SpringPressable
                   horizontalResizing="fill"
                   verticalResizing="fill"
-                  onPress={taskCompleted}
-                  style={{marginRight: theme.spacing.s}}>
+                  onPress={taskCompleted}>
                   <IconButton
                     iconName="check"
                     text="Complete Task"
@@ -102,16 +105,16 @@ const TaskScreen = ({navigation, route}: TaskScreenNavigationProp) => {
                 </SpringPressable>
               </Row>
             </Column>
-            <Column horizontalResizing="fill" paddingVertical={theme.spacing.s}>
+            <Column horizontalResizing="fill" spacing={theme.spacing.m}>
               <Text style={styles.cardDescription}>{taskDetails}</Text>
               <Row
                 horizontalResizing="fill"
+                spacing={theme.spacing.s}
                 paddingHorizontal={theme.spacing.m}>
                 <SpringPressable
                   horizontalResizing="fill"
                   verticalResizing="fill"
-                  onPress={taskCompleted}
-                  style={{marginRight: theme.spacing.s}}>
+                  onPress={taskCompleted}>
                   <IconButton
                     iconName="check"
                     text="Complete Task"
@@ -129,7 +132,7 @@ const TaskScreen = ({navigation, route}: TaskScreenNavigationProp) => {
         <Card>
           <OpacityPressable horizontalResizing="fill" onPress={viewMore}>
             <Row horizontalResizing="fill" justifyContent="space-between">
-              <Row>
+              <Row spacing={theme.spacing.s}>
                 <MaterialIcons name="access-time" style={styles.timeIcon} />
                 <Text style={[{fontWeight: 'bold'}, styles.timeText]}>
                   Est. Meal Time:{' '}
@@ -150,7 +153,6 @@ const TaskScreen = ({navigation, route}: TaskScreenNavigationProp) => {
 const styles = StyleSheet.create({
   cardDescription: {
     fontSize: 18,
-    marginVertical: theme.spacing.m,
     alignSelf: 'stretch',
     textAlign: 'left',
     color: theme.colors.lightText,
@@ -159,7 +161,6 @@ const styles = StyleSheet.create({
   timerText: {
     color: theme.colors.lightText,
     textAlign: 'center',
-    marginLeft: 6,
     fontSize: 16,
   },
   starIcon: {
@@ -177,7 +178,6 @@ const styles = StyleSheet.create({
   timeText: {
     fontSize: 16,
     color: theme.colors.lightText,
-    marginLeft: 6,
   },
   viewMore: {
     fontSize: 14,

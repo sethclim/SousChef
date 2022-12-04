@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import {IFrameProps, makeFrameComponent} from './Frame';
 
 export interface IStackProps extends IFrameProps {
-  dir?: 'column' | 'row' | 'column-reverse' | 'row-reverse';
+  flexDirection?: 'column' | 'row' | 'column-reverse' | 'row-reverse';
   justifyContent?:
     | 'flex-start'
     | 'flex-end'
@@ -12,16 +12,18 @@ export interface IStackProps extends IFrameProps {
     | 'space-around'
     | 'space-evenly';
   alignItems?: 'center' | 'stretch' | 'flex-start' | 'flex-end' | 'baseline';
+  spacing?: number;
 }
 
 export type StackProps = IStackProps;
 
 const stackDefaultProps: IStackProps = {
-  dir: 'column',
+  flexDirection: 'column',
   horizontalResizing: 'hug',
   verticalResizing: 'hug',
   justifyContent: 'center',
   alignItems: 'center',
+  spacing: 0,
 };
 
 const Frame = makeFrameComponent(View);
@@ -32,11 +34,9 @@ export const makeStackComponent = (Comp: React.ElementType) => {
     const children = React.Children.map(props.children, child => {
       if (React.isValidElement<IStackProps>(child)) {
         return React.cloneElement<IStackProps>(child, {
-          parentDirection: props.dir,
+          parentDirection: props.flexDirection,
         });
-      } else {
-        return child;
-      }
+      } else return child;
     });
 
     const isReversed =
@@ -50,23 +50,23 @@ export const makeStackComponent = (Comp: React.ElementType) => {
       ? props.horizontalResizing
       : props.verticalResizing;
 
-    const F = makeFrameComponent(Comp);
+    const Frame = makeFrameComponent(Comp);
 
     return (
-      <F
+      <Frame
         {...propsIn}
         horizontalResizing={horizontalResizing}
         verticalResizing={verticalResizing}
         style={[
           {
-            flexDirection: props.dir,
+            flexDirection: props.flexDirection,
             justifyContent: props.justifyContent,
             alignItems: props.alignItems,
           },
           props.style,
         ]}>
         {children}
-      </F>
+      </Frame>
     );
   };
 };
@@ -75,12 +75,28 @@ const Stack: React.FC<PropsWithChildren<StackProps>> = (
   propsIn: IStackProps,
 ) => {
   const props = {...stackDefaultProps, ...propsIn};
-  const children = React.Children.map(props.children, child => {
-    if (React.isValidElement<IStackProps>(child)) {
-      return React.cloneElement<IStackProps>(child, {
-        parentDirection: props.dir,
+  const children = React.Children.map(props.children, (child, i) => {
+    const parentDirStyle = {parentDirection: props.flexDirection};
+    const verticalSpacing =
+      props.flexDirection == 'column' ||
+      props.flexDirection == 'column-reverse';
+    const spacingStyle = {
+      marginTop: verticalSpacing ? props.spacing : 0,
+      marginLeft: verticalSpacing ? 0 : props.spacing,
+    };
+    let finalStyle = {};
+
+    // Set parent direction to Stack children
+    if (React.isValidElement<IStackProps>(child))
+      finalStyle = {...parentDirStyle};
+    // Apply spacing (excluding 1st child)
+    if (i > 0) finalStyle = {...spacingStyle};
+
+    // If valid child, return clone
+    if (React.isValidElement(child))
+      return React.cloneElement(child as React.ReactElement<any>, {
+        style: [child.props.style, finalStyle],
       });
-    } else return child;
   });
 
   const isReversed =
@@ -101,7 +117,7 @@ const Stack: React.FC<PropsWithChildren<StackProps>> = (
       verticalResizing={verticalResizing}
       style={[
         {
-          flexDirection: props.dir,
+          flexDirection: props.flexDirection,
           justifyContent: props.justifyContent,
           alignItems: props.alignItems,
         },
