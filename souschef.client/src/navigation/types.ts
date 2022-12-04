@@ -1,8 +1,4 @@
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
-import type {
-  CompositeNavigationProp,
-  RouteProp,
-} from '@react-navigation/native';
+import type {RouteProp} from '@react-navigation/native';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 export type WelcomeStackNavigatorParamList = {
@@ -14,9 +10,6 @@ export type WelcomeStackNavigatorParamList = {
     animationID: number;
   };
   BottomTabs: BottomTabNavigatorParamList;
-  Task: {
-    name: string;
-  };
 };
 
 export type BottomTabNavigatorParamList = {
@@ -24,6 +17,7 @@ export type BottomTabNavigatorParamList = {
   Favorite: undefined;
   Calendar: undefined;
   Profile: undefined;
+  Task: undefined;
 };
 
 export const defaultBottomTabNavigatorParamList: BottomTabNavigatorParamList = {
@@ -31,17 +25,13 @@ export const defaultBottomTabNavigatorParamList: BottomTabNavigatorParamList = {
   Favorite: undefined,
   Calendar: undefined,
   Profile: undefined,
+  Task: undefined,
 };
 
 export type WelcomeScreenNavigationProp = NativeStackNavigationProp<
   WelcomeStackNavigatorParamList,
   'Register',
   'Login'
->;
-
-export type WelcomeScreenRouteProp = RouteProp<
-  WelcomeStackNavigatorParamList,
-  'Welcome'
 >;
 
 export type LoginScreenNavigationProp = NativeStackNavigationProp<
@@ -67,6 +57,6 @@ export type RegisterScreenRouteProp = RouteProp<
 >;
 
 export type TaskScreenRouteProp = RouteProp<
-  WelcomeStackNavigatorParamList,
+  BottomTabNavigatorParamList,
   'Task'
 >;

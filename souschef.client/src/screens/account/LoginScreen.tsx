@@ -73,12 +73,15 @@ const LoginScreen = ({
         horizontalResizing="fill"
         verticalResizing="fill"
         paddingHorizontal={theme.spacing.m}
-        spacing={theme.spacing.m}>
+        paddingVertical={theme.spacing.xl}
+        spacing={theme.spacing.xxl}>
         <Column horizontalResizing="fill" spacing={theme.spacing.s}>
           <Text style={stylesWithTheme.h1}>Hello Again!</Text>
           <Text style={stylesWithTheme.h2}>
             Welcome back, you've been missed!
           </Text>
+        </Column>
+        <Column horizontalResizing="fill" spacing={theme.spacing.m}>
           {error.length > 0 && (
             <Card style={stylesWithTheme.error}>
               <Column horizontalResizing="fill" spacing={theme.spacing.s}>
@@ -90,8 +93,6 @@ const LoginScreen = ({
               </Column>
             </Card>
           )}
-        </Column>
-        <Column horizontalResizing="fill" spacing={theme.spacing.m}>
           <Input
             bgColor={theme.colors.foreground}
             placeholder="Email"
@@ -110,37 +111,39 @@ const LoginScreen = ({
             }}
           />
         </Column>
-        <SpringPressable onPress={login} horizontalResizing="fill">
-          <Button
-            bgColor={theme.colors.danger}
-            horizontalResizing="fill"
-            verticalResizing="fixed"
-            height={64}
-            text="Login"
-            textStyle={stylesWithTheme.buttonText}
-          />
-        </SpringPressable>
-        <Row spacing={theme.spacing.s}>
-          <Text style={stylesWithTheme.registerText}>Not a member?</Text>
-          <OpacityPressable onPress={register}>
+        <Column horizontalResizing="fill" spacing={theme.spacing.s}>
+          <SpringPressable onPress={login} horizontalResizing="fill">
+            <Button
+              bgColor={theme.colors.danger}
+              horizontalResizing="fill"
+              verticalResizing="fixed"
+              height={64}
+              text="Login"
+              textStyle={stylesWithTheme.buttonText}
+            />
+          </SpringPressable>
+          <Row spacing={theme.spacing.s}>
+            <Text style={stylesWithTheme.registerText}>Not a member?</Text>
+            <OpacityPressable onPress={register}>
+              <Text
+                style={[
+                  stylesWithTheme.registerText,
+                  stylesWithTheme.clickableText,
+                ]}>
+                Register
+              </Text>
+            </OpacityPressable>
+          </Row>
+          <OpacityPressable onPress={skipLogin}>
             <Text
               style={[
                 stylesWithTheme.registerText,
                 stylesWithTheme.clickableText,
               ]}>
-              Register
+              Bypass Login
             </Text>
           </OpacityPressable>
-        </Row>
-        <OpacityPressable onPress={skipLogin}>
-          <Text
-            style={[
-              stylesWithTheme.registerText,
-              stylesWithTheme.clickableText,
-            ]}>
-            Bypass Login
-          </Text>
-        </OpacityPressable>
+        </Column>
       </Column>
     </SafeArea>
   );

@@ -18,7 +18,7 @@ import {Theme} from '../styles/type';
 
 const TaskScreen = ({route}: {route: TaskScreenRouteProp}) => {
   // Route
-  const {name} = route.params;
+  // const {name} = route.params;
 
   // Theme
   const theme = useContext(ThemeContext);

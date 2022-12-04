@@ -7,6 +7,7 @@ import {
   FavoriteScreen,
   HomeScreen,
   ProfileScreen,
+  TaskScreen,
 } from '../screens';
 import {BottomTabNavigatorParamList} from './types';
 
@@ -23,7 +24,7 @@ const BottomTabs = () => {
           else if (route.name == 'Favorite') iconName = 'heart';
           else if (route.name == 'Calendar') iconName = 'calendar-blank';
           else if (route.name == 'Profile') iconName = 'account';
-          else iconName = '';
+          else iconName = 'checkbox-blank-outline';
 
           return (
             <MaterialCommunityIcon name={iconName} size={size} color={color} />
@@ -62,6 +63,11 @@ const BottomTabs = () => {
       <BottomTab.Screen
         name="Profile"
         component={ProfileScreen}
+        options={{headerShown: false}}
+      />
+      <BottomTab.Screen
+        name="Task"
+        component={TaskScreen}
         options={{headerShown: false}}
       />
     </BottomTab.Navigator>

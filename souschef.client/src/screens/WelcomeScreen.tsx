@@ -1,53 +1,75 @@
 import React, {useContext} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import Svg, {Image} from 'react-native-svg';
 import {Button, Column, Row, SafeArea} from '../components';
-import {SpringPressable} from '../components/pressable';
-import {
-  WelcomeScreenNavigationProp,
-  WelcomeScreenRouteProp,
-} from '../navigation/types';
-import Logo from '../res/sous_chef.svg';
+import {OpacityPressable, SpringPressable} from '../components/pressable';
 import {ThemeContext} from '../contexts/AppContext';
+import {WelcomeScreenNavigationProp} from '../navigation/types';
+import Logo from '../res/sous_chef.svg';
 import {Theme} from '../styles/type';
 
 const WelcomeScreen = ({
   navigation,
-  route,
 }: {
   navigation: WelcomeScreenNavigationProp;
-  route: WelcomeScreenRouteProp;
 }) => {
   // Theme
   const theme = useContext(ThemeContext);
   const stylesWithTheme = styles(theme);
 
   // Methods
-  const register = () => {
-    navigation.replace('Register', {animationID: 0});
-  };
+  const login = () => navigation.replace('Login', {animationID: 0});
+  const register = () => navigation.replace('Register', {animationID: 0});
   return (
     <SafeArea>
-      <Column horizontalResizing="fill" verticalResizing="fill">
+      <Column
+        horizontalResizing="fill"
+        verticalResizing="fill"
+        paddingHorizontal={theme.spacing.m}
+        paddingVertical={theme.spacing.xl}
+        spacing={theme.spacing.xxl}>
         <Column horizontalResizing="fill">
-          {/* <Logo width={350} height={350} /> */}
+          <View
+            style={{
+              width: '100%',
+              height: 250,
+              alignItems: 'center',
+            }}>
+            <View style={{aspectRatio: 1}}>
+              <Logo width="100%" height="100%" />
+            </View>
+          </View>
           <Text style={stylesWithTheme.title}>SOUS-CHEF</Text>
         </Column>
-        <Row horizontalResizing="fill" style={{marginTop: 64}}>
-          <SpringPressable
-            onPress={register}
-            horizontalResizing="fill"
-            style={{marginLeft: theme.spacing.m}}>
+        <Column horizontalResizing="fill">
+          <Text style={stylesWithTheme.h1}>Welcome!</Text>
+          <Text style={stylesWithTheme.h2}>
+            We're so happy you decided to try out Sous-Chef.
+          </Text>
+        </Column>
+        <Column horizontalResizing="fill" spacing={theme.spacing.s}>
+          <SpringPressable onPress={register} horizontalResizing="fill">
             <Button
               bgColor={theme.colors.primary}
               horizontalResizing="fill"
               verticalResizing="fixed"
               height={64}
-              text="Register"
+              text="Create an account"
               textStyle={stylesWithTheme.buttonText}
             />
           </SpringPressable>
-        </Row>
+          <Row spacing={theme.spacing.s}>
+            <Text style={stylesWithTheme.loginText}>Joined us before?</Text>
+            <OpacityPressable onPress={login}>
+              <Text
+                style={[
+                  stylesWithTheme.loginText,
+                  stylesWithTheme.clickableText,
+                ]}>
+                Login
+              </Text>
+            </OpacityPressable>
+          </Row>
+        </Column>
       </Column>
     </SafeArea>
   );
@@ -55,10 +77,45 @@ const WelcomeScreen = ({
 
 const styles = (theme: Theme) =>
   StyleSheet.create({
-    title: {fontSize: 48, fontWeight: 'bold', color: theme.colors.text},
+    title: {
+      color: theme.colors.text,
+      fontSize: 48,
+      alignSelf: 'stretch',
+      textAlign: 'center',
+      fontWeight: 'bold',
+    },
+    h1: {
+      color: theme.colors.text,
+      fontSize: 28,
+      alignSelf: 'stretch',
+      textAlign: 'center',
+      fontWeight: 'bold',
+    },
+    h2: {
+      color: theme.colors.text,
+      fontSize: 18,
+      alignSelf: 'stretch',
+      textAlign: 'center',
+    },
+    error: {
+      backgroundColor: theme.colors.danger,
+      elevation: 0,
+    },
+    errorText: {
+      color: '#fff',
+      fontSize: 16,
+    },
+    errorIcon: {color: '#fff', fontSize: 36},
     buttonText: {
       fontSize: 20,
       fontWeight: 'bold',
+    },
+    loginText: {
+      color: theme.colors.text,
+      fontSize: 16,
+    },
+    clickableText: {
+      color: '#2A60A6',
     },
   });
 

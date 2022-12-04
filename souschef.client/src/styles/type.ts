@@ -18,6 +18,7 @@ export type Theme = {
     m: number;
     l: number;
     xl: number;
+    xxl: number;
   };
   textVariants: {
     header: {

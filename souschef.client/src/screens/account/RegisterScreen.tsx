@@ -80,12 +80,13 @@ const RegisterScreen = ({
         horizontalResizing="fill"
         verticalResizing="fill"
         paddingHorizontal={theme.spacing.m}
-        spacing={theme.spacing.m}>
+        paddingVertical={theme.spacing.xl}
+        spacing={theme.spacing.xxl}>
         <Column horizontalResizing="fill" spacing={theme.spacing.s}>
-          <Text style={stylesWithTheme.h1}>Welcome!</Text>
-          <Text style={stylesWithTheme.h2}>
-            We're so happy you decided to try out SousChef.
-          </Text>
+          <Text style={stylesWithTheme.h1}>Create an Account</Text>
+          <Text style={stylesWithTheme.h2}>You're almost there!</Text>
+        </Column>
+        <Column horizontalResizing="fill" spacing={theme.spacing.m}>
           {error.length > 0 && (
             <Card style={stylesWithTheme.error}>
               <Column horizontalResizing="fill" spacing={theme.spacing.s}>
@@ -97,8 +98,6 @@ const RegisterScreen = ({
               </Column>
             </Card>
           )}
-        </Column>
-        <Column horizontalResizing="fill" spacing={theme.spacing.m}>
           <Input
             bgColor={theme.colors.foreground}
             placeholder="Full name"
@@ -134,28 +133,30 @@ const RegisterScreen = ({
             }}
           />
         </Column>
-        <SpringPressable onPress={register} horizontalResizing="fill">
-          <Button
-            bgColor={theme.colors.primary}
-            horizontalResizing="fill"
-            verticalResizing="fixed"
-            height={64}
-            text="Register"
-            textStyle={stylesWithTheme.buttonText}
-          />
-        </SpringPressable>
-        <Row spacing={theme.spacing.s}>
-          <Text style={stylesWithTheme.loginText}>Joined us before?</Text>
-          <OpacityPressable onPress={login}>
-            <Text
-              style={[
-                stylesWithTheme.loginText,
-                stylesWithTheme.clickableText,
-              ]}>
-              Login
-            </Text>
-          </OpacityPressable>
-        </Row>
+        <Column horizontalResizing="fill" spacing={theme.spacing.s}>
+          <SpringPressable onPress={register} horizontalResizing="fill">
+            <Button
+              bgColor={theme.colors.primary}
+              horizontalResizing="fill"
+              verticalResizing="fixed"
+              height={64}
+              text="Register"
+              textStyle={stylesWithTheme.buttonText}
+            />
+          </SpringPressable>
+          <Row spacing={theme.spacing.s}>
+            <Text style={stylesWithTheme.loginText}>Joined us before?</Text>
+            <OpacityPressable onPress={login}>
+              <Text
+                style={[
+                  stylesWithTheme.loginText,
+                  stylesWithTheme.clickableText,
+                ]}>
+                Login
+              </Text>
+            </OpacityPressable>
+          </Row>
+        </Column>
       </Column>
     </SafeArea>
   );
