@@ -1,47 +1,48 @@
-import * as React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {HomeStackNavigatorParamList} from './types';
+import * as React from 'react';
 import {
-  HomeScreen,
-  TaskScreen,
   LoginScreen,
   RegisterScreen,
+  TaskScreen,
   WelcomeScreen,
 } from '../screens';
+import BottomTabs from './BottomTabs';
+import {WelcomeStackNavigatorParamList} from './types';
 
 // Guide: https://blog.jscrambler.com/getting-started-with-react-navigation-v6-and-typescript-in-react-native
-const HomeStack = createNativeStackNavigator<HomeStackNavigatorParamList>();
+const WelcomeStack =
+  createNativeStackNavigator<WelcomeStackNavigatorParamList>();
 
-const HomeStackNavigator = () => {
+const WelcomeStackNavigator = () => {
   return (
-    <HomeStack.Navigator>
-      <HomeStack.Screen
+    <WelcomeStack.Navigator>
+      <WelcomeStack.Screen
         name="Welcome"
         component={WelcomeScreen}
         options={{headerShown: false}}
       />
-      <HomeStack.Screen
+      <WelcomeStack.Screen
         name="Login"
         component={LoginScreen}
         options={{headerShown: false, animation: 'slide_from_bottom'}}
       />
-      <HomeStack.Screen
+      <WelcomeStack.Screen
         name="Register"
         component={RegisterScreen}
         options={{headerShown: false, animation: 'slide_from_bottom'}}
       />
-      <HomeStack.Screen
-        name="Home"
-        component={HomeScreen}
+      <WelcomeStack.Screen
+        name="BottomTabs"
+        component={BottomTabs}
         options={{headerShown: false, animation: 'fade'}}
       />
-      <HomeStack.Screen
+      <WelcomeStack.Screen
         name="Task"
         component={TaskScreen}
         options={{headerShown: false}}
       />
-    </HomeStack.Navigator>
+    </WelcomeStack.Navigator>
   );
 };
 
-export default HomeStackNavigator;
+export default WelcomeStackNavigator;

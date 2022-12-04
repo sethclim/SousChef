@@ -1,6 +1,11 @@
-import type {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+import type {
+  CompositeNavigationProp,
+  RouteProp,
+} from '@react-navigation/native';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-export type HomeStackNavigatorParamList = {
+export type WelcomeStackNavigatorParamList = {
   Welcome: undefined;
   Login: {
     animationID: number;
@@ -8,33 +13,60 @@ export type HomeStackNavigatorParamList = {
   Register: {
     animationID: number;
   };
-  Home: undefined;
+  BottomTabs: BottomTabNavigatorParamList;
   Task: {
     name: string;
   };
 };
 
-export type WelcomeScreenNavigationProp = NativeStackScreenProps<
-  HomeStackNavigatorParamList,
-  'Welcome'
->;
+export type BottomTabNavigatorParamList = {
+  Home: undefined;
+  Favorite: undefined;
+  Calendar: undefined;
+  Profile: undefined;
+};
 
-export type LoginScreenNavigationProp = NativeStackScreenProps<
-  HomeStackNavigatorParamList,
+export const defaultBottomTabNavigatorParamList: BottomTabNavigatorParamList = {
+  Home: undefined,
+  Favorite: undefined,
+  Calendar: undefined,
+  Profile: undefined,
+};
+
+export type WelcomeScreenNavigationProp = NativeStackNavigationProp<
+  WelcomeStackNavigatorParamList,
+  'Register',
   'Login'
 >;
 
-export type RegisterScreenNavigationProp = NativeStackScreenProps<
-  HomeStackNavigatorParamList,
+export type WelcomeScreenRouteProp = RouteProp<
+  WelcomeStackNavigatorParamList,
+  'Welcome'
+>;
+
+export type LoginScreenNavigationProp = NativeStackNavigationProp<
+  WelcomeStackNavigatorParamList,
+  'Register',
+  'BottomTabs'
+>;
+
+export type LoginScreenRouteProp = RouteProp<
+  WelcomeStackNavigatorParamList,
+  'Login'
+>;
+
+export type RegisterScreenNavigationProp = NativeStackNavigationProp<
+  WelcomeStackNavigatorParamList,
+  'Login',
+  'BottomTabs'
+>;
+
+export type RegisterScreenRouteProp = RouteProp<
+  WelcomeStackNavigatorParamList,
   'Register'
 >;
 
-export type HomeScreenNavigationProp = NativeStackScreenProps<
-  HomeStackNavigatorParamList,
-  'Home'
->;
-
-export type TaskScreenNavigationProp = NativeStackScreenProps<
-  HomeStackNavigatorParamList,
+export type TaskScreenRouteProp = RouteProp<
+  WelcomeStackNavigatorParamList,
   'Task'
 >;

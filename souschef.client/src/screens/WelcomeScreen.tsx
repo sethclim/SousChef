@@ -1,16 +1,28 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import Svg, {Image} from 'react-native-svg';
 import {Button, Column, Row, SafeArea} from '../components';
 import {SpringPressable} from '../components/pressable';
-import {WelcomeScreenNavigationProp} from '../navigation/types';
-import {theme} from '../styles/theme';
+import {
+  WelcomeScreenNavigationProp,
+  WelcomeScreenRouteProp,
+} from '../navigation/types';
 import Logo from '../res/sous_chef.svg';
+import {ThemeContext} from '../contexts/AppContext';
+import {Theme} from '../styles/type';
 
-const WelcomeScreen = ({navigation, route}: WelcomeScreenNavigationProp) => {
-  const login = () => {
-    navigation.replace('Login', {animationID: 0});
-  };
+const WelcomeScreen = ({
+  navigation,
+  route,
+}: {
+  navigation: WelcomeScreenNavigationProp;
+  route: WelcomeScreenRouteProp;
+}) => {
+  // Theme
+  const theme = useContext(ThemeContext);
+  const stylesWithTheme = styles(theme);
+
+  // Methods
   const register = () => {
     navigation.replace('Register', {animationID: 0});
   };
@@ -19,19 +31,9 @@ const WelcomeScreen = ({navigation, route}: WelcomeScreenNavigationProp) => {
       <Column horizontalResizing="fill" verticalResizing="fill">
         <Column horizontalResizing="fill">
           {/* <Logo width={350} height={350} /> */}
-          <Text style={styles.title}>SOUS-CHEF</Text>
+          <Text style={stylesWithTheme.title}>SOUS-CHEF</Text>
         </Column>
         <Row horizontalResizing="fill" style={{marginTop: 64}}>
-          <SpringPressable onPress={login} horizontalResizing="fill">
-            <Button
-              bgColor={theme.colors.red}
-              horizontalResizing="fill"
-              verticalResizing="fixed"
-              height={64}
-              text="Login"
-              textStyle={styles.buttonText}
-            />
-          </SpringPressable>
           <SpringPressable
             onPress={register}
             horizontalResizing="fill"
@@ -42,7 +44,7 @@ const WelcomeScreen = ({navigation, route}: WelcomeScreenNavigationProp) => {
               verticalResizing="fixed"
               height={64}
               text="Register"
-              textStyle={styles.buttonText}
+              textStyle={stylesWithTheme.buttonText}
             />
           </SpringPressable>
         </Row>
@@ -51,12 +53,13 @@ const WelcomeScreen = ({navigation, route}: WelcomeScreenNavigationProp) => {
   );
 };
 
-const styles = StyleSheet.create({
-  title: {fontSize: 48, fontWeight: 'bold', color: theme.colors.lightText},
-  buttonText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-});
+const styles = (theme: Theme) =>
+  StyleSheet.create({
+    title: {fontSize: 48, fontWeight: 'bold', color: theme.colors.lightText},
+    buttonText: {
+      fontSize: 20,
+      fontWeight: 'bold',
+    },
+  });
 
 export default WelcomeScreen;

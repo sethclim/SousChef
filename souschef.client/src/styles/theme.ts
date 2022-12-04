@@ -1,8 +1,4 @@
-type RGB = `rgb(${number}, ${number}, ${number})`;
-type RGBA = `rgb(${number}, ${number}, ${number}, ${number})`;
-type HEX = `#${string}`;
-
-export type Color = RGB | RGBA | HEX;
+import {Color, Theme} from './type';
 
 const palette: {[key: string]: Color} = {
   purple: '#5A31F4',
@@ -14,7 +10,7 @@ const palette: {[key: string]: Color} = {
   grey: '#2F394A',
 };
 
-export const theme = {
+export const theme: Theme = {
   colors: {
     background: palette.white,
     foreground: palette.black,
@@ -44,7 +40,7 @@ export const theme = {
   },
 };
 
-export const darkTheme = {
+export const darkTheme: Theme = {
   ...theme,
   colors: {
     ...theme.colors,

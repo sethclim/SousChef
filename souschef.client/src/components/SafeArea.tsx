@@ -1,11 +1,10 @@
 import React, {type PropsWithChildren} from 'react';
 import {SafeAreaView, View} from 'react-native';
-import {theme} from '../styles/theme';
+import {Color, theme} from '../styles/theme';
 
 export interface ISafeAreaProps {
   direction?: 'column' | 'row' | 'column-reverse' | 'row-reverse';
-  horizontalPadding?: number;
-  verticalPadding?: number;
+  bgColor?: Color;
   children?: React.ReactNode;
 }
 
@@ -13,8 +12,7 @@ export type SafeAreaProps = ISafeAreaProps;
 
 const safeAreaDefaultProps: ISafeAreaProps = {
   direction: 'column',
-  horizontalPadding: theme.spacing.m,
-  verticalPadding: 0,
+  bgColor: '#fff',
 };
 
 const SafeArea: React.FC<PropsWithChildren<SafeAreaProps>> = (
@@ -25,9 +23,7 @@ const SafeArea: React.FC<PropsWithChildren<SafeAreaProps>> = (
     <SafeAreaView
       style={{
         flex: 1,
-        alignItems: 'center',
-        paddingHorizontal: props.horizontalPadding,
-        paddingVertical: props.verticalPadding,
+        backgroundColor: props.bgColor,
       }}>
       {props.children}
     </SafeAreaView>

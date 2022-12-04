@@ -1,20 +1,39 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {StyleSheet, Text} from 'react-native';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {ThemeContext} from '../../contexts/AppContext';
 import {Button, Card, Column, Input, Row, SafeArea} from '../../components';
 import {OpacityPressable, SpringPressable} from '../../components/pressable';
 import {usePost} from '../../hooks';
-import {LoginScreenNavigationProp} from '../../navigation/types';
-import {theme} from '../../styles/theme';
+import {
+  defaultBottomTabNavigatorParamList,
+  LoginScreenNavigationProp,
+  LoginScreenRouteProp,
+} from '../../navigation/types';
+import {Theme} from '../../styles/type';
 
-const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
+const LoginScreen = ({
+  navigation,
+  route,
+}: {
+  navigation: LoginScreenNavigationProp;
+  route: LoginScreenRouteProp;
+}) => {
+  // Theme
+  const theme = useContext(ThemeContext);
+  const stylesWithTheme = styles(theme);
+
+  // Fields
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
+
+  // API Calls
   const {post, error: postError} = usePost(
     'https://localhost:5001/api/user/login',
   );
 
+  // On Mount
   React.useEffect(() => {
     setEmail('');
     setPassword('');
@@ -23,6 +42,7 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
       navigation.setOptions({animation: 'slide_from_left'});
   }, [navigation]);
 
+  // Methods
   const login = () => {
     setError('');
     // Empty fields
@@ -35,7 +55,8 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
         email: email,
         password: password,
       }).then(success => {
-        if (success) navigation.replace('Home');
+        if (success)
+          navigation.replace('BottomTabs', defaultBottomTabNavigatorParamList);
         else setError(`${postError}`);
       });
     }
@@ -43,28 +64,36 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
 
   const register = () => navigation.replace('Register', {animationID: 1});
 
-  const skipLogin = () => navigation.replace('Home');
+  const skipLogin = () =>
+    navigation.replace('BottomTabs', defaultBottomTabNavigatorParamList);
 
   return (
     <SafeArea>
       <Column
         horizontalResizing="fill"
         verticalResizing="fill"
+        paddingHorizontal={theme.spacing.m}
         spacing={theme.spacing.m}>
         <Column horizontalResizing="fill" spacing={theme.spacing.s}>
-          <Text style={styles.h1}>Hello Again!</Text>
-          <Text style={styles.h2}>Welcome back, you've been missed!</Text>
+          <Text style={stylesWithTheme.h1}>Hello Again!</Text>
+          <Text style={stylesWithTheme.h2}>
+            Welcome back, you've been missed!
+          </Text>
           {error.length > 0 && (
-            <Card style={styles.error}>
+            <Card style={stylesWithTheme.error}>
               <Column horizontalResizing="fill" spacing={theme.spacing.s}>
-                <MaterialCommunityIcon name="cancel" style={styles.errorIcon} />
-                <Text style={styles.errorText}>{error}</Text>
+                <MaterialCommunityIcon
+                  name="cancel"
+                  style={stylesWithTheme.errorIcon}
+                />
+                <Text style={stylesWithTheme.errorText}>{error}</Text>
               </Column>
             </Card>
           )}
         </Column>
         <Column horizontalResizing="fill" spacing={theme.spacing.m}>
           <Input
+            bgColor="#F5F7FB"
             placeholder="Email"
             horizontalResizing="fill"
             onChangeText={value => {
@@ -72,6 +101,7 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
             }}
           />
           <Input
+            bgColor="#F5F7FB"
             placeholder="Password"
             secure={true}
             horizontalResizing="fill"
@@ -87,19 +117,27 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
             verticalResizing="fixed"
             height={64}
             text="Login"
-            textStyle={styles.buttonText}
+            textStyle={stylesWithTheme.buttonText}
           />
         </SpringPressable>
         <Row spacing={theme.spacing.s}>
-          <Text style={styles.registerText}>Not a member?</Text>
+          <Text style={stylesWithTheme.registerText}>Not a member?</Text>
           <OpacityPressable onPress={register}>
-            <Text style={[styles.registerText, styles.clickableText]}>
+            <Text
+              style={[
+                stylesWithTheme.registerText,
+                stylesWithTheme.clickableText,
+              ]}>
               Register
             </Text>
           </OpacityPressable>
         </Row>
         <OpacityPressable onPress={skipLogin}>
-          <Text style={[styles.registerText, styles.clickableText]}>
+          <Text
+            style={[
+              stylesWithTheme.registerText,
+              stylesWithTheme.clickableText,
+            ]}>
             Bypass Login
           </Text>
         </OpacityPressable>
@@ -108,40 +146,41 @@ const LoginScreen = ({navigation, route}: LoginScreenNavigationProp) => {
   );
 };
 
-const styles = StyleSheet.create({
-  h1: {
-    color: theme.colors.lightText,
-    fontSize: 28,
-    fontWeight: 'bold',
-    alignSelf: 'stretch',
-    textAlign: 'center',
-  },
-  h2: {
-    color: theme.colors.lightText,
-    fontSize: 18,
-    alignSelf: 'stretch',
-    textAlign: 'center',
-  },
-  error: {
-    backgroundColor: theme.colors.blue,
-    elevation: 0,
-  },
-  errorText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  errorIcon: {color: '#fff', fontSize: 36},
-  buttonText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  registerText: {
-    color: theme.colors.lightText,
-    fontSize: 16,
-  },
-  clickableText: {
-    color: '#2A60A6',
-  },
-});
+const styles = (theme: Theme) =>
+  StyleSheet.create({
+    h1: {
+      color: theme.colors.lightText,
+      fontSize: 28,
+      fontWeight: 'bold',
+      alignSelf: 'stretch',
+      textAlign: 'center',
+    },
+    h2: {
+      color: theme.colors.lightText,
+      fontSize: 18,
+      alignSelf: 'stretch',
+      textAlign: 'center',
+    },
+    error: {
+      backgroundColor: theme.colors.blue,
+      elevation: 0,
+    },
+    errorText: {
+      color: '#fff',
+      fontSize: 16,
+    },
+    errorIcon: {color: '#fff', fontSize: 36},
+    buttonText: {
+      fontSize: 20,
+      fontWeight: 'bold',
+    },
+    registerText: {
+      color: theme.colors.lightText,
+      fontSize: 16,
+    },
+    clickableText: {
+      color: '#2A60A6',
+    },
+  });
 
 export default LoginScreen;

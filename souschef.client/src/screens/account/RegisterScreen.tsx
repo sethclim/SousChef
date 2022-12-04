@@ -1,13 +1,28 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {StyleSheet, Text} from 'react-native';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {ThemeContext} from '../../contexts/AppContext';
 import {Button, Card, Column, Input, Row, SafeArea} from '../../components';
 import {OpacityPressable, SpringPressable} from '../../components/pressable';
 import {usePost} from '../../hooks';
-import {RegisterScreenNavigationProp} from '../../navigation/types';
-import {theme} from '../../styles/theme';
+import {
+  defaultBottomTabNavigatorParamList,
+  RegisterScreenNavigationProp,
+  RegisterScreenRouteProp,
+} from '../../navigation/types';
+import {Theme} from '../../styles/type';
 
-const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
+const RegisterScreen = ({
+  navigation,
+  route,
+}: {
+  navigation: RegisterScreenNavigationProp;
+  route: RegisterScreenRouteProp;
+}) => {
+  // Theme
+  const theme = useContext(ThemeContext);
+  const stylesWithTheme = styles(theme);
+
   const [name, setName] = React.useState<string>('');
   const [email, setEmail] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
@@ -50,7 +65,8 @@ const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
         password: password,
         passwordConfirm: passwordConfirm,
       }).then(success => {
-        if (success) navigation.replace('Home');
+        if (success)
+          navigation.replace('BottomTabs', defaultBottomTabNavigatorParamList);
         else setError(`${postError}`);
       });
     }
@@ -63,23 +79,28 @@ const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
       <Column
         horizontalResizing="fill"
         verticalResizing="fill"
+        paddingHorizontal={theme.spacing.m}
         spacing={theme.spacing.m}>
         <Column horizontalResizing="fill" spacing={theme.spacing.s}>
-          <Text style={styles.h1}>Welcome!</Text>
-          <Text style={styles.h2}>
+          <Text style={stylesWithTheme.h1}>Welcome!</Text>
+          <Text style={stylesWithTheme.h2}>
             We're so happy you decided to try out SousChef.
           </Text>
           {error.length > 0 && (
-            <Card style={styles.error}>
+            <Card style={stylesWithTheme.error}>
               <Column horizontalResizing="fill" spacing={theme.spacing.s}>
-                <MaterialCommunityIcon name="cancel" style={styles.errorIcon} />
-                <Text style={styles.errorText}>{error}</Text>
+                <MaterialCommunityIcon
+                  name="cancel"
+                  style={stylesWithTheme.errorIcon}
+                />
+                <Text style={stylesWithTheme.errorText}>{error}</Text>
               </Column>
             </Card>
           )}
         </Column>
         <Column horizontalResizing="fill" spacing={theme.spacing.m}>
           <Input
+            bgColor="#F5F7FB"
             placeholder="Full name"
             horizontalResizing="fill"
             onChangeText={value => {
@@ -87,6 +108,7 @@ const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
             }}
           />
           <Input
+            bgColor="#F5F7FB"
             placeholder="Email"
             horizontalResizing="fill"
             onChangeText={value => {
@@ -94,6 +116,7 @@ const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
             }}
           />
           <Input
+            bgColor="#F5F7FB"
             placeholder="Password"
             secure={true}
             horizontalResizing="fill"
@@ -102,6 +125,7 @@ const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
             }}
           />
           <Input
+            bgColor="#F5F7FB"
             placeholder="Confirm password"
             secure={true}
             horizontalResizing="fill"
@@ -117,13 +141,19 @@ const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
             verticalResizing="fixed"
             height={64}
             text="Register"
-            textStyle={styles.buttonText}
+            textStyle={stylesWithTheme.buttonText}
           />
         </SpringPressable>
         <Row spacing={theme.spacing.s}>
-          <Text style={styles.loginText}>Joined us before?</Text>
+          <Text style={stylesWithTheme.loginText}>Joined us before?</Text>
           <OpacityPressable onPress={login}>
-            <Text style={[styles.loginText, styles.clickableText]}>Login</Text>
+            <Text
+              style={[
+                stylesWithTheme.loginText,
+                stylesWithTheme.clickableText,
+              ]}>
+              Login
+            </Text>
           </OpacityPressable>
         </Row>
       </Column>
@@ -131,40 +161,41 @@ const RegisterScreen = ({navigation, route}: RegisterScreenNavigationProp) => {
   );
 };
 
-const styles = StyleSheet.create({
-  h1: {
-    color: theme.colors.lightText,
-    fontSize: 28,
-    alignSelf: 'stretch',
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  h2: {
-    color: theme.colors.lightText,
-    fontSize: 18,
-    alignSelf: 'stretch',
-    textAlign: 'center',
-  },
-  error: {
-    backgroundColor: theme.colors.red,
-    elevation: 0,
-  },
-  errorText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  errorIcon: {color: '#fff', fontSize: 36},
-  buttonText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  loginText: {
-    color: theme.colors.lightText,
-    fontSize: 16,
-  },
-  clickableText: {
-    color: '#2A60A6',
-  },
-});
+const styles = (theme: Theme) =>
+  StyleSheet.create({
+    h1: {
+      color: theme.colors.lightText,
+      fontSize: 28,
+      alignSelf: 'stretch',
+      textAlign: 'center',
+      fontWeight: 'bold',
+    },
+    h2: {
+      color: theme.colors.lightText,
+      fontSize: 18,
+      alignSelf: 'stretch',
+      textAlign: 'center',
+    },
+    error: {
+      backgroundColor: theme.colors.red,
+      elevation: 0,
+    },
+    errorText: {
+      color: '#fff',
+      fontSize: 16,
+    },
+    errorIcon: {color: '#fff', fontSize: 36},
+    buttonText: {
+      fontSize: 20,
+      fontWeight: 'bold',
+    },
+    loginText: {
+      color: theme.colors.lightText,
+      fontSize: 16,
+    },
+    clickableText: {
+      color: '#2A60A6',
+    },
+  });
 
 export default RegisterScreen;
