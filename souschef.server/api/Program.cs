@@ -1,4 +1,5 @@
-using SousChef.Data;
+using souschef.server.Data;
+using souschef.server.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -10,14 +11,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddEntityFrameworkNpgsql().AddDbContext<PostGresDBContext>(opt =>
-        opt.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")));
+        opt.UseNpgsql(ConnectionHelper.GetConnectionString("")));
 
 builder.Services.AddDefaultIdentity<ApplicationUser>()
                 .AddEntityFrameworkStores<PostGresDBContext>();
 
 //builder.Services.AddScoped<SignInManager<ApplicationUser>>();
-
-
 
 var app = builder.Build();
 
@@ -29,12 +28,9 @@ if (app.Environment.IsDevelopment())
 
     using(var scope = app.Services.CreateScope())
     {
-        var salesContext = scope.ServiceProvider.GetRequiredService<PostGresDBContext>();
-        salesContext.Database.Migrate();
-        //salesContext.Seed();
+        await DataHelper.ManageDataAsync(scope.ServiceProvider);
     }
 }
-
 
 app.UseHttpsRedirection();
 
