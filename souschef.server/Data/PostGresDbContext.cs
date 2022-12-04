@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-namespace SousChef.Data;
+namespace souschef.server.Data;
 
 public class PostGresDBContext : IdentityDbContext<ApplicationUser>
 {
