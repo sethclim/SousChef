@@ -15,7 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddEntityFrameworkNpgsql().AddDbContext<PostGresDBContext>(opt =>
-        opt.UseNpgsql(ConnectionHelper.GetConnectionString("test")));
+        opt.UseNpgsql(ConnectionHelper.GetConnectionString("Db")));
 
 builder.Services.AddDefaultIdentity<ApplicationUser>()
                 .AddEntityFrameworkStores<PostGresDBContext>();
@@ -26,14 +26,18 @@ builder.Services.AddScoped<CookingSessionRepository>();
 
 var app = builder.Build();
 
-var scope = app.Services.CreateScope();
-await DataHelper.ManageDataAsync(scope.ServiceProvider);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+}
+else
+{
+    var scope = app.Services.CreateScope();
+    await DataHelper.ManageDataAsync(scope.ServiceProvider);
 }
 
 app.UseHttpsRedirection();

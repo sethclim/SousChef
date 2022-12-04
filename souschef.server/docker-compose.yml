@@ -1,22 +1,10 @@
 version: "3.9"
 services:
-  reverseproxy:
-      build:
-        context: .
-        dockerfile: reverse-proxy/nginx.Dockerfile
-      ports:
-        - "443:443" 
-        - "80:80" 
-      networks:
-      - server-network
-      restart: always
   web:
-    build: 
-      context: .
-      dockerfile: api/api.Dockerfile
+    build: .
     ports:
       - "5000:5000"
-      # - "5001:5001"
+      - "5001:5001"
 
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -27,7 +15,6 @@ services:
     volumes:
       - ~/.aspnet/https:/https:ro
     depends_on:
-      - "reverseproxy"
       - "db"
     networks:
       - server-network
