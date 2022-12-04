@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using souschef.server.Data;
 using souschef.server.Data.Models;
+using souschef.server.Data.Repository;
+using souschef.server.Data.Repository.Contracts;
 using souschef.server.Helpers;
 
 
@@ -18,7 +20,9 @@ builder.Services.AddEntityFrameworkNpgsql().AddDbContext<PostGresDBContext>(opt 
 builder.Services.AddDefaultIdentity<ApplicationUser>()
                 .AddEntityFrameworkStores<PostGresDBContext>();
 
-//builder.Services.AddScoped<SignInManager<ApplicationUser>>();
+builder.Services.AddScoped<RecipeRepository>();
+builder.Services.AddScoped<CookingSessionRepository>();
+
 
 var app = builder.Build();
 

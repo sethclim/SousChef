@@ -14,5 +14,7 @@ namespace souschef.server.Data.Models
 
         public ApplicationUser? Owner{ get; set;}
 
+        public Guid OwnerId { get; set; }
+
     }
 }
