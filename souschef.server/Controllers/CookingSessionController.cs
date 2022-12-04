@@ -1,6 +1,8 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using souschef.server.Data.LiveSession;
+using souschef.server.Data.Models;
+using souschef.server.Data.Repository.Contracts;
+
 
 namespace souschef.server.Controllers;
 
@@ -8,61 +10,55 @@ namespace souschef.server.Controllers;
 [Route("api/cookingseesion")]
 public class CookingSessionController : Controller
 {
-    private readonly ICookingSessionRepository<ApplicationUser> m_cookingSessionRepository;
+    private readonly ICookingSessionRepository m_cookingSessionRepository;
 
-    public CookingSessionController(ICookingSessionRepository<ApplicationUser> _cookingSessionRepository)
+    public CookingSessionController(ICookingSessionRepository _cookingSessionRepository)
     {
         m_cookingSessionRepository = _cookingSessionRepository;
     }
 
-    [AllowAnonymous]
     [HttpPost("Start")]
-    public async Task<IActionResult> Start()
+    public string Start()
     {
-
+       var session = LiveSessions.GetLiveSessions().StartCookingSession();
+       return session.Id;
     }
 
-
-    [AllowAnonymous]
     [HttpPost("End")]
     public async Task<IActionResult> End()
     {
-
+        throw new NotImplementedException();
     }
 
 
-    [AllowAnonymous]
     [HttpPost("Join")]
     public async Task<IActionResult> Join()
     {
-
+        throw new NotImplementedException();
     }
 
-    [AllowAnonymous]
     [HttpPost("Leave")]
     public async Task<IActionResult> Leave()
     {
-
+        throw new NotImplementedException();
     }
 
-    [AllowAnonymous]
     [HttpGet("GetUsers")]
-    public async Task<IActionResult> GetUsers()
+    public async Task<IEnumerable<ApplicationUser>> GetUsers(string _sessionId)
     {
-
+        return await m_cookingSessionRepository.GetUsers(Guid.Parse(_sessionId));
     }
 
-    [AllowAnonymous]
     [HttpPost("GetTask")]
-    public async Task<IActionResult> GetTask()
+    public Data.Models.Task GetTask(int id)
     {
-
+        var session = LiveSessions.GetLiveSessions().GetSessionById(id);
+        return session.GetNextTask();
     }
 
-    [AllowAnonymous]
     [HttpPost("CompleteTask")]
     public async Task<IActionResult> CompleteTask()
     {
-
+        throw new NotImplementedException();
     }
 }

@@ -10,9 +10,9 @@ namespace souschef.server.Data.Models
 
         public DateTime Date{ get; set;}
 
-        public MealPlan MealPlan {get; set;}
+        public MealPlan? MealPlan {get; set;}
 
-        public List<ApplicationUser> Guests{ get; set;}
+        public List<ApplicationUser>? Guests{ get; set;}
 
         public Guid OwnerId { get; set; }
 

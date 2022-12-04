@@ -1,23 +1,22 @@
-
+using souschef.server.Data.Models;
 
 namespace souschef.server.Data.Repository.Contracts
 {
     public class CookingSessionRepository : ICookingSessionRepository
     { 
-        private readonly ApplicationDbContext _context;
+        private readonly PostGresDBContext _context;
 
-        public CookingSessionRepository(ApplicationDbContext context){ _context = context; }
+        public CookingSessionRepository(PostGresDBContext context){ _context = context; }
 
-        Task<UpdateResult> GetTask()
+        System.Threading.Tasks.Task ICookingSessionRepository.GetTask()
         {
-
+            throw new NotImplementedException();
         }
 
-        Task<UpdateResult> GetUsers()
+        public async Task<IEnumerable<ApplicationUser>> GetUsers(Guid sessionId)
         {
-
+           return await _context.Users.Where(u => u.CurrentSessionId == sessionId);
         }
-
 
     }
 }
