@@ -5,7 +5,7 @@ namespace souschef.server.Data.Repository.Contracts
 {
     public interface ICookingSessionRepository
     { 
-        public Task GetTask();
-        public Task<IEnumerable<ApplicationUser>> GetUsers(Guid sessionId);
+        public System.Threading.Tasks.Task GetTask();
+        public IEnumerable<ApplicationUser> GetUsers(Guid sessionId);
     }
 }

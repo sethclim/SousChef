@@ -1,6 +1,8 @@
-using souschef.server.Data;
-using souschef.server.Helpers;
 using Microsoft.EntityFrameworkCore;
+using souschef.server.Data;
+using souschef.server.Data.Models;
+using souschef.server.Helpers;
+
 
 
 var builder = WebApplication.CreateBuilder(args);

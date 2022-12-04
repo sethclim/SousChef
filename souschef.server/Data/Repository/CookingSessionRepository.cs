@@ -13,9 +13,9 @@ namespace souschef.server.Data.Repository.Contracts
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<ApplicationUser>> GetUsers(Guid sessionId)
+        public IEnumerable<ApplicationUser> GetUsers(Guid sessionId)
         {
-           return await _context.Users.Where(u => u.CurrentSessionId == sessionId);
+           return _context.Users.Where(u => u.CurrentSessionId == sessionId);
         }
 
     }

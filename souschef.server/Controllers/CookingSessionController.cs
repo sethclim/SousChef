@@ -43,10 +43,11 @@ public class CookingSessionController : Controller
         throw new NotImplementedException();
     }
 
+    //mm
     [HttpGet("GetUsers")]
-    public async Task<IEnumerable<ApplicationUser>> GetUsers(string _sessionId)
+    public  IEnumerable<ApplicationUser> GetUsers(string _sessionId)
     {
-        return await m_cookingSessionRepository.GetUsers(Guid.Parse(_sessionId));
+        return  m_cookingSessionRepository.GetUsers(Guid.Parse(_sessionId));
     }
 
     [HttpPost("GetTask")]

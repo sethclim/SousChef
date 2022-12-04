@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using souschef.server.Data.Models;
 
 namespace souschef.server.Data;
 
@@ -14,7 +15,7 @@ public class PostGresDBContext : IdentityDbContext<ApplicationUser>
     public DbSet<CookingSession>?  CookingSession { get; set; }
     public DbSet<MealPlan>?        MealPlan { get; set; }
     public DbSet<Recipe>?          Recipes { get; set; }
-    public DbSet<Tasks>?           Tasks { get; set; }
+    public DbSet<Models.Task>?           Tasks { get; set; }
     public DbSet<Ingredient>?      Ingredients { get; set; }
     public DbSet<Kitchenware>?     Kitchenware { get; set; }
 }
