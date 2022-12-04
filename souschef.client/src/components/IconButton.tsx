@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {StyleSheet, Text} from 'react-native';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Color, theme} from '../styles/theme';
+import {ThemeContext} from '../contexts/AppContext';
+import {Color, Theme} from '../styles/type';
 import {IFrameProps} from './primitives/Frame';
 import Row from './primitives/Row';
 
@@ -16,20 +17,25 @@ interface IIconButtonProps extends IFrameProps {
 
 type IconButtonProps = IIconButtonProps;
 
-const iconButtonDefaultProps: IIconButtonProps = {
-  text: 'Placeholder',
-  iconName: 'check',
-  color: '#fff',
-  bgColor: '#3ddc84',
-  paddingVertical: theme.spacing.s,
-  paddingHorizontal: theme.spacing.m,
-  size: 18,
-  borderRadius: 128,
-  elevation: 4,
-};
-
 const IconButton: React.FC<IconButtonProps> = (propsIn: IIconButtonProps) => {
+  // Theme
+  const theme = useContext(ThemeContext);
+  const stylesWithTheme = styles(theme);
+
+  // Props
+  const iconButtonDefaultProps: IIconButtonProps = {
+    text: 'Placeholder',
+    iconName: 'check',
+    color: '#fff',
+    bgColor: '#3ddc84',
+    paddingVertical: theme.spacing.s,
+    paddingHorizontal: theme.spacing.m,
+    size: 18,
+    borderRadius: 128,
+    elevation: 4,
+  };
   const props = {...iconButtonDefaultProps, ...propsIn};
+
   return (
     <Row {...props}>
       <MaterialCommunityIcon
@@ -44,7 +50,7 @@ const IconButton: React.FC<IconButtonProps> = (propsIn: IIconButtonProps) => {
         style={{
           color: props.color,
           fontSize: props.size,
-          ...styles.buttonText,
+          ...stylesWithTheme.buttonText,
         }}>
         {props.text}
       </Text>
@@ -52,8 +58,9 @@ const IconButton: React.FC<IconButtonProps> = (propsIn: IIconButtonProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  buttonText: {textAlign: 'center', fontWeight: 'bold', marginLeft: 8},
-});
+const styles = (theme: Theme) =>
+  StyleSheet.create({
+    buttonText: {textAlign: 'center', fontWeight: 'bold', marginLeft: 8},
+  });
 
 export default IconButton;

@@ -39,7 +39,7 @@ const WelcomeScreen = ({
             horizontalResizing="fill"
             style={{marginLeft: theme.spacing.m}}>
             <Button
-              bgColor={theme.colors.blue}
+              bgColor={theme.colors.primary}
               horizontalResizing="fill"
               verticalResizing="fixed"
               height={64}
@@ -55,7 +55,7 @@ const WelcomeScreen = ({
 
 const styles = (theme: Theme) =>
   StyleSheet.create({
-    title: {fontSize: 48, fontWeight: 'bold', color: theme.colors.lightText},
+    title: {fontSize: 48, fontWeight: 'bold', color: theme.colors.text},
     buttonText: {
       fontSize: 20,
       fontWeight: 'bold',

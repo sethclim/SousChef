@@ -1,6 +1,7 @@
-import React, {type PropsWithChildren} from 'react';
+import React, {useContext, type PropsWithChildren} from 'react';
 import {SafeAreaView, View} from 'react-native';
-import {Color, theme} from '../styles/theme';
+import {ThemeContext} from '../contexts/AppContext';
+import {Color} from '../styles/type';
 
 export interface ISafeAreaProps {
   direction?: 'column' | 'row' | 'column-reverse' | 'row-reverse';
@@ -10,14 +11,17 @@ export interface ISafeAreaProps {
 
 export type SafeAreaProps = ISafeAreaProps;
 
-const safeAreaDefaultProps: ISafeAreaProps = {
-  direction: 'column',
-  bgColor: '#fff',
-};
-
 const SafeArea: React.FC<PropsWithChildren<SafeAreaProps>> = (
   propsIn: ISafeAreaProps,
 ) => {
+  // Theme
+  const theme = useContext(ThemeContext);
+
+  // Props
+  const safeAreaDefaultProps: ISafeAreaProps = {
+    direction: 'column',
+    bgColor: theme.colors.background,
+  };
   const props = {...safeAreaDefaultProps, ...propsIn};
   return (
     <SafeAreaView

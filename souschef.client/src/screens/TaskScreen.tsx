@@ -171,15 +171,15 @@ const styles = (theme: Theme) =>
       fontSize: 18,
       alignSelf: 'stretch',
       textAlign: 'left',
-      color: theme.colors.lightText,
+      color: theme.colors.text,
     },
     timerIcon: {
-      color: theme.colors.lightText,
+      color: theme.colors.text,
       textAlign: 'center',
       fontSize: 24,
     },
     timerText: {
-      color: theme.colors.lightText,
+      color: theme.colors.text,
       textAlign: 'center',
       fontSize: 16,
     },
@@ -195,18 +195,18 @@ const styles = (theme: Theme) =>
     },
     dropdownIcon: {color: '#979CA5', fontSize: 36},
     timeIcon: {
-      color: theme.colors.lightText,
+      color: theme.colors.text,
       textAlign: 'center',
       fontSize: 28,
     },
     timeText: {
       fontSize: 16,
-      color: theme.colors.lightText,
+      color: theme.colors.text,
     },
     viewMore: {
       fontSize: 14,
       fontWeight: 'bold',
-      color: theme.colors.blue,
+      color: theme.colors.primary,
     },
   });
 

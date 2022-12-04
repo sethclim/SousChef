@@ -1,25 +1,22 @@
 import {Color, Theme} from './type';
 
 const palette: {[key: string]: Color} = {
-  purple: '#5A31F4',
-  green: '#0ECD9D',
-  red: '#fb6a69',
+  white: '#ffffff',
+  lightgrey: '#f5f7fb',
   blue: '#2E9DFB',
-  black: '#0B0B0B',
-  white: '#F0F2F3',
+  green: '#3ddc84',
+  red: '#fb6a69',
   grey: '#2F394A',
 };
 
 export const theme: Theme = {
   colors: {
     background: palette.white,
-    foreground: palette.black,
-    primary: palette.purple,
+    foreground: palette.lightgrey,
+    primary: palette.blue,
     success: palette.green,
     danger: palette.red,
-    lightText: palette.grey,
-    blue: palette.blue,
-    red: palette.red,
+    text: palette.grey,
   },
   spacing: {
     s: 8,
@@ -44,7 +41,7 @@ export const darkTheme: Theme = {
   ...theme,
   colors: {
     ...theme.colors,
-    background: palette.black,
-    foreground: palette.white,
+    background: palette.grey,
+    text: palette.white,
   },
 };

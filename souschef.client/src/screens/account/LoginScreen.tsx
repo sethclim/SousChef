@@ -93,7 +93,7 @@ const LoginScreen = ({
         </Column>
         <Column horizontalResizing="fill" spacing={theme.spacing.m}>
           <Input
-            bgColor="#F5F7FB"
+            bgColor={theme.colors.foreground}
             placeholder="Email"
             horizontalResizing="fill"
             onChangeText={value => {
@@ -101,7 +101,7 @@ const LoginScreen = ({
             }}
           />
           <Input
-            bgColor="#F5F7FB"
+            bgColor={theme.colors.foreground}
             placeholder="Password"
             secure={true}
             horizontalResizing="fill"
@@ -112,7 +112,7 @@ const LoginScreen = ({
         </Column>
         <SpringPressable onPress={login} horizontalResizing="fill">
           <Button
-            bgColor={theme.colors.red}
+            bgColor={theme.colors.danger}
             horizontalResizing="fill"
             verticalResizing="fixed"
             height={64}
@@ -149,20 +149,20 @@ const LoginScreen = ({
 const styles = (theme: Theme) =>
   StyleSheet.create({
     h1: {
-      color: theme.colors.lightText,
+      color: theme.colors.text,
       fontSize: 28,
       fontWeight: 'bold',
       alignSelf: 'stretch',
       textAlign: 'center',
     },
     h2: {
-      color: theme.colors.lightText,
+      color: theme.colors.text,
       fontSize: 18,
       alignSelf: 'stretch',
       textAlign: 'center',
     },
     error: {
-      backgroundColor: theme.colors.blue,
+      backgroundColor: theme.colors.primary,
       elevation: 0,
     },
     errorText: {
@@ -175,7 +175,7 @@ const styles = (theme: Theme) =>
       fontWeight: 'bold',
     },
     registerText: {
-      color: theme.colors.lightText,
+      color: theme.colors.text,
       fontSize: 16,
     },
     clickableText: {

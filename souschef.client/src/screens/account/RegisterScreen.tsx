@@ -100,7 +100,7 @@ const RegisterScreen = ({
         </Column>
         <Column horizontalResizing="fill" spacing={theme.spacing.m}>
           <Input
-            bgColor="#F5F7FB"
+            bgColor={theme.colors.foreground}
             placeholder="Full name"
             horizontalResizing="fill"
             onChangeText={value => {
@@ -108,7 +108,7 @@ const RegisterScreen = ({
             }}
           />
           <Input
-            bgColor="#F5F7FB"
+            bgColor={theme.colors.foreground}
             placeholder="Email"
             horizontalResizing="fill"
             onChangeText={value => {
@@ -116,7 +116,7 @@ const RegisterScreen = ({
             }}
           />
           <Input
-            bgColor="#F5F7FB"
+            bgColor={theme.colors.foreground}
             placeholder="Password"
             secure={true}
             horizontalResizing="fill"
@@ -125,7 +125,7 @@ const RegisterScreen = ({
             }}
           />
           <Input
-            bgColor="#F5F7FB"
+            bgColor={theme.colors.foreground}
             placeholder="Confirm password"
             secure={true}
             horizontalResizing="fill"
@@ -136,7 +136,7 @@ const RegisterScreen = ({
         </Column>
         <SpringPressable onPress={register} horizontalResizing="fill">
           <Button
-            bgColor={theme.colors.blue}
+            bgColor={theme.colors.primary}
             horizontalResizing="fill"
             verticalResizing="fixed"
             height={64}
@@ -164,20 +164,20 @@ const RegisterScreen = ({
 const styles = (theme: Theme) =>
   StyleSheet.create({
     h1: {
-      color: theme.colors.lightText,
+      color: theme.colors.text,
       fontSize: 28,
       alignSelf: 'stretch',
       textAlign: 'center',
       fontWeight: 'bold',
     },
     h2: {
-      color: theme.colors.lightText,
+      color: theme.colors.text,
       fontSize: 18,
       alignSelf: 'stretch',
       textAlign: 'center',
     },
     error: {
-      backgroundColor: theme.colors.red,
+      backgroundColor: theme.colors.danger,
       elevation: 0,
     },
     errorText: {
@@ -190,7 +190,7 @@ const styles = (theme: Theme) =>
       fontWeight: 'bold',
     },
     loginText: {
-      color: theme.colors.lightText,
+      color: theme.colors.text,
       fontSize: 16,
     },
     clickableText: {

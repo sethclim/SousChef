@@ -1,5 +1,5 @@
 import React from 'react';
-import {Color} from '../../styles/theme';
+import {Color} from '../../styles/type';
 
 type Resizing = 'fill' | 'hug' | 'fixed';
 

@@ -11,9 +11,7 @@ export type Theme = {
     primary: Color;
     success: Color;
     danger: Color;
-    lightText: Color;
-    blue: Color;
-    red: Color;
+    text: Color;
   };
   spacing: {
     s: number;

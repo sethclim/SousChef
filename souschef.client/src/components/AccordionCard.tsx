@@ -1,7 +1,13 @@
-import React, {useRef, useState, type PropsWithChildren} from 'react';
+import React, {
+  useContext,
+  useRef,
+  useState,
+  type PropsWithChildren,
+} from 'react';
 import {Animated, LayoutAnimation, StyleSheet, Text} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {theme} from '../styles/theme';
+import {ThemeContext} from '../contexts/AppContext';
+import {Theme} from '../styles/type';
 import Card, {CardProps} from './Card';
 import {OpacityPressable} from './pressable';
 import Row from './primitives/Row';
@@ -15,6 +21,10 @@ type AccordionCardProps = IAccordionCardProps;
 const AccordionCard: React.FC<PropsWithChildren<AccordionCardProps>> = (
   props: IAccordionCardProps,
 ) => {
+  // Theme
+  const theme = useContext(ThemeContext);
+  const stylesWithTheme = styles(theme);
+
   const [showContent, setShowContent] = useState(false);
   const children: Array<React.ReactNode> = React.Children.toArray(
     props.children,
@@ -41,11 +51,11 @@ const AccordionCard: React.FC<PropsWithChildren<AccordionCardProps>> = (
     <Card {...props} justifyContent="flex-start">
       <OpacityPressable horizontalResizing="fill" onPress={toggleAccordian}>
         <Row horizontalResizing="fill" justifyContent="space-between">
-          <Text style={styles.cardHeader}>{props.title}</Text>
+          <Text style={stylesWithTheme.cardHeader}>{props.title}</Text>
           <Animated.View style={{transform: [{rotateZ: arrowTransform}]}}>
             <MaterialIcons
               name="keyboard-arrow-down"
-              style={styles.dropdownIcon}
+              style={stylesWithTheme.dropdownIcon}
             />
           </Animated.View>
         </Row>
@@ -55,13 +65,14 @@ const AccordionCard: React.FC<PropsWithChildren<AccordionCardProps>> = (
   );
 };
 
-const styles = StyleSheet.create({
-  cardHeader: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: theme.colors.lightText,
-  },
-  dropdownIcon: {color: '#979CA5', fontSize: 36},
-});
+const styles = (theme: Theme) =>
+  StyleSheet.create({
+    cardHeader: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: theme.colors.text,
+    },
+    dropdownIcon: {color: '#979CA5', fontSize: 36},
+  });
 
 export default AccordionCard;
