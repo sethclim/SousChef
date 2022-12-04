@@ -1,6 +1,7 @@
 import React, {useContext} from 'react';
 import {StyleSheet, Text} from 'react-native';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {ThemeContext} from '../../contexts/AppContext';
 import {Button, Card, Column, Input, Row, SafeArea} from '../../components';
 import {OpacityPressable, SpringPressable} from '../../components/pressable';
@@ -69,82 +70,84 @@ const LoginScreen = ({
 
   return (
     <SafeArea>
-      <Column
-        horizontalResizing="fill"
-        verticalResizing="fill"
-        paddingHorizontal={theme.spacing.m}
-        paddingVertical={theme.spacing.xl}
-        spacing={theme.spacing.xxl}>
-        <Column horizontalResizing="fill" spacing={theme.spacing.s}>
-          <Text style={stylesWithTheme.h1}>Hello Again!</Text>
-          <Text style={stylesWithTheme.h2}>
-            Welcome back, you've been missed!
-          </Text>
-        </Column>
-        <Column horizontalResizing="fill" spacing={theme.spacing.m}>
-          {error.length > 0 && (
-            <Card style={stylesWithTheme.error}>
-              <Column horizontalResizing="fill" spacing={theme.spacing.s}>
-                <MaterialCommunityIcon
-                  name="cancel"
-                  style={stylesWithTheme.errorIcon}
-                />
-                <Text style={stylesWithTheme.errorText}>{error}</Text>
-              </Column>
-            </Card>
-          )}
-          <Input
-            bgColor={theme.colors.foreground}
-            placeholder="Email"
-            horizontalResizing="fill"
-            onChangeText={value => {
-              setEmail(value);
-            }}
-          />
-          <Input
-            bgColor={theme.colors.foreground}
-            placeholder="Password"
-            secure={true}
-            horizontalResizing="fill"
-            onChangeText={value => {
-              setPassword(value);
-            }}
-          />
-        </Column>
-        <Column horizontalResizing="fill" spacing={theme.spacing.s}>
-          <SpringPressable onPress={login} horizontalResizing="fill">
-            <Button
-              bgColor={theme.colors.danger}
+      <KeyboardAwareScrollView contentContainerStyle={{flexGrow: 1}}>
+        <Column
+          horizontalResizing="fill"
+          verticalResizing="fill"
+          paddingHorizontal={theme.spacing.m}
+          paddingVertical={theme.spacing.xl}
+          spacing={theme.spacing.xl}>
+          <Column horizontalResizing="fill" spacing={theme.spacing.s}>
+            <Text style={stylesWithTheme.h1}>Hello Again!</Text>
+            <Text style={stylesWithTheme.h2}>
+              Welcome back, you've been missed!
+            </Text>
+          </Column>
+          <Column horizontalResizing="fill" spacing={theme.spacing.m}>
+            {error.length > 0 && (
+              <Card style={stylesWithTheme.error}>
+                <Column horizontalResizing="fill" spacing={theme.spacing.s}>
+                  <MaterialCommunityIcon
+                    name="cancel"
+                    style={stylesWithTheme.errorIcon}
+                  />
+                  <Text style={stylesWithTheme.errorText}>{error}</Text>
+                </Column>
+              </Card>
+            )}
+            <Input
+              bgColor={theme.colors.foreground}
+              placeholder="Email"
               horizontalResizing="fill"
-              verticalResizing="fixed"
-              height={64}
-              text="Login"
-              textStyle={stylesWithTheme.buttonText}
+              onChangeText={value => {
+                setEmail(value);
+              }}
             />
-          </SpringPressable>
-          <Row spacing={theme.spacing.s}>
-            <Text style={stylesWithTheme.registerText}>Not a member?</Text>
-            <OpacityPressable onPress={register}>
+            <Input
+              bgColor={theme.colors.foreground}
+              placeholder="Password"
+              secure={true}
+              horizontalResizing="fill"
+              onChangeText={value => {
+                setPassword(value);
+              }}
+            />
+          </Column>
+          <Column horizontalResizing="fill" spacing={theme.spacing.m}>
+            <SpringPressable onPress={login} horizontalResizing="fill">
+              <Button
+                bgColor={theme.colors.danger}
+                horizontalResizing="fill"
+                verticalResizing="fixed"
+                height={64}
+                text="Login"
+                textStyle={stylesWithTheme.buttonText}
+              />
+            </SpringPressable>
+            <Row spacing={theme.spacing.s}>
+              <Text style={stylesWithTheme.registerText}>Not a member?</Text>
+              <OpacityPressable onPress={register}>
+                <Text
+                  style={[
+                    stylesWithTheme.registerText,
+                    stylesWithTheme.clickableText,
+                  ]}>
+                  Register
+                </Text>
+              </OpacityPressable>
+            </Row>
+            <OpacityPressable onPress={skipLogin}>
               <Text
                 style={[
                   stylesWithTheme.registerText,
                   stylesWithTheme.clickableText,
                 ]}>
-                Register
+                Bypass Login
               </Text>
             </OpacityPressable>
-          </Row>
-          <OpacityPressable onPress={skipLogin}>
-            <Text
-              style={[
-                stylesWithTheme.registerText,
-                stylesWithTheme.clickableText,
-              ]}>
-              Bypass Login
-            </Text>
-          </OpacityPressable>
+          </Column>
         </Column>
-      </Column>
+      </KeyboardAwareScrollView>
     </SafeArea>
   );
 };

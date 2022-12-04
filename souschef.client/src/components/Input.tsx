@@ -34,6 +34,8 @@ const Input: React.FC<InputProps> = (propsIn: IInputProps) => {
   return (
     <Row {...props} justifyContent="space-between">
       <TextInput
+        autoComplete={'off'}
+        importantForAutofill={'no'}
         placeholderTextColor="#cbcdd1"
         placeholder={props.placeholder}
         value={props.value}

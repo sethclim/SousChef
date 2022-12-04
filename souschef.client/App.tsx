@@ -11,7 +11,6 @@ const App = () => {
   let dark = useColorScheme() === 'dark';
 
   useEffect(() => {
-    console.log('MOUTED');
     SplashScreen.hide();
   }, []);
 
