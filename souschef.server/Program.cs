@@ -26,16 +26,20 @@ builder.Services.AddScoped<CookingSessionRepository>();
 
 var app = builder.Build();
 
-var scope = app.Services.CreateScope();
-await DataHelper.ManageDataAsync(scope.ServiceProvider);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    Console.WriteLine("Dev");
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+else
+{
+    Console.WriteLine("Prod");
+    var scope = app.Services.CreateScope();
+    await DataHelper.ManageDataAsync(scope.ServiceProvider);
+}
 
 app.UseHttpsRedirection();
 
