@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-
+using souschef.server.Data.DTOs;
 using souschef.server.Data.Models;
 
 namespace souschef.server.Controllers;
@@ -26,7 +26,7 @@ public class UserController : Controller
     /// <returns>Returns 200 ok or an error msg and status code</returns>
     [AllowAnonymous]
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+    public async Task<IActionResult> Register([FromBody] RegisterDTO dto)
     {
         if(dto.Password != dto.PasswordConfirm)
             return new ContentResult() { Content = "Password Do Not Match", StatusCode = 403 };
@@ -50,7 +50,7 @@ public class UserController : Controller
     /// <returns>Returns 200 ok or an error msg and status code</returns>
     [AllowAnonymous]
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginDto dto)
+    public async Task<IActionResult> Login([FromBody] LoginDTO dto)
     {
         Console.WriteLine("Login Endpoint");
         if (!ModelState.IsValid)
@@ -104,7 +104,7 @@ public class UserController : Controller
     /// <returns>Returns 200 ok or an error msg and status code</returns>
     [AllowAnonymous]
     [HttpPost("delete-account")]
-    public async Task<IActionResult> DeleteAccount([FromBody] LoginDto dto)
+    public async Task<IActionResult> DeleteAccount([FromBody] LoginDTO dto)
     {
         if (!ModelState.IsValid)
         {

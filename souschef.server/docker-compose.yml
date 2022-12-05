@@ -1,25 +1,13 @@
 version: "3.9"
 services:
-  reverseproxy:
-      build:
-        context: .
-        dockerfile: reverse-proxy/nginx.Dockerfile
-      ports:
-        - "443:443" 
-        - "80:80" 
-      networks:
-      - server-network
-      restart: always
   web:
-    build: 
-      context: .
-      dockerfile: api/api.Dockerfile
+    build: .
     ports:
       - "5000:5000"
-      # - "5001:5001"
+      - "5001:5001"
 
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:5000
       - CONNECTIONSTRINGS__DEFAULT=User ID=postgres;Password=postgres;Host=souschef-postgres;Port=27017;Database=postgres
       # - ASPNETCORE_Kestrel__Certificates__Default__Password=password
@@ -27,7 +15,6 @@ services:
     volumes:
       - ~/.aspnet/https:/https:ro
     depends_on:
-      - "reverseproxy"
       - "db"
     networks:
       - server-network
