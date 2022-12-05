@@ -1,15 +1,17 @@
 ﻿
+using souschef.server.Data.Models;
+
 namespace souschef.server.Data.LiveSession
 {
     public class LiveSessions
     {
-        private static readonly LiveSessions m_instance = new LiveSessions();
+        private static readonly LiveSessions m_instance = new();
 
-        private readonly List<LiveCookingSession> m_currentCookingSessions;
+        private readonly Dictionary<Guid, LiveCookingSession> m_currentCookingSessions;
 
         private LiveSessions()
         {
-            m_currentCookingSessions = new List<LiveCookingSession>();
+            m_currentCookingSessions = new Dictionary<Guid, LiveCookingSession>();
         }
 
         public static LiveSessions GetLiveSessions()
@@ -17,23 +19,26 @@ namespace souschef.server.Data.LiveSession
             return m_instance;
         }
 
-        public LiveCookingSession GetSessionById(int _id)
+        public LiveCookingSession GetSessionById(Guid _id)
         {
             return m_currentCookingSessions[_id];
         }
 
-        public LiveCookingSession StartCookingSession()
+        public LiveCookingSession StartCookingSession(Guid _id)
         {
             var session = new LiveCookingSession();
-            m_currentCookingSessions.Add(session);
+            m_currentCookingSessions.Add(_id, session);
             return session;
         }
 
         public class LiveCookingSession
         {
-            public string Id { get; set; }
+            public string? Id { get; set; }
+            public ApplicationUser? Host { get; set; }
 
-            public List<Models.Task> Tasks = new List<Models.Task>();
+            public List<ApplicationUser> Members = new();
+
+            public List<Models.Task> Tasks = new();
 
             private int currentTask = 0;
 
