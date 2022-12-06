@@ -5,6 +5,6 @@ const cookingSession = `${baseUrl}/cookingsession`;
 export const ApiUrls = {
   login: `${user}/login`,
   register: `${user}/register`,
-  getTask: `${cookingSession}/gettask`,
-  completeTask: `${cookingSession}/completetask`,
+  getTask: `${cookingSession}/GetTask`,
+  completeTask: `${cookingSession}/CompleteTask`,
 };

@@ -20,7 +20,7 @@ public class CookingSessionController : Controller
         m_userManager = _userManager;
     }
 
-    [HttpGet("Start")]
+    [HttpGet("start")]
     public ActionResult Start()
     {
 
@@ -91,7 +91,6 @@ public class CookingSessionController : Controller
             Id = Guid.NewGuid(),
             Date = DateTime.Now,
             MealPlan = m,
-
         };
 
         var session = LiveSessions.GetLiveSessions().StartCookingSession(s);
@@ -106,7 +105,7 @@ public class CookingSessionController : Controller
         }
     }
 
-    [HttpGet]
+    [HttpGet("end")]
     public IActionResult End([FromQuery] string sessionId)
     {
         if (LiveSessions.GetLiveSessions().RemoveSessionById(Guid.Parse(sessionId)))
@@ -117,7 +116,7 @@ public class CookingSessionController : Controller
         return new ContentResult() { Content = "Invalid session ID", StatusCode = 404 };
     }
 
-    [HttpPost]
+    [HttpPost("join")]
     public async Task<IActionResult> Join([FromQuery] string sessionId)
     {
         // var user = await m_userManager.FindByIdAsync(userId);
@@ -132,7 +131,7 @@ public class CookingSessionController : Controller
         return new ContentResult() { Content = "Invalid session ID", StatusCode = 404 };
     }
 
-    [HttpPost]
+    [HttpPost("leave")]
     public async Task<IActionResult> Leave([FromQuery] string sessionId)
     {
         // var user = await m_userManager.FindByIdAsync(userId);
@@ -147,13 +146,13 @@ public class CookingSessionController : Controller
         return new ContentResult() { Content = "Invalid session ID", StatusCode = 404 };
     }
 
-    [HttpGet]
+    [HttpGet("get-users")]
     public IEnumerable<ApplicationUser> GetUsers([FromQuery] string sessionId)
     {
         return m_cookingSessionRepository.GetUsers(Guid.Parse(sessionId));
     }
 
-    [HttpGet]
+    [HttpGet("get-task")]
     public ActionResult<Data.Models.Task> GetTask([FromQuery] string sessionId)
     {
         var session = LiveSessions.GetLiveSessions().GetSessionById(Guid.Parse(sessionId));
@@ -167,7 +166,7 @@ public class CookingSessionController : Controller
         return new ContentResult() { Content = "Invalid session ID", StatusCode = 404 };
     }
 
-    [HttpPost]
+    [HttpPost("complete-task")]
     public IActionResult CompleteTask([FromQuery] string sessionId, [FromQuery] string taskId)
     {
         var session = LiveSessions.GetLiveSessions().GetSessionById(Guid.Parse(sessionId));
