@@ -5,7 +5,7 @@ export const usePost = (url: string) => {
   const [loading, setLoading] = useState<boolean>();
   const [error, setError] = useState<unknown>();
 
-  const post = async (json: {}): Promise<boolean> => {
+  const post = async (json?: {}) => {
     try {
       setLoading(true);
       const response = await fetch(url, {
@@ -19,14 +19,11 @@ export const usePost = (url: string) => {
 
       if (response.ok) {
         setData(await response.json());
-        return true;
       } else {
         setError(await response.json());
-        return false;
       }
     } catch (error) {
       setError(error);
-      return false;
     }
   };
 

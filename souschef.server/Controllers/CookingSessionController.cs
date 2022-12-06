@@ -8,24 +8,24 @@ using souschef.server.Data.Repository.Contracts;
 namespace souschef.server.Controllers;
 
 [ApiController]
-[Route("api/cookingseesion")]
+[Route("api/cookingsession")]
 public class CookingSessionController : Controller
 {
-    private readonly ICookingSessionRepository    m_cookingSessionRepository;
+    private readonly ICookingSessionRepository m_cookingSessionRepository;
     private readonly UserManager<ApplicationUser> m_userManager;
 
     public CookingSessionController(ICookingSessionRepository _cookingSessionRepository, UserManager<ApplicationUser> _userManager)
     {
         m_cookingSessionRepository = _cookingSessionRepository;
-        m_userManager              = _userManager;
+        m_userManager = _userManager;
     }
 
     [HttpGet("Start{id}")]
     public ActionResult Start(string _sessionId)
     {
-       var session = LiveSessions.GetLiveSessions().StartCookingSession(Guid.Parse(_sessionId));
+        var session = LiveSessions.GetLiveSessions().StartCookingSession(Guid.Parse(_sessionId));
 
-        if(session != null)
+        if (session != null)
         {
             return Ok(session.Id);
         }
@@ -40,7 +40,6 @@ public class CookingSessionController : Controller
     {
         throw new NotImplementedException();
     }
-
 
     [HttpPost("Join{sessionId},{userId}")]
     public async Task<IActionResult> Join(string _sessionId, string userId)
@@ -62,25 +61,24 @@ public class CookingSessionController : Controller
         return Ok();
     }
 
-    
     [HttpGet("GetUsers{id}")]
-    public  IEnumerable<ApplicationUser> GetUsers(string _sessionId)
+    public IEnumerable<ApplicationUser> GetUsers(string _sessionId)
     {
-        return  m_cookingSessionRepository.GetUsers(Guid.Parse(_sessionId));
+        return m_cookingSessionRepository.GetUsers(Guid.Parse(_sessionId));
     }
 
     [HttpGet("GetTask{id}")]
-    public Data.Models.Task GetTask(string id)
+    public Data.Models.Task GetTask(string _sessionId)
     {
-        var session = LiveSessions.GetLiveSessions().GetSessionById(Guid.Parse(id));
+        var session = LiveSessions.GetLiveSessions().GetSessionById(Guid.Parse(_sessionId));
         return session.GetNextTask();
     }
 
     [HttpPost("CompleteTask{sessionId},{taskId}")]
-    public  IActionResult CompleteTask(string _sessionId, int id)
+    public IActionResult CompleteTask(string _sessionId, string _taskId)
     {
         var session = LiveSessions.GetLiveSessions().GetSessionById(Guid.Parse(_sessionId));
-        session.Tasks[id].Finished = true;
+        session.Tasks[Guid.Parse(_taskId)].Finished = true;
 
         return Ok();
     }

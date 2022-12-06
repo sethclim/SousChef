@@ -9,7 +9,7 @@ namespace souschef.server.Data.LiveSession
 
         private readonly Dictionary<Guid, LiveCookingSession> m_currentCookingSessions;
 
-        private LiveSessions()
+        LiveSessions()
         {
             m_currentCookingSessions = new Dictionary<Guid, LiveCookingSession>();
         }
@@ -19,15 +19,15 @@ namespace souschef.server.Data.LiveSession
             return m_instance;
         }
 
-        public LiveCookingSession GetSessionById(Guid _id)
+        public LiveCookingSession GetSessionById(Guid _sessionId)
         {
-            return m_currentCookingSessions[_id];
+            return m_currentCookingSessions[_sessionId];
         }
 
-        public LiveCookingSession StartCookingSession(Guid _id)
+        public LiveCookingSession StartCookingSession(Guid _sessionId)
         {
             var session = new LiveCookingSession();
-            m_currentCookingSessions.Add(_id, session);
+            m_currentCookingSessions.Add(_sessionId, session);
             return session;
         }
 
@@ -38,14 +38,19 @@ namespace souschef.server.Data.LiveSession
 
             public List<ApplicationUser> Members = new();
 
-            public List<Models.Task> Tasks = new();
+            public Dictionary<Guid, Models.Task> Tasks = new();
 
-            private int currentTask = 0;
+            private Dictionary<Guid, Models.Task>.Enumerator taskEnumerator;
+
+            public LiveCookingSession()
+            {
+                taskEnumerator = Tasks.GetEnumerator();
+            }
 
             public Models.Task GetNextTask()
             {
-                currentTask++;
-                return Tasks[currentTask];
+                taskEnumerator.MoveNext();
+                return taskEnumerator.Current.Value;
             }
         }
     }
