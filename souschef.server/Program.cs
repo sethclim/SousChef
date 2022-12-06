@@ -20,8 +20,8 @@ builder.Services.AddEntityFrameworkNpgsql().AddDbContext<PostGresDBContext>(opt 
 builder.Services.AddDefaultIdentity<ApplicationUser>()
                 .AddEntityFrameworkStores<PostGresDBContext>();
 
-builder.Services.AddScoped<RecipeRepository>();
-builder.Services.AddScoped<CookingSessionRepository>();
+builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
+builder.Services.AddScoped<ICookingSessionRepository, CookingSessionRepository>();
 
 
 var app = builder.Build();

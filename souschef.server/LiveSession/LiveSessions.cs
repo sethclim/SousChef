@@ -24,33 +24,54 @@ namespace souschef.server.Data.LiveSession
             return m_currentCookingSessions[_sessionId];
         }
 
-        public LiveCookingSession StartCookingSession(Guid _sessionId)
+        public LiveCookingSession StartCookingSession(CookingSession _cookingSession)
         {
-            var session = new LiveCookingSession();
-            m_currentCookingSessions.Add(_sessionId, session);
+            var d = new Dictionary<Guid, Models.Task>();
+
+            foreach(var t in _cookingSession.MealPlan!.Recipes[0]!.Tasks)
+            {
+                d.Add(t.Id, t);
+            }
+
+            var session = new LiveCookingSession()
+            {
+                Id = _cookingSession.Id,
+                Host = _cookingSession.Host,
+                Members = _cookingSession.Guests!,
+                Tasks = d,
+            };
+
+            Console.WriteLine(session.Tasks.Count + session.Tasks.First().Value.Description);
+
+            m_currentCookingSessions.Add(_cookingSession.Id, session);
             return session;
         }
 
         public class LiveCookingSession
         {
-            public string? Id { get; set; }
+            public Guid? Id { get; set; }
             public ApplicationUser? Host { get; set; }
 
             public List<ApplicationUser> Members = new();
 
             public Dictionary<Guid, Models.Task> Tasks = new();
 
-            private Dictionary<Guid, Models.Task>.Enumerator taskEnumerator;
+            private int currentTask = 0;
 
-            public LiveCookingSession()
+            public Models.Task? GetNextTask()
             {
-                taskEnumerator = Tasks.GetEnumerator();
-            }
+                var l = Tasks.Values.ToList();
 
-            public Models.Task GetNextTask()
-            {
-                taskEnumerator.MoveNext();
-                return taskEnumerator.Current.Value;
+                Models.Task? nextTask = null;
+
+                if(currentTask < l.Count)
+                {
+                    nextTask = l[currentTask];
+                    currentTask++;
+
+                }
+
+                return nextTask;
             }
         }
     }

@@ -14,6 +14,8 @@ namespace souschef.server.Data.Models
 
         public List<ApplicationUser>? Guests{ get; set;}
 
+        public ApplicationUser Host { get; set; }
+
         public Guid OwnerId { get; set; }
 
         public CookingSession()

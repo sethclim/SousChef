@@ -16,5 +16,7 @@ namespace souschef.server.Data.Models
 
         public Guid OwnerId { get; set; }
 
+        public List<Task>? Tasks { get; set; }
+
     }
 }
