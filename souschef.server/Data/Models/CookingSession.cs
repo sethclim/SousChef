@@ -5,14 +5,14 @@ namespace souschef.server.Data.Models
 {
     public class CookingSession
     {
-        [Key]  
+        [Key]
         public Guid Id { get; set; }
 
-        public DateTime Date{ get; set;}
+        public DateTime Date { get; set; }
 
-        public MealPlan? MealPlan {get; set;}
+        public MealPlan? MealPlan { get; set; }
 
-        public List<ApplicationUser>? Guests{ get; set;}
+        public List<ApplicationUser> Guests { get; set; } = new();
 
         public ApplicationUser Host { get; set; }
 

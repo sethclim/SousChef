@@ -17,11 +17,12 @@ import {OpacityPressable, SpringPressable} from '../components/pressable';
 import {TaskScreenRouteProp} from '../navigation/types';
 import {Theme} from '../styles/type';
 import {useGet, usePost} from '../hooks';
-import {defaultTask, Task} from '../api/responses/type';
+import {defaultTask, Task} from '../api/responses';
 
 const TaskScreen = ({route}: {route: TaskScreenRouteProp}) => {
   // Route
-  const {sessionId} = route.params;
+  // const {sessionId} = route.params;
+  const sessionId = '40343c47-eb70-4930-ab6c-c8bcb8329c56';
 
   // Theme
   const theme = useContext(ThemeContext);
@@ -36,7 +37,7 @@ const TaskScreen = ({route}: {route: TaskScreenRouteProp}) => {
     data: GetTaskData,
     loading: GetTaskLoading,
     error: GetTaskError,
-  } = useGet<Task>(`${ApiUrls.getTask}/${sessionId}`, defaultTask);
+  } = useGet<Task>(`${ApiUrls.getTask}?sessionId=${sessionId}`, defaultTask);
   const {
     post: CompleteTask,
     data: CompleteTaskData,
@@ -58,12 +59,13 @@ const TaskScreen = ({route}: {route: TaskScreenRouteProp}) => {
 
   return (
     <SafeArea>
-      {GetTaskLoading || !GetTaskData ? null : (
+      {!GetTaskData ? null : (
         <Column
           horizontalResizing="fill"
           justifyContent="flex-start"
           paddingVertical={theme.spacing.xl}>
           <Timer seconds={GetTaskData.duration} />
+          <Text>{`${GetTaskError}`}</Text>
           <Column
             verticalResizing="fill"
             horizontalResizing="fill"
@@ -109,13 +111,13 @@ const TaskScreen = ({route}: {route: TaskScreenRouteProp}) => {
                 />
               </Row>
             </Row>
-            <AccordionCard title="Your Task">
+            <AccordionCard title={GetTaskData.name}>
               <Column
                 verticalResizing="fill"
                 horizontalResizing="fill"
                 spacing={theme.spacing.m}>
                 <Text style={stylesWithTheme.cardDescription}>
-                  {GetTaskData.name}
+                  {GetTaskData.description}
                 </Text>
                 <Row
                   horizontalResizing="fill"

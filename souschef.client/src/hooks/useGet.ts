@@ -13,7 +13,7 @@ export const useGet = <T>(url: string, defaultData?: T) => {
       if (response.ok) {
         setData(await response.json());
       } else {
-        setError(await response.json());
+        setError(await response.text());
       }
     } catch (error) {
       setError(error);

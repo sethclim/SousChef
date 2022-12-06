@@ -11,7 +11,7 @@ namespace souschef.server.Controllers;
 [Route("api/cookingsession")]
 public class CookingSessionController : Controller
 {
-    private readonly ICookingSessionRepository    m_cookingSessionRepository;
+    private readonly ICookingSessionRepository m_cookingSessionRepository;
     private readonly UserManager<ApplicationUser> m_userManager;
 
     public CookingSessionController(ICookingSessionRepository _cookingSessionRepository, UserManager<ApplicationUser> _userManager)
@@ -28,22 +28,22 @@ public class CookingSessionController : Controller
 
         t.Add(new Data.Models.Task
         {
-           Id = Guid.NewGuid(),
-           Name = "Cut Onions",
-           Description = "Chop the onions NOWWWWW",
-           Ingredients = new List<Ingredient>
+            Id = Guid.NewGuid(),
+            Name = "Cut Onions",
+            Description = "Chop the onions NOWWWWW",
+            Ingredients = new List<Ingredient>
            {
                new Ingredient{ Id = Guid.NewGuid(), Name="Onion", Quantity=6 }
            },
 
-           Kitchenware = new List<Kitchenware>
+            Kitchenware = new List<Kitchenware>
            {
                new Kitchenware{ Id = Guid.NewGuid(), Name="Knife", Quantity=1 }
            },
-           Duration = 1,
-           Difficulty = 1,
-           Points = 1,
-           Finished = false,
+            Duration = 1,
+            Difficulty = 1,
+            Points = 1,
+            Finished = false,
         });
 
         t.Add(new Data.Models.Task
@@ -102,59 +102,86 @@ public class CookingSessionController : Controller
         }
         else
         {
-            return new ContentResult() { Content = "Start Session Failed", StatusCode = 404 };
+            return new ContentResult() { Content = "Start session failed", StatusCode = 404 };
         }
     }
 
-    [HttpGet("End{id}")]
-    public async Task<IActionResult> End(string _sessionId)
+    [HttpGet]
+    public IActionResult End([FromQuery] string sessionId)
     {
-        throw new NotImplementedException();
+        if (LiveSessions.GetLiveSessions().RemoveSessionById(Guid.Parse(sessionId)))
+        {
+            return Ok();
+        }
+
+        return new ContentResult() { Content = "Invalid session ID", StatusCode = 404 };
     }
 
-    [HttpPost("Join{sessionId},{userId}")]
-    public async Task<IActionResult> Join(string _sessionId, string userId)
+    [HttpPost]
+    public async Task<IActionResult> Join([FromQuery] string sessionId)
     {
-        var user = await m_userManager.FindByIdAsync(userId);
-        var session = LiveSessions.GetLiveSessions().GetSessionById(Guid.Parse(_sessionId));
-        session.Members.Add(user);
+        // var user = await m_userManager.FindByIdAsync(userId);
+        var session = LiveSessions.GetLiveSessions().GetSessionById(Guid.Parse(sessionId));
 
-        return Ok();
+        if (session != null)
+        {
+            // session.Members.Add(user);
+            return Ok();
+        }
+
+        return new ContentResult() { Content = "Invalid session ID", StatusCode = 404 };
     }
 
-    [HttpPost("Leave{sessionId},{userId}")]
-    public async Task<IActionResult> Leave(string _sessionId, string userId)
+    [HttpPost]
+    public async Task<IActionResult> Leave([FromQuery] string sessionId)
     {
-        var user = await m_userManager.FindByIdAsync(userId);
-        var session = LiveSessions.GetLiveSessions().GetSessionById(Guid.Parse(_sessionId));
-        session.Members.Remove(user);
+        // var user = await m_userManager.FindByIdAsync(userId);
+        var session = LiveSessions.GetLiveSessions().GetSessionById(Guid.Parse(sessionId));
 
-        return Ok();
+        if (session != null)
+        {
+            // session.Members.Remove(user);
+            return Ok();
+        }
+
+        return new ContentResult() { Content = "Invalid session ID", StatusCode = 404 };
     }
 
-    [HttpGet("GetUsers{id}")]
-    public IEnumerable<ApplicationUser> GetUsers(string _sessionId)
+    [HttpGet]
+    public IEnumerable<ApplicationUser> GetUsers([FromQuery] string sessionId)
     {
-        return m_cookingSessionRepository.GetUsers(Guid.Parse(_sessionId));
+        return m_cookingSessionRepository.GetUsers(Guid.Parse(sessionId));
     }
 
-    [HttpGet("gettask")]
-    public ActionResult<Data.Models.Task> GetTask(string _sessionId)
+    [HttpGet]
+    public ActionResult<Data.Models.Task> GetTask([FromQuery] string sessionId)
     {
+        var session = LiveSessions.GetLiveSessions().GetSessionById(Guid.Parse(sessionId));
+        if (session != null)
+        {
+            var task = session.GetNextTask();
+            if (task != null) return Ok(task);
+            return new ContentResult() { Content = "No more tasks available", StatusCode = 404 };
+        }
 
-        var session = LiveSessions.GetLiveSessions().GetSessionById(Guid.Parse(_sessionId));
-        var s = session.GetNextTask();
-        if (s != null)
-            return Ok(s);
-        else return new ContentResult() { Content = "No More Tasks", StatusCode = 403 };
+        return new ContentResult() { Content = "Invalid session ID", StatusCode = 404 };
     }
 
-    [HttpPost("CompleteTask{sessionId},{taskId}")]
-    public IActionResult CompleteTask(string _sessionId, string _taskId)
+    [HttpPost]
+    public IActionResult CompleteTask([FromQuery] string sessionId, [FromQuery] string taskId)
     {
-        var session = LiveSessions.GetLiveSessions().GetSessionById(Guid.Parse(_sessionId));
-        session.Tasks[Guid.Parse(_taskId)].Finished = true;
+        var session = LiveSessions.GetLiveSessions().GetSessionById(Guid.Parse(sessionId));
 
-        return Ok();
+        if (session != null)
+        {
+            if (session.Tasks.ContainsKey(Guid.Parse(taskId)))
+            {
+                session.Tasks[Guid.Parse(taskId)].Finished = true;
+                return Ok();
+            }
+            return new ContentResult() { Content = "Task not found", StatusCode = 404 };
+        }
+
+        return new ContentResult() { Content = "Invalid session ID", StatusCode = 404 };
     }
 }

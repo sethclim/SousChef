@@ -19,16 +19,20 @@ namespace souschef.server.Data.LiveSession
             return m_instance;
         }
 
-        public LiveCookingSession GetSessionById(Guid _sessionId)
+        public LiveCookingSession? GetSessionById(Guid _sessionId)
         {
-            return m_currentCookingSessions[_sessionId];
+            return m_currentCookingSessions.ContainsKey(_sessionId)
+                ? m_currentCookingSessions[_sessionId]
+                : null;
         }
+
+        public bool RemoveSessionById(Guid _sessionId) => m_currentCookingSessions.Remove(_sessionId);
 
         public LiveCookingSession StartCookingSession(CookingSession _cookingSession)
         {
             var d = new Dictionary<Guid, Models.Task>();
 
-            foreach(var t in _cookingSession.MealPlan!.Recipes[0]!.Tasks)
+            foreach (var t in _cookingSession.MealPlan!.Recipes[0]!.Tasks)
             {
                 d.Add(t.Id, t);
             }
@@ -64,7 +68,7 @@ namespace souschef.server.Data.LiveSession
 
                 Models.Task? nextTask = null;
 
-                if(currentTask < l.Count)
+                if (currentTask < l.Count)
                 {
                     nextTask = l[currentTask];
                     currentTask++;
