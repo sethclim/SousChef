@@ -3,6 +3,7 @@ import {StyleSheet, Text} from 'react-native';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {ThemeContext} from '../../contexts/AppContext';
+import {ApiUrls} from '../../api/constants/ApiConstants';
 import {Button, Card, Column, Input, Row, SafeArea} from '../../components';
 import {OpacityPressable, SpringPressable} from '../../components/pressable';
 import {usePost} from '../../hooks';
@@ -30,9 +31,7 @@ const LoginScreen = ({
   const [error, setError] = React.useState('');
 
   // API Calls
-  const {post, error: postError} = usePost(
-    'https://localhost:5001/api/user/login',
-  );
+  const {post: login, error: loginError} = usePost(ApiUrls.login);
 
   // On Mount
   React.useEffect(() => {
@@ -44,7 +43,7 @@ const LoginScreen = ({
   }, [navigation]);
 
   // Methods
-  const login = () => {
+  const attemptLogin = () => {
     setError('');
     // Empty fields
     if (email.length === 0 || password.length === 0) {
@@ -52,18 +51,18 @@ const LoginScreen = ({
     }
     // Successfully log'd in
     else {
-      post({
+      login({
         email: email,
         password: password,
-      }).then(success => {
-        if (success)
+      }).then(() => {
+        if (!error)
           navigation.replace('BottomTabs', defaultBottomTabNavigatorParamList);
-        else setError(`${postError}`);
+        else setError(`${loginError}`);
       });
     }
   };
 
-  const register = () => navigation.replace('Register', {animationID: 1});
+  const gotoRegister = () => navigation.replace('Register', {animationID: 1});
 
   const skipLogin = () =>
     navigation.replace('BottomTabs', defaultBottomTabNavigatorParamList);
@@ -114,7 +113,7 @@ const LoginScreen = ({
             />
           </Column>
           <Column horizontalResizing="fill" spacing={theme.spacing.m}>
-            <SpringPressable onPress={login} horizontalResizing="fill">
+            <SpringPressable onPress={attemptLogin} horizontalResizing="fill">
               <Button
                 bgColor={theme.colors.danger}
                 horizontalResizing="fill"
@@ -126,7 +125,7 @@ const LoginScreen = ({
             </SpringPressable>
             <Row spacing={theme.spacing.s}>
               <Text style={stylesWithTheme.registerText}>Not a member?</Text>
-              <OpacityPressable onPress={register}>
+              <OpacityPressable onPress={gotoRegister}>
                 <Text
                   style={[
                     stylesWithTheme.registerText,

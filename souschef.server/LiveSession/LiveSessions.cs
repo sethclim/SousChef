@@ -9,7 +9,7 @@ namespace souschef.server.Data.LiveSession
 
         private readonly Dictionary<Guid, LiveCookingSession> m_currentCookingSessions;
 
-        private LiveSessions()
+        LiveSessions()
         {
             m_currentCookingSessions = new Dictionary<Guid, LiveCookingSession>();
         }
@@ -19,33 +19,59 @@ namespace souschef.server.Data.LiveSession
             return m_instance;
         }
 
-        public LiveCookingSession GetSessionById(Guid _id)
+        public LiveCookingSession GetSessionById(Guid _sessionId)
         {
-            return m_currentCookingSessions[_id];
+            return m_currentCookingSessions[_sessionId];
         }
 
-        public LiveCookingSession StartCookingSession(Guid _id)
+        public LiveCookingSession StartCookingSession(CookingSession _cookingSession)
         {
-            var session = new LiveCookingSession();
-            m_currentCookingSessions.Add(_id, session);
+            var d = new Dictionary<Guid, Models.Task>();
+
+            foreach(var t in _cookingSession.MealPlan!.Recipes[0]!.Tasks)
+            {
+                d.Add(t.Id, t);
+            }
+
+            var session = new LiveCookingSession()
+            {
+                Id = _cookingSession.Id,
+                Host = _cookingSession.Host,
+                Members = _cookingSession.Guests!,
+                Tasks = d,
+            };
+
+            Console.WriteLine(session.Tasks.Count + session.Tasks.First().Value.Description);
+
+            m_currentCookingSessions.Add(_cookingSession.Id, session);
             return session;
         }
 
         public class LiveCookingSession
         {
-            public string? Id { get; set; }
+            public Guid? Id { get; set; }
             public ApplicationUser? Host { get; set; }
 
             public List<ApplicationUser> Members = new();
 
-            public List<Models.Task> Tasks = new();
+            public Dictionary<Guid, Models.Task> Tasks = new();
 
             private int currentTask = 0;
 
-            public Models.Task GetNextTask()
+            public Models.Task? GetNextTask()
             {
-                currentTask++;
-                return Tasks[currentTask];
+                var l = Tasks.Values.ToList();
+
+                Models.Task? nextTask = null;
+
+                if(currentTask < l.Count)
+                {
+                    nextTask = l[currentTask];
+                    currentTask++;
+
+                }
+
+                return nextTask;
             }
         }
     }

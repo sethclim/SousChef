@@ -5,6 +5,7 @@ import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIc
 import {Button, Card, Column, Input, Row, SafeArea} from '../../components';
 import {OpacityPressable, SpringPressable} from '../../components/pressable';
 import {ThemeContext} from '../../contexts/AppContext';
+import {ApiUrls} from '../../api/constants/ApiConstants';
 import {usePost} from '../../hooks';
 import {
   defaultBottomTabNavigatorParamList,
@@ -29,9 +30,7 @@ const RegisterScreen = ({
   const [password, setPassword] = React.useState<string>('');
   const [passwordConfirm, setPasswordConfirm] = React.useState<string>('');
   const [error, setError] = React.useState<string>('');
-  const {post, error: postError} = usePost(
-    'https://localhost:5001/api/user/register',
-  );
+  const {post: register, error: registerError} = usePost(ApiUrls.register);
 
   React.useEffect(() => {
     setName('');
@@ -43,7 +42,7 @@ const RegisterScreen = ({
       navigation.setOptions({animation: 'slide_from_right'});
   }, [navigation]);
 
-  const register = () => {
+  const attemptRegister = () => {
     setError('');
     // Empty fields
     if (
@@ -60,20 +59,20 @@ const RegisterScreen = ({
     }
     // Successfully registered
     else {
-      post({
+      register({
         userName: name,
         email: email,
         password: password,
         passwordConfirm: passwordConfirm,
-      }).then(success => {
-        if (success)
+      }).then(() => {
+        if (!error)
           navigation.replace('BottomTabs', defaultBottomTabNavigatorParamList);
-        else setError(`${postError}`);
+        else setError(`${registerError}`);
       });
     }
   };
 
-  const login = () => navigation.replace('Login', {animationID: 1});
+  const gotoLogin = () => navigation.replace('Login', {animationID: 1});
 
   return (
     <SafeArea>
@@ -136,7 +135,9 @@ const RegisterScreen = ({
             />
           </Column>
           <Column horizontalResizing="fill" spacing={theme.spacing.m}>
-            <SpringPressable onPress={register} horizontalResizing="fill">
+            <SpringPressable
+              onPress={attemptRegister}
+              horizontalResizing="fill">
               <Button
                 bgColor={theme.colors.primary}
                 horizontalResizing="fill"
@@ -148,7 +149,7 @@ const RegisterScreen = ({
             </SpringPressable>
             <Row spacing={theme.spacing.s}>
               <Text style={stylesWithTheme.loginText}>Joined us before?</Text>
-              <OpacityPressable onPress={login}>
+              <OpacityPressable onPress={gotoLogin}>
                 <Text
                   style={[
                     stylesWithTheme.loginText,

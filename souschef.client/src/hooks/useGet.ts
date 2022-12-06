@@ -1,25 +1,22 @@
 import {useState} from 'react';
 
-export const useGet = (url: string) => {
+export const useGet = <T>(url: string, defaultData?: T) => {
   const [error, setError] = useState<unknown>();
   const [loading, setLoading] = useState<boolean>();
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<T | undefined>(defaultData);
 
-  const get = async (): Promise<boolean> => {
+  const get = async () => {
     try {
       setLoading(true);
       const response = await fetch(url, {method: 'GET'});
 
       if (response.ok) {
         setData(await response.json());
-        return true;
       } else {
         setError(await response.json());
-        return false;
       }
     } catch (error) {
       setError(error);
-      return false;
     }
   };
 

@@ -17,7 +17,9 @@ export type BottomTabNavigatorParamList = {
   Favorite: undefined;
   Calendar: undefined;
   Profile: undefined;
-  Task: undefined;
+  Task: {
+    sessionId: string;
+  };
 };
 
 export const defaultBottomTabNavigatorParamList: BottomTabNavigatorParamList = {
@@ -25,7 +27,9 @@ export const defaultBottomTabNavigatorParamList: BottomTabNavigatorParamList = {
   Favorite: undefined,
   Calendar: undefined,
   Profile: undefined,
-  Task: undefined,
+  Task: {
+    sessionId: '',
+  },
 };
 
 export type WelcomeScreenNavigationProp = NativeStackNavigationProp<
