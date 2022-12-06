@@ -22,7 +22,7 @@ import {defaultTask, Task} from '../api/responses';
 const TaskScreen = ({route}: {route: TaskScreenRouteProp}) => {
   // Route
   // const {sessionId} = route.params;
-  const sessionId = '0063200f-44ce-4a0e-aec0-d3ec0b82b09d';
+  const sessionId = '4d9de020-74ba-4f7a-b38f-8aa9753b65ce'; // TEMPORARY (CHANGES EVERYTIME)
 
   // Theme
   const theme = useContext(ThemeContext);
