@@ -8,13 +8,11 @@ namespace souschef.server.Data.Models
         [Key]
         public Guid Id { get; set; }
 
-        public DateTime Date { get; set; }
+        public long Date { get; set; }
 
         public int Duration { get; set; }
 
         public ApplicationUser? Owner { get; set; }
-
-        public Guid OwnerId { get; set; }
 
         public List<Task> Tasks { get; set; } = new();
 

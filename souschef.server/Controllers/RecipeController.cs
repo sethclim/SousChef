@@ -2,7 +2,7 @@
 using souschef.server.Data.DTOs;
 using souschef.server.Data.Models;
 using souschef.server.Data.Repository.Contracts;
-
+using souschef.server.Helpers;
 
 namespace souschef.server.Controllers
 {
@@ -21,22 +21,29 @@ namespace souschef.server.Controllers
         public IActionResult AddRecipe([FromBody]RecipeDTO _dto)
         {
 
-            var recipe = new Recipe()
+            if(_dto.OwnerId != null && _dto.Steps != null)
             {
-                Id = Guid.NewGuid(),
-                OwnerId = Guid.Parse(_dto.OwnerId),
-                Duration = (int)_dto.Steps!.Sum(item => item.TimeEstimate),
-                Date = DateTime.Now
-            };
+                var recipe = new Recipe()
+                {
+                    Id = Guid.NewGuid(),
+                    Duration = (int)_dto.Steps!.Sum(item => item.TimeEstimate),
+                    Date = Conversions.GetUnixTimeStamp(DateTime.Now),
+                    Tasks = Array.ConvertAll(_dto.Steps, new Converter<Step, Data.Models.Task>(delegate (Step x) { return Conversions.ToTask(x)!; })).ToList() //Fix Null Issue
+                };
 
-            m_recipeRepository.AddRecipe(recipe);
+                m_recipeRepository.AddRecipe(recipe);
+                return Ok();
 
-            return Ok();
+            }
+            else
+            {
+                return new ContentResult() { Content = "Invalid Owner Id", StatusCode = 404 };
+            }
         }
 
         [HttpGet("GetPublicRecipes")]
         public ActionResult<IEnumerable<Recipe>> GetAllRecipes()
-        {
+        {   
             var recipes = m_recipeRepository.GetAll(Guid.Parse("CUSTOMALLID"));
             if(recipes != null)
             {
@@ -71,7 +78,6 @@ namespace souschef.server.Controllers
                 var recipe = new Recipe()
                 {
                     Id = Guid.NewGuid(),
-                    OwnerId = Guid.Parse(_dto.OwnerId!),
                     Duration = (int)_dto.Steps!.Sum(item => item.TimeEstimate),
                 };
 

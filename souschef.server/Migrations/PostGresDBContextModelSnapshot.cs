@@ -239,8 +239,12 @@ namespace souschef.server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<long>("Date")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("HostId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Guid?>("MealPlanId")
                         .HasColumnType("uuid");
@@ -249,6 +253,8 @@ namespace souschef.server.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("HostId");
 
                     b.HasIndex("MealPlanId");
 
@@ -321,8 +327,8 @@ namespace souschef.server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<long>("Date")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Duration")
                         .HasColumnType("integer");
@@ -349,7 +355,6 @@ namespace souschef.server.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("AssigneeId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
@@ -361,15 +366,23 @@ namespace souschef.server.Migrations
                     b.Property<int>("Duration")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("Finished")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.Property<int>("Points")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("RecipeId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AssigneeId");
+
+                    b.HasIndex("RecipeId");
 
                     b.ToTable("Tasks");
                 });
@@ -434,9 +447,17 @@ namespace souschef.server.Migrations
 
             modelBuilder.Entity("souschef.server.Data.Models.CookingSession", b =>
                 {
+                    b.HasOne("souschef.server.Data.Models.ApplicationUser", "Host")
+                        .WithMany()
+                        .HasForeignKey("HostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("souschef.server.Data.Models.MealPlan", "MealPlan")
                         .WithMany()
                         .HasForeignKey("MealPlanId");
+
+                    b.Navigation("Host");
 
                     b.Navigation("MealPlan");
                 });
@@ -472,9 +493,11 @@ namespace souschef.server.Migrations
                 {
                     b.HasOne("souschef.server.Data.Models.ApplicationUser", "Assignee")
                         .WithMany()
-                        .HasForeignKey("AssigneeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AssigneeId");
+
+                    b.HasOne("souschef.server.Data.Models.Recipe", null)
+                        .WithMany("Tasks")
+                        .HasForeignKey("RecipeId");
 
                     b.Navigation("Assignee");
                 });
@@ -492,6 +515,11 @@ namespace souschef.server.Migrations
             modelBuilder.Entity("souschef.server.Data.Models.MealPlan", b =>
                 {
                     b.Navigation("Recipes");
+                });
+
+            modelBuilder.Entity("souschef.server.Data.Models.Recipe", b =>
+                {
+                    b.Navigation("Tasks");
                 });
 
             modelBuilder.Entity("souschef.server.Data.Models.Task", b =>

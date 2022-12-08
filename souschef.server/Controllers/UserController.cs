@@ -95,8 +95,9 @@ public class UserController : Controller
 
         var userDTO = new UserDTO
         {
-            Name = user.UserName,
-            Email = user.Email,
+            Id         = user.Id,
+            Name       = user.UserName,
+            Email      = user.Email,
             SkillLevel = user.SkillLevel
         };
         

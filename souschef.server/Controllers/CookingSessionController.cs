@@ -89,7 +89,7 @@ public class CookingSessionController : Controller
         var s = new CookingSession
         {
             Id = Guid.NewGuid(),
-            Date = DateTime.Now,
+            Date = Conversions.GetUnixTimeStamp(DateTime.Now),
             MealPlan = m,
         };
 
