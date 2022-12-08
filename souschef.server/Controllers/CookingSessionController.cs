@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using souschef.server.Data.DTOs;
 using souschef.server.Data.LiveSession;
 using souschef.server.Data.Models;
 using souschef.server.Data.Repository.Contracts;
-
+using souschef.server.Helpers;
 
 namespace souschef.server.Controllers;
 
@@ -85,7 +86,6 @@ public class CookingSessionController : Controller
             Id = Guid.NewGuid()
         };
 
-
         var s = new CookingSession
         {
             Id = Guid.NewGuid(),
@@ -93,7 +93,14 @@ public class CookingSessionController : Controller
             MealPlan = m,
         };
 
-        var session = LiveSessions.GetLiveSessions().StartCookingSession(s);
+        var members = new List<UserDTO>();
+
+        foreach(var mem in s.Guests)
+        {
+            members.Add(Conversions.ToUserDTO(mem));
+        }
+
+        var session = LiveSessions.GetLiveSessions().StartCookingSession(s.Id, s.MealPlan, Conversions.ToUserDTO(s.Host), members);
 
         if (session != null)
         {
@@ -110,8 +117,8 @@ public class CookingSessionController : Controller
     {
         if (LiveSessions.GetLiveSessions().RemoveSessionById(Guid.Parse(sessionId)))
         {
-            return Ok();
-        }
+                return Ok();
+            }
 
         return new ContentResult() { Content = "Invalid session ID", StatusCode = 404 };
     }
