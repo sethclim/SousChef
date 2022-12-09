@@ -25,19 +25,20 @@ namespace souschef.server.Controllers
         {
             if(_dto.OwnerId != null && _dto.Steps != null)
             {
-
                 var recipe = new Recipe()
                 {
                     Id = Guid.NewGuid(),
+                    Name = _dto.Name,
                     Duration = (int)_dto.Steps!.Sum(item => item.TimeEstimate),
                     Date = Conversions.GetUnixTimeStamp(DateTime.Now),
                     Tasks = Array.ConvertAll(_dto.Steps, new Converter<Step, Data.Models.Task>(delegate (Step x) { return Conversions.ToTask(x)!; })).ToList(), //Fix Null Issue
-                    OwnerId = Guid.Parse(_dto.OwnerId)
+                    OwnerId = Guid.Parse(_dto.OwnerId),
+                    Difficulty = _dto.Difficulty
                 };
 
                 m_recipeRepository.AddRecipe(recipe);
-                return Ok();
 
+                return Ok();
             }
             else
             {
@@ -54,10 +55,12 @@ namespace souschef.server.Controllers
                 var recipe = new Recipe()
                 {
                     Id = Guid.NewGuid(),
+                    Name = _dto.Name,
                     Duration = (int)_dto.Steps!.Sum(item => item.TimeEstimate),
                     Date = Conversions.GetUnixTimeStamp(DateTime.Now),
                     Tasks = Array.ConvertAll(_dto.Steps, new Converter<Step, Data.Models.Task>(delegate (Step x) { return Conversions.ToTask(x)!; })).ToList(), //Fix Null Issue
-                    OwnerId = null
+                    OwnerId = null,
+                    Difficulty = _dto.Difficulty
                 };
 
                 m_recipeRepository.AddRecipe(recipe);

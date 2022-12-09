@@ -10,7 +10,7 @@ namespace souschef.server.Data.DTOs
         public string? Name         { get; set; }
         public Step[]? Steps        { get; set; }
         public DateTime DateCreated { get; set; }
-
+        public int Difficulty       { get; set; }
     }
 
     public class Step
