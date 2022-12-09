@@ -16,9 +16,5 @@ namespace souschef.server.Controllers
             m_userManager = _userManager;
         }
 
-        public IActionResult SaveCookingSession()
-        {
-
-        }
     }
 }
