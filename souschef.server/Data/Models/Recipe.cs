@@ -10,6 +10,7 @@ namespace souschef.server.Data.Models
         public string? Name     { get; set; }
         public long Date        { get; set; }
         public int Duration     { get; set; }
+        public int Serves       { get; set; }
         public int Difficulty   { get; set; }
         public Guid? OwnerId    { get; set; }
         public List<Task> Tasks { get; set; } = new();

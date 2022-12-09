@@ -30,6 +30,7 @@ namespace souschef.server.Controllers
                     Id = Guid.NewGuid(),
                     Name = _dto.Name,
                     Duration = (int)_dto.Steps!.Sum(item => item.TimeEstimate),
+                    Serves = _dto.Serves,
                     Date = Conversions.GetUnixTimeStamp(DateTime.Now),
                     Tasks = Array.ConvertAll(_dto.Steps, new Converter<Step, Data.Models.Task>(delegate (Step x) { return Conversions.ToTask(x)!; })).ToList(), //Fix Null Issue
                     OwnerId = Guid.Parse(_dto.OwnerId),
@@ -59,6 +60,7 @@ namespace souschef.server.Controllers
                     Id = Guid.NewGuid(),
                     Name = _dto.Name,
                     Duration = (int)_dto.Steps!.Sum(item => item.TimeEstimate),
+                    Serves = _dto.Serves,
                     Date = Conversions.GetUnixTimeStamp(DateTime.Now),
                     Tasks = Array.ConvertAll(_dto.Steps, new Converter<Step, Data.Models.Task>(delegate (Step x) { return Conversions.ToTask(x)!; })).ToList(), //Fix Null Issue
                     OwnerId = null,
