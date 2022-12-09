@@ -60,6 +60,9 @@ export type RegisterScreenRouteProp = RouteProp<
   'Register'
 >;
 
+export type HomeScreenNavigationProp =
+  NativeStackNavigationProp<BottomTabNavigatorParamList>;
+
 export type TaskScreenRouteProp = RouteProp<
   BottomTabNavigatorParamList,
   'Task'

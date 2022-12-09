@@ -30,6 +30,7 @@ const BottomTabs = () => {
             <MaterialCommunityIcon name={iconName} size={size} color={color} />
           );
         },
+        tabBarHideOnKeyboard: true,
         tabBarActiveTintColor: '#2F394A',
         tabBarInactiveTintColor: '#CBCDD1',
         tabBarShowLabel: false,

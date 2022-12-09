@@ -23,7 +23,7 @@ export const theme: Theme = {
     m: 16,
     l: 24,
     xl: 48,
-    xxl: 96,
+    xxl: 64,
   },
   textVariants: {
     header: {

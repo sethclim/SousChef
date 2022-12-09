@@ -2,7 +2,7 @@ import React, {type PropsWithChildren} from 'react';
 import Stack, {IStackProps} from './Stack';
 
 export interface IColumnProps
-  extends Omit<IStackProps, 'direction' | 'parentDirection'> {}
+  extends Omit<IStackProps, 'flexDirection' | 'parentDirection'> {}
 type ColumnProps = IColumnProps;
 
 const Column: React.FC<PropsWithChildren<ColumnProps>> = (

@@ -2,7 +2,7 @@ import React, {type PropsWithChildren} from 'react';
 import Stack, {IStackProps} from './Stack';
 
 export interface IRowProps
-  extends Omit<IStackProps, 'direction' | 'parentDirection'> {}
+  extends Omit<IStackProps, 'flexDirection' | 'parentDirection'> {}
 type RowProps = IRowProps;
 
 const Row: React.FC<PropsWithChildren<RowProps>> = (props: IRowProps) => {
