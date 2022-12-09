@@ -11,6 +11,8 @@ namespace souschef.server.Data.DTOs
         public Step[]? Steps        { get; set; }
         public DateTime DateCreated { get; set; }
         public int Difficulty       { get; set; }
+        public Ingredient[]? Ingredients  { get; set; }
+        public Kitchenware[]? KitchenWare { get; set; }
     }
 
     public class Step
