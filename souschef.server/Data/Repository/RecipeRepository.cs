@@ -12,7 +12,8 @@ namespace souschef.server.Data.Repository
 
 
         public IEnumerable<Recipe>? Recipes => _context.Recipes?
-               .Include(c => c.Tasks);
+               .Include(c => c.Tasks).ThenInclude(x => x.Ingredients)
+               .Include(c => c.Tasks).ThenInclude(x => x.Kitchenware);
 
         public void AddRecipe(Recipe _recipe)
         {
@@ -26,7 +27,7 @@ namespace souschef.server.Data.Repository
             _context.SaveChanges();
         }
 
-        public IEnumerable<Recipe>? GetAll(Guid ownerId)
+        public IEnumerable<Recipe>? GetAll(Guid? ownerId)
         {
             return Recipes?.Where(r => r.OwnerId == ownerId);
         }

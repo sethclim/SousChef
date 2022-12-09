@@ -45,10 +45,35 @@ namespace souschef.server.Controllers
             }
         }
 
-        [HttpGet("GetPublicRecipes")]
+        [HttpPost("public-recipe")]
+        public IActionResult AddPublicRecipe([FromBody] RecipeDTO _dto)
+        {
+            if (_dto.Steps != null)
+            {
+
+                var recipe = new Recipe()
+                {
+                    Id = Guid.NewGuid(),
+                    Duration = (int)_dto.Steps!.Sum(item => item.TimeEstimate),
+                    Date = Conversions.GetUnixTimeStamp(DateTime.Now),
+                    Tasks = Array.ConvertAll(_dto.Steps, new Converter<Step, Data.Models.Task>(delegate (Step x) { return Conversions.ToTask(x)!; })).ToList(), //Fix Null Issue
+                    OwnerId = null
+                };
+
+                m_recipeRepository.AddRecipe(recipe);
+                return Ok();
+
+            }
+            else
+            {
+                return new ContentResult() { Content = "Invalid Owner Id", StatusCode = 404 };
+            }
+        }
+
+        [HttpGet("public-recipes")]
         public ActionResult<IEnumerable<Recipe>> GetAllRecipes()
         {   
-            var recipes = m_recipeRepository.GetAll(Guid.Parse("CUSTOMALLID"));
+            var recipes = m_recipeRepository.GetAll(null);
             if(recipes != null)
             {
                 return Ok(recipes);
@@ -59,7 +84,7 @@ namespace souschef.server.Controllers
             }
         }
 
-        [HttpGet("GetMyRecipes")]
+        [HttpGet("get-my-recipes")]
         public ActionResult<IEnumerable<Recipe>> GetMyRecipes(string _ownerId)
         {
             if (!Guid.TryParse(_ownerId, out Guid res))
