@@ -17,4 +17,4 @@ namespace souschef.server.Data.Models
         public List<Task> Tasks { get; set; } = new();
 
     }
-}
+}   
