@@ -27,7 +27,7 @@ namespace souschef.server.Data.Repository
             _context.SaveChanges();
         }
 
-        public IEnumerable<Recipe>? GetAll(Guid ownerId)
+        public IEnumerable<Recipe>? GetAll(Guid? ownerId)
         {
             return Recipes?.Where(r => r.OwnerId == ownerId);
         }
