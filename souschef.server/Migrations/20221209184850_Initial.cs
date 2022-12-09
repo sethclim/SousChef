@@ -185,15 +185,16 @@ namespace souschef.server.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Date = table.Column<long>(type: "bigint", nullable: false),
                     Duration = table.Column<int>(type: "integer", nullable: false),
-                    OwnerId = table.Column<string>(type: "text", nullable: true),
+                    OwnerId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ApplicationUserId = table.Column<string>(type: "text", nullable: true),
                     MealPlanId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Recipes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Recipes_AspNetUsers_OwnerId",
-                        column: x => x.OwnerId,
+                        name: "FK_Recipes_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -333,14 +334,14 @@ namespace souschef.server.Migrations
                 column: "TaskId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Recipes_ApplicationUserId",
+                table: "Recipes",
+                column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Recipes_MealPlanId",
                 table: "Recipes",
                 column: "MealPlanId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Recipes_OwnerId",
-                table: "Recipes",
-                column: "OwnerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tasks_AssigneeId",

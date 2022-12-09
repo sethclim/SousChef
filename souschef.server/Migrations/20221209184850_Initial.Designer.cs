@@ -12,7 +12,7 @@ using souschef.server.Data;
 namespace souschef.server.Migrations
 {
     [DbContext(typeof(PostGresDBContext))]
-    [Migration("20221208185054_Initial")]
+    [Migration("20221209184850_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -329,6 +329,9 @@ namespace souschef.server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("text");
+
                     b.Property<long>("Date")
                         .HasColumnType("bigint");
 
@@ -338,14 +341,14 @@ namespace souschef.server.Migrations
                     b.Property<Guid?>("MealPlanId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("OwnerId")
-                        .HasColumnType("text");
+                    b.Property<Guid?>("OwnerId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MealPlanId");
+                    b.HasIndex("ApplicationUserId");
 
-                    b.HasIndex("OwnerId");
+                    b.HasIndex("MealPlanId");
 
                     b.ToTable("Recipes");
                 });
@@ -480,15 +483,13 @@ namespace souschef.server.Migrations
 
             modelBuilder.Entity("souschef.server.Data.Models.Recipe", b =>
                 {
+                    b.HasOne("souschef.server.Data.Models.ApplicationUser", null)
+                        .WithMany("Recipes")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("souschef.server.Data.Models.MealPlan", null)
                         .WithMany("Recipes")
                         .HasForeignKey("MealPlanId");
-
-                    b.HasOne("souschef.server.Data.Models.ApplicationUser", "Owner")
-                        .WithMany("Recipes")
-                        .HasForeignKey("OwnerId");
-
-                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("souschef.server.Data.Models.Task", b =>

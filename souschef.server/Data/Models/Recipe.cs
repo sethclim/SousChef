@@ -12,7 +12,7 @@ namespace souschef.server.Data.Models
 
         public int Duration { get; set; }
 
-        public ApplicationUser? Owner { get; set; }
+        public Guid? OwnerId { get; set; }
 
         public List<Task> Tasks { get; set; } = new();
 
