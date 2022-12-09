@@ -1,4 +1,5 @@
 ﻿
+using souschef.server.Data.DTOs;
 using souschef.server.Data.Models;
 
 namespace souschef.server.Data.LiveSession
@@ -28,35 +29,33 @@ namespace souschef.server.Data.LiveSession
 
         public bool RemoveSessionById(Guid _sessionId) => m_currentCookingSessions.Remove(_sessionId);
 
-        public LiveCookingSession StartCookingSession(CookingSession _cookingSession)
+        public LiveCookingSession StartCookingSession(Guid sessionId, MealPlan mealPlan, UserDTO host, List<UserDTO> members)
         {
             var d = new Dictionary<Guid, Models.Task>();
 
-            foreach (var t in _cookingSession.MealPlan!.Recipes[0]!.Tasks)
+            foreach (var t in mealPlan.Recipes[0]!.Tasks)
             {
                 d.Add(t.Id, t);
             }
 
             var session = new LiveCookingSession()
             {
-                Id = _cookingSession.Id,
-                Host = _cookingSession.Host,
-                Members = _cookingSession.Guests!,
+                Id = sessionId,
+                Host = host,
+                Members = members!,
                 Tasks = d,
             };
 
-            Console.WriteLine(session.Tasks.Count + session.Tasks.First().Value.Description);
-
-            m_currentCookingSessions.Add(_cookingSession.Id, session);
+            m_currentCookingSessions.Add(sessionId, session);
             return session;
         }
 
         public class LiveCookingSession
         {
             public Guid? Id { get; set; }
-            public ApplicationUser? Host { get; set; }
+            public UserDTO? Host { get; set; }
 
-            public List<ApplicationUser> Members = new();
+            public List<UserDTO> Members = new();
 
             public Dictionary<Guid, Models.Task> Tasks = new();
 

@@ -23,7 +23,7 @@ namespace souschef.server.Data.Repository
 
         public IEnumerable<Recipe>? GetAll(Guid ownerId)
         {
-            return _context.Recipes?.Where(r => r.OwnerId == ownerId);
+            return _context.Recipes?.Where(r => Guid.Parse(r.Owner!.Id!) == ownerId);
         }
 
         public Recipe? GetRecipe(Guid recipeId)
