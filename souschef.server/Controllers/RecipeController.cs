@@ -25,19 +25,23 @@ namespace souschef.server.Controllers
         {
             if(_dto.OwnerId != null && _dto.Steps != null)
             {
-
                 var recipe = new Recipe()
                 {
                     Id = Guid.NewGuid(),
+                    Name = _dto.Name,
                     Duration = (int)_dto.Steps!.Sum(item => item.TimeEstimate),
+                    Serves = _dto.Serves,
                     Date = Conversions.GetUnixTimeStamp(DateTime.Now),
                     Tasks = Array.ConvertAll(_dto.Steps, new Converter<Step, Data.Models.Task>(delegate (Step x) { return Conversions.ToTask(x)!; })).ToList(), //Fix Null Issue
-                    OwnerId = Guid.Parse(_dto.OwnerId)
+                    OwnerId = Guid.Parse(_dto.OwnerId),
+                    Difficulty = _dto.Difficulty,
+                    Kitchenware = _dto.KitchenWare?.ToList(),
+                    Ingredients = _dto.Ingredients?.ToList(),
                 };
 
                 m_recipeRepository.AddRecipe(recipe);
-                return Ok();
 
+                return Ok();
             }
             else
             {
@@ -54,10 +58,15 @@ namespace souschef.server.Controllers
                 var recipe = new Recipe()
                 {
                     Id = Guid.NewGuid(),
+                    Name = _dto.Name,
                     Duration = (int)_dto.Steps!.Sum(item => item.TimeEstimate),
+                    Serves = _dto.Serves,
                     Date = Conversions.GetUnixTimeStamp(DateTime.Now),
                     Tasks = Array.ConvertAll(_dto.Steps, new Converter<Step, Data.Models.Task>(delegate (Step x) { return Conversions.ToTask(x)!; })).ToList(), //Fix Null Issue
-                    OwnerId = null
+                    OwnerId = null,
+                    Difficulty = _dto.Difficulty,
+                    Kitchenware = _dto.KitchenWare?.ToList(),
+                    Ingredients = _dto.Ingredients?.ToList(),
                 };
 
                 m_recipeRepository.AddRecipe(recipe);
@@ -137,6 +146,5 @@ namespace souschef.server.Controllers
                 return new ContentResult() { Content = "Delete Failed", StatusCode = 404 };
             }
         }
-
     }
 }

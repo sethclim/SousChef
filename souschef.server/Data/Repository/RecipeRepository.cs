@@ -12,6 +12,8 @@ namespace souschef.server.Data.Repository
 
 
         public IEnumerable<Recipe>? Recipes => _context.Recipes?
+               .Include(c => c.Ingredients)
+               .Include(c => c.Kitchenware)
                .Include(c => c.Tasks).ThenInclude(x => x.Ingredients)
                .Include(c => c.Tasks).ThenInclude(x => x.Kitchenware);
 
