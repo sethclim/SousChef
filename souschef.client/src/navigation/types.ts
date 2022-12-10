@@ -8,16 +8,17 @@ export type HomeStackNavigatorParamList = {
   Recipe: {
     recipe: Recipe;
   };
+  Task: {
+    sessionId: string;
+  };
 };
 
 export type BottomTabNavigatorParamList = {
   Home: undefined;
   Favorite: undefined;
+  Cook: undefined;
   Calendar: undefined;
   Profile: undefined;
-  Task: {
-    sessionId: string;
-  };
 };
 
 export type WelcomeStackNavigatorParamList = {
@@ -34,17 +35,18 @@ export type WelcomeStackNavigatorParamList = {
 export const defaultBottomTabNavigatorParamList: BottomTabNavigatorParamList = {
   Home: undefined,
   Favorite: undefined,
+  Cook: undefined,
   Calendar: undefined,
   Profile: undefined,
-  Task: {
-    sessionId: '',
-  },
 };
 
 export const defaultHomeStackNavigatorParamList: HomeStackNavigatorParamList = {
   BottomTabs: defaultBottomTabNavigatorParamList,
   Recipe: {
     recipe: defaultRecipe,
+  },
+  Task: {
+    sessionId: '',
   },
 };
 
@@ -91,7 +93,17 @@ export type RecipeScreenRouteProp = RouteProp<
   'Recipe'
 >;
 
+export type CookScreenNavigationProp = NativeStackNavigationProp<
+  HomeStackNavigatorParamList,
+  'Task'
+>;
+
+export type TaskScreenNavigationProp = BottomTabNavigationProp<
+  HomeStackNavigatorParamList,
+  'BottomTabs'
+>;
+
 export type TaskScreenRouteProp = RouteProp<
-  BottomTabNavigatorParamList,
+  HomeStackNavigatorParamList,
   'Task'
 >;

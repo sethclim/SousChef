@@ -1,12 +1,6 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import * as React from 'react';
-import {
-  LoginScreen,
-  RegisterScreen,
-  TaskScreen,
-  WelcomeScreen,
-} from '../screens';
-import BottomTabs from './BottomTabs';
+import {LoginScreen, RegisterScreen, WelcomeScreen} from '../screens';
 import HomeStackNavigator from './HomeStack';
 import {WelcomeStackNavigatorParamList} from './types';
 

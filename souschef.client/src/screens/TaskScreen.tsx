@@ -14,12 +14,21 @@ import {
 } from '../components';
 import CircularButton from '../components/CircularButton';
 import {OpacityPressable, SpringPressable} from '../components/pressable';
-import {TaskScreenRouteProp} from '../navigation/types';
+import {
+  TaskScreenNavigationProp,
+  TaskScreenRouteProp,
+} from '../navigation/types';
 import {Theme} from '../styles/type';
 import {useGet, usePost} from '../hooks';
 import {defaultTask, Task} from '../api/responses';
 
-const TaskScreen = ({route}: {route: TaskScreenRouteProp}) => {
+const TaskScreen = ({
+  navigation,
+  route,
+}: {
+  navigation: TaskScreenNavigationProp;
+  route: TaskScreenRouteProp;
+}) => {
   // Route
   // const {sessionId} = route.params;
   const sessionId = '4d9de020-74ba-4f7a-b38f-8aa9753b65ce'; // TEMPORARY (CHANGES EVERYTIME)
