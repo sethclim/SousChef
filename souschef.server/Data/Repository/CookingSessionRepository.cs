@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using souschef.server.Data.Models;
 
 namespace souschef.server.Data.Repository.Contracts
@@ -8,6 +9,11 @@ namespace souschef.server.Data.Repository.Contracts
 
         public CookingSessionRepository(PostGresDBContext context){ _context = context; }
 
+        public IEnumerable<CookingSession>? CookingSessions => _context.CookingSession?
+                .Include(cS => cS.Recipes)
+                .Include(cS => cS.Host);
+
+
         Models.Task ICookingSessionRepository.GetTask()
         {
             throw new NotImplementedException();
@@ -17,6 +23,11 @@ namespace souschef.server.Data.Repository.Contracts
         {
              _context.CookingSession?.Add(cookingSession);
              _context.SaveChanges();
+        }
+
+        public IEnumerable<CookingSession>? GetCookingSessionsByUser(Guid userId)
+        {
+            return CookingSessions?.Where(cs => cs.Host?.Id == userId.ToString());
         }
 
         public IEnumerable<ApplicationUser> GetUsers(Guid sessionId)

@@ -31,12 +31,10 @@ namespace souschef.server.Controllers
             {
                 return new ContentResult() { Content = "User Not Found", StatusCode = 404 };
             }
-            else if(user.CookingSessions == null)
-            {
-                return new ContentResult() { Content = "User doesn't have cooking session", StatusCode = 404 };
-            }
 
-            var todaysSessions = user.CookingSessions?.Where(ck => ck.Date == Conversions.GetUnixTimeStamp(DateTime.Now));
+            var sessions =  m_cookingSessionRepository.GetCookingSessionsByUser(Guid.Parse(userId));
+
+            var todaysSessions = sessions?.Where(ck => ck.Date == Conversions.GetUnixTimeStamp(DateTime.Now));
 
             if(todaysSessions == null)
                 return new ContentResult() { Content = "User doesn't have cooking session today", StatusCode = 404 };

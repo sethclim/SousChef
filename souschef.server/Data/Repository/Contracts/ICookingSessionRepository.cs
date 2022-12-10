@@ -8,5 +8,6 @@ namespace souschef.server.Data.Repository.Contracts
         public Models.Task GetTask();
         public void SaveCookingSession(CookingSession cookingSession);
         public IEnumerable<ApplicationUser> GetUsers(Guid sessionId);
+        public IEnumerable<CookingSession>? GetCookingSessionsByUser(Guid userId);
     }
 }
