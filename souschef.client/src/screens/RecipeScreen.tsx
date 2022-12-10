@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -10,7 +10,7 @@ import {
   Row,
   SafeArea,
 } from '../components';
-import {BottomSheetRefProps} from '../components/BottomSheet';
+import {BottomSheetRefProps, BottomSheetState} from '../components/BottomSheet';
 import {SpringPressable} from '../components/pressable';
 import {ThemeContext} from '../contexts/AppContext';
 import {
@@ -35,8 +35,15 @@ const RecipeScreen = ({
 
   // Ref
   const ref = useRef<BottomSheetRefProps>(null);
+  const [max, setMax] = useState(BottomSheetState.Min);
+
 
   const [favorite, setFavorite] = useState(false);
+
+
+  const onChange = (state : BottomSheetState) => {
+    setMax(state);
+  }
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
@@ -63,101 +70,111 @@ const RecipeScreen = ({
           <Image
             source={require('../res/default-recipe.jpg')}
             style={stylesWithTheme.bannerImage}></Image>
-          <BottomSheet ref={ref}>
-            <Column
-              justifyContent="flex-start"
-              horizontalResizing="fill"
-              verticalResizing="fill"
-              paddingHorizontal={theme.spacing.m}
-              paddingVertical={theme.spacing.m}
-              spacing={theme.spacing.m}>
-              <Text numberOfLines={2} style={stylesWithTheme.h1}>
-                {recipe.name}
-              </Text>
-              <Row horizontalResizing="fill" spacing={theme.spacing.m}>
-                <Row spacing={theme.spacing.s}>
-                  <MaterialIcons name="timer" style={stylesWithTheme.icon} />
-                  <Text style={stylesWithTheme.timerText}>
-                    {recipe.duration / 60} min
-                  </Text>
-                </Row>
-                <View style={stylesWithTheme.divider} />
-                <Row>
-                  <MaterialIcons name="star" style={stylesWithTheme.starIcon} />
-                  <MaterialIcons
-                    name="star"
-                    style={[
-                      stylesWithTheme.starIcon,
-                      recipe.difficulty < DIFFICULTY.Medium
-                        ? stylesWithTheme.starEmptyIcon
-                        : {},
-                    ]}
-                  />
-                  <MaterialIcons
-                    name="star"
-                    style={[
-                      stylesWithTheme.starIcon,
-                      recipe.difficulty < DIFFICULTY.Hard
-                        ? stylesWithTheme.starEmptyIcon
-                        : {},
-                    ]}
-                  />
-                </Row>
-                <View style={stylesWithTheme.divider} />
-                <Row spacing={theme.spacing.s}>
-                  <MaterialIcons name="person" style={stylesWithTheme.icon} />
-                  <Text style={stylesWithTheme.timerText}>
-                    {recipe.serves} Serving
-                  </Text>
-                </Row>
-              </Row>
+          <BottomSheet ref={ref} onStateChange={onChange}>
+            {
+              max ?
               <Column
-                alignItems="flex-start"
+                justifyContent="flex-start"
                 horizontalResizing="fill"
-                spacing={theme.spacing.s}>
-                <Text style={stylesWithTheme.h2}>Ingredients</Text>
-                {recipe.ingredients.map((ingredient, i) => (
-                  <Row
-                    key={i}
-                    justifyContent="flex-start"
-                    horizontalResizing="fill"
-                    paddingHorizontal={theme.spacing.s}
-                    spacing={theme.spacing.s}>
-                    <View style={stylesWithTheme.listBullet} />
-                    <Text key={i} style={stylesWithTheme.listItem}>
-                      {`${ingredient.quantity} ${ingredient.name}`}
+                verticalResizing="fill"
+                paddingHorizontal={theme.spacing.m}
+                paddingVertical={theme.spacing.m}
+                spacing={theme.spacing.m}>
+                <Text numberOfLines={2} style={stylesWithTheme.h1}>
+                  {recipe.name}
+                </Text>
+                <Row horizontalResizing="fill" spacing={theme.spacing.m}>
+                  <Row spacing={theme.spacing.s}>
+                    <MaterialIcons name="timer" style={stylesWithTheme.icon} />
+                    <Text style={stylesWithTheme.timerText}>
+                      {recipe.duration / 60} min
                     </Text>
                   </Row>
-                ))}
-              </Column>
-              <Column
-                alignItems="flex-start"
-                horizontalResizing="fill"
-                spacing={theme.spacing.s}>
-                <Text style={stylesWithTheme.h2}>Steps</Text>
-                {recipe.tasks.map((task, i) => {
-                  let backgroundColor = '#FBB148';
-                  if (i % 3 == 1) backgroundColor = '#5ab885';
-                  else if (i % 3 == 2) backgroundColor = '#80b2e0';
-                  return (
+                  <View style={stylesWithTheme.divider} />
+                  <Row>
+                    <MaterialIcons name="star" style={stylesWithTheme.starIcon} />
+                    <MaterialIcons
+                      name="star"
+                      style={[
+                        stylesWithTheme.starIcon,
+                        recipe.difficulty < DIFFICULTY.Medium
+                          ? stylesWithTheme.starEmptyIcon
+                          : {},
+                      ]}
+                    />
+                    <MaterialIcons
+                      name="star"
+                      style={[
+                        stylesWithTheme.starIcon,
+                        recipe.difficulty < DIFFICULTY.Hard
+                          ? stylesWithTheme.starEmptyIcon
+                          : {},
+                      ]}
+                    />
+                  </Row>
+                  <View style={stylesWithTheme.divider} />
+                  <Row spacing={theme.spacing.s}>
+                    <MaterialIcons name="person" style={stylesWithTheme.icon} />
+                    <Text style={stylesWithTheme.timerText}>
+                      {recipe.serves} Serving
+                    </Text>
+                  </Row>
+                </Row>
+                <Column
+                  alignItems="flex-start"
+                  horizontalResizing="fill"
+                  spacing={theme.spacing.s}>
+                  <Text style={stylesWithTheme.h2}>Ingredients</Text>
+                  {recipe.ingredients.map((ingredient, i) => (
                     <Row
                       key={i}
                       justifyContent="flex-start"
                       horizontalResizing="fill"
                       paddingHorizontal={theme.spacing.s}
-                      spacing={theme.spacing.m}>
-                      <Text
-                        style={[stylesWithTheme.listNumber, {backgroundColor}]}>
-                        {i + 1}
-                      </Text>
+                      spacing={theme.spacing.s}>
+                      <View style={stylesWithTheme.listBullet} />
                       <Text key={i} style={stylesWithTheme.listItem}>
-                        {task.description}
+                        {`${ingredient.quantity} ${ingredient.name}`}
                       </Text>
                     </Row>
-                  );
-                })}
-              </Column>
-            </Column>
+                  ))}
+                </Column>
+                <Column
+                  alignItems="flex-start"
+                  horizontalResizing="fill"
+                  spacing={theme.spacing.s}>
+                  <Text style={stylesWithTheme.h2}>Steps</Text>
+                  {recipe.tasks.map((task, i) => {
+                    let backgroundColor = '#FBB148';
+                    if (i % 3 == 1) backgroundColor = '#5ab885';
+                    else if (i % 3 == 2) backgroundColor = '#80b2e0';
+                    return (
+                      <Row
+                        key={i}
+                        justifyContent="flex-start"
+                        horizontalResizing="fill"
+                        paddingHorizontal={theme.spacing.s}
+                        spacing={theme.spacing.m}>
+                        <Text
+                          style={[stylesWithTheme.listNumber, {backgroundColor}]}>
+                          {i + 1}
+                        </Text>
+                        <Text key={i} style={stylesWithTheme.listItem}>
+                          {task.description}
+                        </Text>
+                      </Row>
+                    );
+                  })}
+                </Column>
+              </Column>:
+
+                    null
+              
+
+
+
+            }
+
           </BottomSheet>
         </Column>
       </SafeArea>

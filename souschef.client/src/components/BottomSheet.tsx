@@ -10,7 +10,10 @@ import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
   Extrapolate,
   interpolate,
+  runOnJS,
+  useAnimatedReaction,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
@@ -25,6 +28,8 @@ const HALF_TRANSLATE_Y = (MAX_TRANSLATE_Y + MIN_TRANSLATE_Y) / 2;
 
 type BottomSheetProps = {
   children?: React.ReactNode;
+  onStateChange :  (state: BottomSheetState) => void
+  ;
 };
 export type BottomSheetRefProps = {
   scrollTo: (destination: number) => void;
@@ -33,8 +38,14 @@ export type BottomSheetRefProps = {
   isMaximized: () => boolean;
 };
 
+export const enum BottomSheetState {
+  Max,
+  Min,
+  Hidden
+}
+
 const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
-  ({children}, ref) => {
+  ({children, onStateChange}, ref) => {
     // Theme
     const theme = useContext(ThemeContext);
     const stylesWithTheme = styles(theme);
@@ -42,6 +53,8 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
     // Shared Values
     const translateY = useSharedValue(MIN_TRANSLATE_Y);
     const maximized = useSharedValue(false);
+
+    const state = useSharedValue(BottomSheetState.Min);
 
     // Callbacks
     const scrollTo = useCallback((destination: number) => {
@@ -68,6 +81,12 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
       [scrollTo, minimize, maximize, isMaximized],
     );
 
+
+    useDerivedValue(() => {
+      runOnJS(onStateChange)(state.value);
+    });
+
+
     const context = useSharedValue({y: 0});
     const gesture = Gesture.Pan()
       .onStart(() => {
@@ -79,12 +98,15 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
           Math.min(translateY.value, MIN_TRANSLATE_Y),
           MAX_TRANSLATE_Y,
         );
+
       })
       .onEnd(() => {
         if (translateY.value > HALF_TRANSLATE_Y) {
           scrollTo(MIN_TRANSLATE_Y);
+          state.value = BottomSheetState.Min
         } else if (translateY.value < HALF_TRANSLATE_Y) {
           scrollTo(MAX_TRANSLATE_Y);
+          state.value = BottomSheetState.Max
         }
       });
 
