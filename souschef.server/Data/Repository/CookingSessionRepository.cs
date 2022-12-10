@@ -8,9 +8,15 @@ namespace souschef.server.Data.Repository.Contracts
 
         public CookingSessionRepository(PostGresDBContext context){ _context = context; }
 
-        System.Threading.Tasks.Task ICookingSessionRepository.GetTask()
+        Models.Task ICookingSessionRepository.GetTask()
         {
             throw new NotImplementedException();
+        }
+
+        public void SaveCookingSession(CookingSession cookingSession)
+        {
+             _context.CookingSession?.Add(cookingSession);
+             _context.SaveChanges();
         }
 
         public IEnumerable<ApplicationUser> GetUsers(Guid sessionId)
