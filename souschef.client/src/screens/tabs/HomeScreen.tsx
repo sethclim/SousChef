@@ -10,9 +10,6 @@ import {useGet} from '../../hooks';
 import {HomeScreenNavigationProp} from '../../navigation/types';
 import {Theme} from '../../styles/type';
 
-const mediumImage = {width: 175, height: 200};
-const smallImage = {width: 110, height: 110};
-
 const HomeScreen = ({navigation}: {navigation: HomeScreenNavigationProp}) => {
   // Theme
   const theme = useContext(ThemeContext);
@@ -60,7 +57,6 @@ const HomeScreen = ({navigation}: {navigation: HomeScreenNavigationProp}) => {
 
   // Methods
   const onMount = () => {
-    console.log('MOUNTED');
     getPublicRecipes(); // API Request
     setSearchValue('');
   };
@@ -288,6 +284,9 @@ const verticalRecipesComponent = (
     </ScrollView>
   );
 };
+
+const mediumImage = {width: 175, height: 200};
+const smallImage = {width: 110, height: 110};
 
 const styles = (theme: Theme) =>
   StyleSheet.create({

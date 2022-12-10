@@ -1,17 +1,10 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from 'react';
-import {Dimensions, StyleSheet, View, Text} from 'react-native';
+import React, {useCallback, useContext, useImperativeHandle} from 'react';
+import {Dimensions, StyleSheet, View} from 'react-native';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
   Extrapolate,
   interpolate,
   runOnJS,
-  useAnimatedReaction,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
@@ -27,25 +20,24 @@ const MIN_MAX_DIFF = MIN_TRANSLATE_Y - MAX_TRANSLATE_Y;
 const HALF_TRANSLATE_Y = (MAX_TRANSLATE_Y + MIN_TRANSLATE_Y) / 2;
 
 type BottomSheetProps = {
+  onStateChange: (state: BottomSheetState) => void;
+  zIndex?: number;
   children?: React.ReactNode;
-  onStateChange :  (state: BottomSheetState) => void
-  ;
 };
 export type BottomSheetRefProps = {
   scrollTo: (destination: number) => void;
   minimize: () => void;
   maximize: () => void;
-  isMaximized: () => boolean;
 };
 
 export const enum BottomSheetState {
   Max,
   Min,
-  Hidden
+  Hidden,
 }
 
 const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
-  ({children, onStateChange}, ref) => {
+  ({children, onStateChange, zIndex}, ref) => {
     // Theme
     const theme = useContext(ThemeContext);
     const stylesWithTheme = styles(theme);
@@ -71,21 +63,15 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
       scrollTo(MAX_TRANSLATE_Y);
     }, []);
 
-    const isMaximized = useCallback(() => {
-      return maximized.value;
-    }, []);
-
-    useImperativeHandle(
-      ref,
-      () => ({scrollTo, minimize, maximize, isMaximized}),
-      [scrollTo, minimize, maximize, isMaximized],
-    );
-
+    useImperativeHandle(ref, () => ({scrollTo, minimize, maximize}), [
+      scrollTo,
+      minimize,
+      maximize,
+    ]);
 
     useDerivedValue(() => {
       runOnJS(onStateChange)(state.value);
     });
-
 
     const context = useSharedValue({y: 0});
     const gesture = Gesture.Pan()
@@ -94,19 +80,18 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
       })
       .onUpdate(event => {
         translateY.value = event.translationY + context.value.y;
-        translateY.value = Math.max(
-          Math.min(translateY.value, MIN_TRANSLATE_Y),
-          MAX_TRANSLATE_Y,
-        );
-
+        translateY.value = Math.max(translateY.value, MAX_TRANSLATE_Y);
       })
       .onEnd(() => {
-        if (translateY.value > HALF_TRANSLATE_Y) {
+        if (translateY.value > -SCREEN_HEIGHT / 3) {
+          scrollTo(0);
+          state.value = BottomSheetState.Hidden;
+        } else if (translateY.value > HALF_TRANSLATE_Y) {
           scrollTo(MIN_TRANSLATE_Y);
-          state.value = BottomSheetState.Min
+          state.value = BottomSheetState.Min;
         } else if (translateY.value < HALF_TRANSLATE_Y) {
           scrollTo(MAX_TRANSLATE_Y);
-          state.value = BottomSheetState.Max
+          state.value = BottomSheetState.Max;
         }
       });
 
@@ -125,6 +110,7 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
       return {
         borderRadius,
         height,
+        zIndex,
         transform: [{translateY: translateY.value}],
       };
     });
