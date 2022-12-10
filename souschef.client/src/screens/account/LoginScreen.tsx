@@ -1,14 +1,14 @@
 import React, {useContext} from 'react';
 import {StyleSheet, Text} from 'react-native';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {ThemeContext} from '../../contexts/AppContext';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ApiUrls} from '../../api/constants/ApiConstants';
 import {Button, Card, Column, Input, Row, SafeArea} from '../../components';
 import {OpacityPressable, SpringPressable} from '../../components/pressable';
+import {ThemeContext} from '../../contexts/AppContext';
 import {usePost} from '../../hooks';
 import {
-  defaultBottomTabNavigatorParamList,
+  defaultHomeStackNavigatorParamList,
   LoginScreenNavigationProp,
   LoginScreenRouteProp,
 } from '../../navigation/types';
@@ -56,7 +56,7 @@ const LoginScreen = ({
         password: password,
       }).then(() => {
         if (!error)
-          navigation.replace('BottomTabs', defaultBottomTabNavigatorParamList);
+          navigation.replace('HomeStack', defaultHomeStackNavigatorParamList);
         else setError(`${loginError}`);
       });
     }
@@ -65,7 +65,7 @@ const LoginScreen = ({
   const gotoRegister = () => navigation.replace('Register', {animationID: 1});
 
   const skipLogin = () =>
-    navigation.replace('BottomTabs', defaultBottomTabNavigatorParamList);
+    navigation.replace('HomeStack', defaultHomeStackNavigatorParamList);
 
   return (
     <SafeArea>

@@ -7,6 +7,7 @@ import {
   WelcomeScreen,
 } from '../screens';
 import BottomTabs from './BottomTabs';
+import HomeStackNavigator from './HomeStack';
 import {WelcomeStackNavigatorParamList} from './types';
 
 // Guide: https://blog.jscrambler.com/getting-started-with-react-navigation-v6-and-typescript-in-react-native
@@ -32,14 +33,9 @@ const WelcomeStackNavigator = () => {
         options={{headerShown: false, animation: 'slide_from_bottom'}}
       />
       <WelcomeStack.Screen
-        name="BottomTabs"
-        component={BottomTabs}
+        name="HomeStack"
+        component={HomeStackNavigator}
         options={{headerShown: false, animation: 'fade'}}
-      />
-      <WelcomeStack.Screen
-        name="Task"
-        component={TaskScreen}
-        options={{headerShown: false}}
       />
     </WelcomeStack.Navigator>
   );

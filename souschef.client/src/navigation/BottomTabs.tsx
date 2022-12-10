@@ -9,6 +9,7 @@ import {
   ProfileScreen,
   TaskScreen,
 } from '../screens';
+import HomeStackNavigator from './HomeStack';
 import {BottomTabNavigatorParamList} from './types';
 
 const BottomTab = createBottomTabNavigator<BottomTabNavigatorParamList>();

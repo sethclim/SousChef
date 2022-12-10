@@ -5,6 +5,7 @@ import HomeScreen from './tabs/HomeScreen';
 import FavoriteScreen from './tabs/FavoriteScreen';
 import CalendarScreen from './tabs/CalendarScreen';
 import ProfileScreen from './tabs/ProfileScreen';
+import RecipeScreen from './RecipeScreen';
 import TaskScreen from './TaskScreen';
 
 export {
@@ -15,5 +16,6 @@ export {
   FavoriteScreen,
   CalendarScreen,
   ProfileScreen,
+  RecipeScreen,
   TaskScreen,
 };

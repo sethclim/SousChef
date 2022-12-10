@@ -2,7 +2,7 @@ import React, {useContext, useEffect} from 'react';
 import {Image, ScrollView, StyleSheet, Text} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {ApiUrls} from '../../api/constants/ApiConstants';
-import {defaultRecipe, DIFFICULTY, Recipe} from '../../api/responses';
+import {DIFFICULTY, Recipe} from '../../api/responses';
 import {Card, Column, Row, SafeArea, SearchBar} from '../../components';
 import {SpringPressable} from '../../components/pressable';
 import {ThemeContext} from '../../contexts/AppContext';
@@ -78,8 +78,8 @@ const HomeScreen = ({navigation}: {navigation: HomeScreenNavigationProp}) => {
     console.log('See All!');
   };
 
-  const recipePressed = (recipe: string) => {
-    console.log(recipe);
+  const recipePressed = (_recipe: Recipe) => {
+    navigation.navigate('Recipe', {recipe: _recipe});
   };
 
   return (
@@ -152,7 +152,7 @@ const HomeScreen = ({navigation}: {navigation: HomeScreenNavigationProp}) => {
                       return (
                         <SpringPressable
                           key={i}
-                          onPress={() => recipePressed(recipe.id)}>
+                          onPress={() => recipePressed(recipe)}>
                           <Card
                             justifyContent="flex-end"
                             paddingHorizontal={0}
@@ -200,7 +200,7 @@ const HomeScreen = ({navigation}: {navigation: HomeScreenNavigationProp}) => {
 
 const verticalRecipesComponent = (
   recipes: Recipe[],
-  onPressed: (recipeId: string) => void,
+  onPressed: (recipe: Recipe) => void,
   theme: Theme,
   styles: any,
 ) => {
@@ -223,7 +223,7 @@ const verticalRecipesComponent = (
           return (
             <SpringPressable
               key={i}
-              onPress={() => onPressed(recipe.id)}
+              onPress={() => onPressed(recipe)}
               horizontalResizing="fill">
               <Card
                 paddingHorizontal={0}

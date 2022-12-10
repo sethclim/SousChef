@@ -1,15 +1,13 @@
+import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import type {RouteProp} from '@react-navigation/native';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {defaultRecipe, Recipe} from '../api/responses';
 
-export type WelcomeStackNavigatorParamList = {
-  Welcome: undefined;
-  Login: {
-    animationID: number;
-  };
-  Register: {
-    animationID: number;
-  };
+export type HomeStackNavigatorParamList = {
   BottomTabs: BottomTabNavigatorParamList;
+  Recipe: {
+    recipe: Recipe;
+  };
 };
 
 export type BottomTabNavigatorParamList = {
@@ -22,6 +20,17 @@ export type BottomTabNavigatorParamList = {
   };
 };
 
+export type WelcomeStackNavigatorParamList = {
+  Welcome: undefined;
+  Login: {
+    animationID: number;
+  };
+  Register: {
+    animationID: number;
+  };
+  HomeStack: HomeStackNavigatorParamList;
+};
+
 export const defaultBottomTabNavigatorParamList: BottomTabNavigatorParamList = {
   Home: undefined,
   Favorite: undefined,
@@ -29,6 +38,13 @@ export const defaultBottomTabNavigatorParamList: BottomTabNavigatorParamList = {
   Profile: undefined,
   Task: {
     sessionId: '',
+  },
+};
+
+export const defaultHomeStackNavigatorParamList: HomeStackNavigatorParamList = {
+  BottomTabs: defaultBottomTabNavigatorParamList,
+  Recipe: {
+    recipe: defaultRecipe,
   },
 };
 
@@ -60,8 +76,20 @@ export type RegisterScreenRouteProp = RouteProp<
   'Register'
 >;
 
-export type HomeScreenNavigationProp =
-  NativeStackNavigationProp<BottomTabNavigatorParamList>;
+export type HomeScreenNavigationProp = NativeStackNavigationProp<
+  HomeStackNavigatorParamList,
+  'Recipe'
+>;
+
+export type RecipeScreenNavigationProp = BottomTabNavigationProp<
+  HomeStackNavigatorParamList,
+  'BottomTabs'
+>;
+
+export type RecipeScreenRouteProp = RouteProp<
+  HomeStackNavigatorParamList,
+  'Recipe'
+>;
 
 export type TaskScreenRouteProp = RouteProp<
   BottomTabNavigatorParamList,
