@@ -79,18 +79,12 @@ public class LiveCookingSessionController : Controller
 
         r_List.Add(r);
 
-        var m = new MealPlan
-        {
-            OccasionType = 0,
-            Recipes = r_List,
-            Id = Guid.NewGuid()
-        };
 
         var s = new CookingSession
         {
             Id = Guid.NewGuid(),
             Date = Conversions.GetUnixTimeStamp(DateTime.Now),
-            MealPlan = m,
+            Recipes = r_List,
         };
 
         var members = new List<UserDTO>();
@@ -100,7 +94,7 @@ public class LiveCookingSessionController : Controller
             members.Add(Conversions.ToUserDTO(mem));
         }
 
-        var session = LiveSessions.GetLiveSessions().StartCookingSession(s.Id, s.MealPlan, Conversions.ToUserDTO(s.Host), members);
+        var session = LiveSessions.GetLiveSessions().StartCookingSession(s);
 
         if (session != null)
         {

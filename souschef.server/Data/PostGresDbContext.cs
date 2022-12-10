@@ -13,7 +13,6 @@ public class PostGresDBContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<ApplicationUser>? ApplicationUsers { get; set; }
     public DbSet<CookingSession>?  CookingSession   { get; set; }
-    public DbSet<MealPlan>?        MealPlan         { get; set; }
     public DbSet<Recipe>?          Recipes          { get; set; }
     public DbSet<Models.Task>?     Tasks            { get; set; }
     public DbSet<Ingredient>?      Ingredients      { get; set; }
