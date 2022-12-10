@@ -7,5 +7,6 @@
         public string? Id { get; set; }
         public int SkillLevel { get; set; }
         public string? CurrentSessionId { get; set; }
+        public Guid? CurrentRecipe { get; set; }
     }
 }

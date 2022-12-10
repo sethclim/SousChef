@@ -160,12 +160,12 @@ public class LiveCookingSessionController : Controller
     }
 
     [HttpGet("get-task")]
-    public ActionResult<Data.Models.Task> GetTask([FromQuery] string sessionId)
+    public ActionResult<Data.Models.Task> GetTask([FromQuery] string sessionId, [FromQuery] string userId)
     {
         var session = LiveSessions.GetLiveSessions().GetSessionById(Guid.Parse(sessionId));
         if (session != null)
         {
-            var task = session.GetNextTask();
+            var task = session.GetNextTask(userId);
             if (task != null) return Ok(task);
             return new ContentResult() { Content = "No more tasks available", StatusCode = 404 };
         }
@@ -174,18 +174,15 @@ public class LiveCookingSessionController : Controller
     }
 
     [HttpPost("complete-task")]
-    public IActionResult CompleteTask([FromQuery] string sessionId, [FromQuery] string taskId)
+    public IActionResult CompleteTask([FromQuery] string sessionId, [FromQuery] string recipeId, [FromQuery] string taskId)
     {
         var session = LiveSessions.GetLiveSessions().GetSessionById(Guid.Parse(sessionId));
 
         if (session != null)
         {
-            if (session.Tasks.ContainsKey(Guid.Parse(taskId)))
-            {
-                session.Tasks[Guid.Parse(taskId)].Finished = true;
-                return Ok();
-            }
-            return new ContentResult() { Content = "Task not found", StatusCode = 404 };
+            session.Recipes[Guid.Parse(recipeId)].GetTask(Guid.Parse(taskId)).Finished = true;
+        
+            return Ok();
         }
 
         return new ContentResult() { Content = "Invalid session ID", StatusCode = 404 };
