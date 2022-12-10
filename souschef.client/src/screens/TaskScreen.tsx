@@ -66,11 +66,7 @@ const TaskScreen = ({
 
   // Methods
   const onChange = (state: BottomSheetState) => {
-    if (state == BottomSheetState.Hidden) {
-      navigation.goBack();
-    } else {
-      setMaximized(state == BottomSheetState.Max);
-    }
+    setMaximized(state == BottomSheetState.Max);
   };
 
   const viewMore = () => {

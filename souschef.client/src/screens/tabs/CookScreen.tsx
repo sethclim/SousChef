@@ -1,5 +1,5 @@
 import React, {useContext, useEffect} from 'react';
-import {Image, ScrollView, StyleSheet, Text} from 'react-native';
+import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {ThemeContext} from '../../contexts/AppContext';
 import {Button, Card, Column, Row, SafeArea} from '../../components';
 import {Theme} from '../../styles/type';
@@ -16,8 +16,6 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
 
   // Fields
   const [todayMealPlan, setTodayMealPlan] = React.useState<Recipe[]>([
-    defaultRecipe,
-    defaultRecipe,
     defaultRecipe,
     defaultRecipe,
     defaultRecipe,
@@ -63,9 +61,9 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
         justifyContent="flex-start"
         horizontalResizing="fill"
         verticalResizing="fill"
-        paddingVertical={theme.spacing.m}
+        paddingVertical={theme.spacing.xl}
         spacing={theme.spacing.m}>
-        <Column horizontalResizing="fill" spacing={theme.spacing.l}>
+        <Column alignItems="flex-start" horizontalResizing="fill">
           <Text style={stylesWithTheme.h1}>Today's Meal Plan</Text>
           {todayMealPlan.length == 0 ? (
             <Text style={stylesWithTheme.optional}>
@@ -97,10 +95,13 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
                             style={stylesWithTheme.imageOverlayText}>
                             {recipe.name}
                           </Text>
-                          <Button
-                            text="START"
-                            style={stylesWithTheme.imageOverlayButton}
-                          />
+                          <View
+                            style={stylesWithTheme.imageOverlayButtonContainer}>
+                            <Button
+                              text="START"
+                              style={stylesWithTheme.imageOverlayButton}
+                            />
+                          </View>
                         </Column>
                       </Card>
                     </SpringPressable>
@@ -134,12 +135,19 @@ const mediumImage = {width: 175, height: 200};
 
 const styles = (theme: Theme) =>
   StyleSheet.create({
-    h1: {color: theme.colors.text, fontSize: 28, fontWeight: 'bold'},
+    h1: {
+      color: theme.colors.text,
+      fontSize: 28,
+      fontWeight: 'bold',
+      paddingHorizontal: theme.spacing.m,
+      paddingTop: theme.spacing.l,
+    },
     h2: {color: theme.colors.text, fontSize: 20, fontWeight: 'bold'},
     h3: {color: theme.colors.text, fontSize: 14},
     optional: {
       color: '#D0BEBE',
       fontSize: 18,
+      paddingHorizontal: theme.spacing.m,
       paddingTop: theme.spacing.s,
     },
     mediumImage: {
@@ -149,9 +157,6 @@ const styles = (theme: Theme) =>
       shadowRadius: 8,
     },
     imageOverlay: {
-      backgroundColor: '#0008',
-      padding: theme.spacing.s,
-      borderRadius: 8,
       position: 'absolute',
       top: 0,
       bottom: 0,
@@ -159,15 +164,23 @@ const styles = (theme: Theme) =>
       right: 0,
     },
     imageOverlayText: {
+      width: '100%',
       color: '#fff',
+      backgroundColor: '#0008',
+      padding: theme.spacing.s,
+      borderRadius: 8,
       fontSize: 18,
       textAlign: 'center',
       fontWeight: 'bold',
     },
+    imageOverlayButtonContainer: {
+      width: '100%',
+      padding: theme.spacing.s,
+    },
     imageOverlayButton: {
+      width: '100%',
       color: '#fff',
       backgroundColor: theme.colors.primary,
-      width: '100%',
       borderRadius: 8,
       paddingVertical: theme.spacing.s,
     },

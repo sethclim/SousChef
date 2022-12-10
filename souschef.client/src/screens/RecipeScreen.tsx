@@ -42,11 +42,7 @@ const RecipeScreen = ({
   const [maximized, setMaximized] = useState(false);
 
   const onChange = (state: BottomSheetState) => {
-    if (state == BottomSheetState.Hidden) {
-      navigation.goBack();
-    } else {
-      setMaximized(state == BottomSheetState.Max);
-    }
+    setMaximized(state == BottomSheetState.Max);
   };
 
   return (
