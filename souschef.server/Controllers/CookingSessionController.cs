@@ -34,10 +34,19 @@ namespace souschef.server.Controllers
 
             var sessions =  m_cookingSessionRepository.GetCookingSessionsByUser(Guid.Parse(userId));
 
-            var todaysSessions = sessions?.Where(ck => ck.Date == Conversions.GetUnixTimeStamp(DateTime.Now));
+            Console.WriteLine("Time " + Conversions.GetUnixTimeStamp(DateTime.Now));
 
-            if(todaysSessions == null)
+
+            DateTime dat_Time = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+           
+
+            var todaysSessions = sessions?.Where(cookingSession => (new DateTime(1970, 1, 1, 0, 0, 0, 0)
+                                          .AddSeconds((double)(cookingSession.Date ?? 0.0))) >= DateTime.Now.Date);
+
+            if(todaysSessions?.Count() <= 0)
                 return new ContentResult() { Content = "User doesn't have cooking session today", StatusCode = 404 };
+
+            Console.WriteLine(todaysSessions);
 
             return Ok(todaysSessions);
         }
