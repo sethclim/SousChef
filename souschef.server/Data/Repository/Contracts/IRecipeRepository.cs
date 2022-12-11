@@ -7,7 +7,7 @@ namespace souschef.server.Data.Repository.Contracts
         void AddRecipe(Recipe _recipe);
         void DeleteRecipe(Recipe _recipe);
         Recipe? GetRecipe(Guid recipeId);
-        IEnumerable<Recipe>? GetAll(Guid ownerId);
+        IEnumerable<Recipe>? GetAll(Guid? ownerId);
         bool Modify(Recipe _recipe);
     }
 }

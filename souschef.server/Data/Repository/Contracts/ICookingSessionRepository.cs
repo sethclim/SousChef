@@ -5,7 +5,9 @@ namespace souschef.server.Data.Repository.Contracts
 {
     public interface ICookingSessionRepository
     { 
-        public System.Threading.Tasks.Task GetTask();
+        public Models.Task GetTask();
+        public void SaveCookingSession(CookingSession cookingSession);
         public IEnumerable<ApplicationUser> GetUsers(Guid sessionId);
+        public IEnumerable<CookingSession>? GetCookingSessionsByUser(Guid userId);
     }
 }
