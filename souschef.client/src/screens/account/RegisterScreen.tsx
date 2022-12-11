@@ -5,7 +5,7 @@ import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIc
 import {ApiUrls} from '../../api/constants/ApiConstants';
 import {Button, Card, Column, Input, Row, SafeArea} from '../../components';
 import {OpacityPressable, SpringPressable} from '../../components/pressable';
-import {ThemeContext} from '../../contexts/AppContext';
+import {AuthContext, ThemeContext} from '../../contexts/AppContext';
 import {usePost} from '../../hooks';
 import {
   defaultHomeStackNavigatorParamList,
@@ -21,6 +21,9 @@ const RegisterScreen = ({
   navigation: RegisterScreenNavigationProp;
   route: RegisterScreenRouteProp;
 }) => {
+  // User
+  const {register, registerSuccess, registerError} = useContext(AuthContext);
+
   // Theme
   const theme = useContext(ThemeContext);
   const stylesWithTheme = styles(theme);
@@ -30,7 +33,6 @@ const RegisterScreen = ({
   const [password, setPassword] = React.useState<string>('');
   const [passwordConfirm, setPasswordConfirm] = React.useState<string>('');
   const [error, setError] = React.useState<string>('');
-  const {post: register, error: registerError} = usePost(ApiUrls.register);
 
   React.useEffect(() => {
     setName('');
@@ -41,6 +43,14 @@ const RegisterScreen = ({
     if (route.params.animationID === 1)
       navigation.setOptions({animation: 'slide_from_right'});
   }, [navigation]);
+
+  React.useEffect(() => {
+    if (registerSuccess) {
+      navigation.replace('Login', {animationID: 1});
+    } else if (registerError) {
+      setError(`${registerError}`);
+    }
+  }, [registerSuccess, registerError]);
 
   const attemptRegister = () => {
     setError('');
@@ -64,11 +74,12 @@ const RegisterScreen = ({
         email: email,
         password: password,
         passwordConfirm: passwordConfirm,
-      }).then(() => {
-        if (!error)
-          navigation.replace('HomeStack', defaultHomeStackNavigatorParamList);
-        else setError(`${registerError}`);
       });
+      // .then(() => {
+      //   if (!error)
+      //     navigation.replace('HomeStack', defaultHomeStackNavigatorParamList);
+      //   else setError(`${registerError}`);
+      // });
     }
   };
 

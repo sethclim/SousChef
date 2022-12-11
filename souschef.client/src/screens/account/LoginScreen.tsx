@@ -2,11 +2,9 @@ import React, {useContext} from 'react';
 import {StyleSheet, Text} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {ApiUrls} from '../../api/constants/ApiConstants';
 import {Button, Card, Column, Input, Row, SafeArea} from '../../components';
 import {OpacityPressable, SpringPressable} from '../../components/pressable';
-import {ThemeContext} from '../../contexts/AppContext';
-import {usePost} from '../../hooks';
+import {AuthContext, ThemeContext} from '../../contexts/AppContext';
 import {
   defaultHomeStackNavigatorParamList,
   LoginScreenNavigationProp,
@@ -21,6 +19,9 @@ const LoginScreen = ({
   navigation: LoginScreenNavigationProp;
   route: LoginScreenRouteProp;
 }) => {
+  // User
+  const {user, login, loginSuccess, loginError} = useContext(AuthContext);
+
   // Theme
   const theme = useContext(ThemeContext);
   const stylesWithTheme = styles(theme);
@@ -30,9 +31,6 @@ const LoginScreen = ({
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
 
-  // API Calls
-  const {post: login, error: loginError} = usePost(ApiUrls.login);
-
   // On Mount
   React.useEffect(() => {
     setEmail('');
@@ -41,6 +39,14 @@ const LoginScreen = ({
     if (route.params.animationID === 1)
       navigation.setOptions({animation: 'slide_from_left'});
   }, [navigation]);
+
+  React.useEffect(() => {
+    if (user) {
+      navigation.replace('HomeStack', defaultHomeStackNavigatorParamList);
+    } else if (loginError) {
+      setError(`${loginError}`);
+    }
+  }, [user, loginSuccess, loginError]);
 
   // Methods
   const attemptLogin = () => {
@@ -54,18 +60,11 @@ const LoginScreen = ({
       login({
         email: email,
         password: password,
-      }).then(() => {
-        if (!error)
-          navigation.replace('HomeStack', defaultHomeStackNavigatorParamList);
-        else setError(`${loginError}`);
       });
     }
   };
 
   const gotoRegister = () => navigation.replace('Register', {animationID: 1});
-
-  const skipLogin = () =>
-    navigation.replace('HomeStack', defaultHomeStackNavigatorParamList);
 
   return (
     <SafeArea>
@@ -135,15 +134,6 @@ const LoginScreen = ({
                 </Text>
               </OpacityPressable>
             </Row>
-            <OpacityPressable onPress={skipLogin}>
-              <Text
-                style={[
-                  stylesWithTheme.registerText,
-                  stylesWithTheme.clickableText,
-                ]}>
-                Bypass Login
-              </Text>
-            </OpacityPressable>
           </Column>
         </Column>
       </KeyboardAwareScrollView>

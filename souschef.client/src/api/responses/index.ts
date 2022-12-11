@@ -1,7 +1,39 @@
+export enum SKILL_LEVEL {
+  Beginner,
+  Intermediate,
+  Expert,
+}
+
 export enum DIFFICULTY {
   Easy,
   Medium,
   Hard,
+}
+
+export enum OCCASION_TYPE {
+  Home,
+  Professional,
+  Educational,
+}
+
+export enum WEIGHT_UNITS {}
+export enum VOLUME_UNITS {}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  skillLevel: SKILL_LEVEL;
+}
+
+export interface MealPlan {
+  id: string;
+  name: string;
+  date: number;
+  occasionType: OCCASION_TYPE;
+  recipes: Recipe[];
+  guests: User[];
+  host: User;
 }
 
 export interface Task {

@@ -1,60 +1,78 @@
 import React, {useContext, useEffect} from 'react';
 import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
-import {ThemeContext} from '../../contexts/AppContext';
+import {AuthContext, ThemeContext} from '../../contexts/AppContext';
 import {Button, Card, Column, Row, SafeArea} from '../../components';
 import {Theme} from '../../styles/type';
 import {CookScreenNavigationProp} from '../../navigation/types';
 import {SpringPressable} from '../../components/pressable';
-import {defaultRecipe, Recipe} from '../../api/responses';
+import {defaultRecipe, MealPlan, Recipe} from '../../api/responses';
 import {useGet} from '../../hooks';
 import {ApiUrls} from '../../api/constants/ApiConstants';
 
 const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
+  // User
+  const {user} = useContext(AuthContext);
+
   // Theme
   const theme = useContext(ThemeContext);
   const stylesWithTheme = styles(theme);
 
   // Fields
-  const [todayMealPlan, setTodayMealPlan] = React.useState<Recipe[]>([
-    defaultRecipe,
-    defaultRecipe,
-    defaultRecipe,
-  ]);
+  const [todayMealPlan, setTodayMealPlan] = React.useState<MealPlan[]>([]);
+  let mealPlanId: string | undefined;
 
   // API Calls
-  // const {
-  //   get: getMealPlans,
-  //   data: mealPlans,
-  //   loading: mealPlansLoading,
-  //   error: mealPlansError,
-  // } = useGet<Recipe[]>(`${ApiUrls.getTodaysMealPlans}?userId=${}`, []);
+  const {
+    get: getMealPlans,
+    data: mealPlans,
+    success: mealPlansSuccess,
+    loading: mealPlansLoading,
+    error: mealPlansError,
+  } = useGet<MealPlan[]>(
+    `${ApiUrls.getTodaysMealPlans}?userId=${user?.id}`,
+    [],
+  );
+
+  const {
+    get: startMealPlan,
+    data: startMealPlanData,
+    success: startMealPlanSuccess,
+    loading: startMealPlanLoading,
+    error: startMealPlanError,
+  } = useGet(`${ApiUrls.startMealPlan}?sessionId=${mealPlanId}`);
 
   // OnMount
-  // useEffect(() => {
-  //   navigation.addListener('focus', onMount);
-  //   return () => {
-  //     navigation.removeListener('focus', onMount);
-  //   };
-  // }, []);
+  useEffect(() => {
+    navigation.addListener('focus', onMount);
+    return () => {
+      navigation.removeListener('focus', onMount);
+    };
+  }, []);
 
-  // OnMealPlansData
-  // useEffect(() => {
-  //   setTodayMealPlan(mealPlans);
-  // }, [mealPlans]);
+  useEffect(() => {
+    setTodayMealPlan(mealPlans ?? []);
+  }, [mealPlans]);
+
+  useEffect(() => {
+    if (startMealPlanSuccess)
+      navigation.navigate('Task', {sessionId: mealPlanId!});
+  }, [startMealPlanSuccess]);
 
   // Methods
-  // const onMount = () => {
-  //   getMealPlans(); // API Request
-  // };
+  const onMount = () => {
+    getMealPlans(); // API Request
+  };
 
   // Methods
-  const mealPlanPressed = (_recipe: Recipe) => {
-    //navigation.navigate('Recipe', {recipe: _recipe});
+  const mealPlanPressed = (mealPlan: MealPlan) => {
+    mealPlanId = mealPlan.id;
+    startMealPlan();
   };
 
   const joinSession = () => {
-    navigation.navigate('Task', {sessionId: ''});
+    navigation.navigate('Task', {sessionId: mealPlanId!});
   };
+
   return (
     <SafeArea>
       <Column
@@ -78,11 +96,11 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
                 paddingVertical: theme.spacing.m,
               }}>
               <Row horizontalResizing="fill" spacing={theme.spacing.m}>
-                {todayMealPlan.map((recipe, i) => {
+                {todayMealPlan.map((mealPlan, i) => {
                   return (
                     <SpringPressable
                       key={i}
-                      onPress={() => mealPlanPressed(recipe)}>
+                      onPress={() => mealPlanPressed(mealPlan)}>
                       <Card paddingHorizontal={0} paddingVertical={0}>
                         <Image
                           source={require('../../res/default-recipe.jpg')}
@@ -93,7 +111,7 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
                           <Text
                             numberOfLines={4}
                             style={stylesWithTheme.imageOverlayText}>
-                            {recipe.name}
+                            {mealPlan.name}
                           </Text>
                           <View
                             style={stylesWithTheme.imageOverlayButtonContainer}>
