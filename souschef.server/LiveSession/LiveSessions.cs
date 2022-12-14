@@ -41,6 +41,7 @@ namespace souschef.server.Data.LiveSession
 
             foreach (var r in cookingSession.Recipes)
             {
+                Console.WriteLine("cookingSession.Recipes " + r.Tasks.Count);
                 recipes.Add(r.Id, Conversions.ToLiveRecipe(r));
             }
 

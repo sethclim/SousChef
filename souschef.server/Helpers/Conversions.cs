@@ -13,7 +13,8 @@ namespace souschef.server.Helpers
                 Name = user.UserName,
                 Email = user.Email,
                 SkillLevel = user.SkillLevel,
-                CurrentSessionId = user.CurrentSessionId.ToString()
+                CurrentSessionId = user.CurrentSessionId.ToString(),
+                CurrentRecipe = null,
             };
         }
 
@@ -29,6 +30,7 @@ namespace souschef.server.Helpers
                     Ingredients = _step.Ingredients.ToList(),
                     Kitchenware = _step.KitchenWare.ToList(),
                     Difficulty  = _step.Difficulty,
+                    Finished    = false,
                 };
 
             }
