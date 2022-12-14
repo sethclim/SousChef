@@ -11,9 +11,9 @@ namespace souschef.server.Controllers
     [Route("api/cookingsession")]
     public class CookingSessionController : Controller
     {
-        private readonly ICookingSessionRepository m_cookingSessionRepository;
+        private readonly ICookingSessionRepository    m_cookingSessionRepository;
         private readonly UserManager<ApplicationUser> m_userManager;
-        private readonly IRecipeRepository m_recipeRepository;
+        private readonly IRecipeRepository            m_recipeRepository;
 
         public CookingSessionController(ICookingSessionRepository _cookingSessionRepository, UserManager<ApplicationUser> _userManager, IRecipeRepository _recipeRepository)
         {
@@ -34,14 +34,19 @@ namespace souschef.server.Controllers
 
             var sessions =  m_cookingSessionRepository.GetCookingSessionsByUser(Guid.Parse(userId));
 
-            Console.WriteLine("Time " + Conversions.GetUnixTimeStamp(DateTime.Now));
+            List<CookingSession> todaysSessions = new();
 
+            foreach (var session in sessions!)
+            {
+                Console.WriteLine("SessionTime " + session.Date);
+                Console.WriteLine("Time        " + Conversions.GetUnixTimeStamp(DateTime.Now.Date));
 
-            DateTime dat_Time = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-           
-
-            var todaysSessions = sessions?.Where(cookingSession => (new DateTime(1970, 1, 1, 0, 0, 0, 0)
-                                          .AddSeconds((double)(cookingSession.Date ?? 0.0))) >= DateTime.Now.Date);
+                if (session.Date >= Conversions.GetUnixTimeStamp(DateTime.Now.Date))
+                {
+                    Console.WriteLine("Its Today");
+                    todaysSessions.Add(session);
+                }
+            }
 
             if(todaysSessions?.Count() <= 0)
                 return new ContentResult() { Content = "User doesn't have cooking session today", StatusCode = 404 };

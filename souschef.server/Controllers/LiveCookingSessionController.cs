@@ -22,87 +22,28 @@ public class LiveCookingSessionController : Controller
     }
 
     [HttpGet("start")]
-    public ActionResult Start()
-    {
+    public ActionResult Start(string sessionId)
+    { 
+        var session = m_cookingSessionRepository.GetCookingSessionsById(Guid.Parse(sessionId));
 
-        var t = new List<Data.Models.Task>();
+        Console.WriteLine("Controller Session " + session?.Recipes![0].Tasks.Count);
 
-        t.Add(new Data.Models.Task
+        if(session != null)
         {
-            Id = Guid.NewGuid(),
-            Name = "Cut Onions",
-            Description = "Chop the onions NOWWWWW",
-            Ingredients = new List<Ingredient>
-           {
-               new Ingredient{ Id = Guid.NewGuid(), Name="Onion", Quantity=6 }
-           },
+            var liveSession = LiveSessions.GetLiveSessions().StartCookingSession(session);
 
-            Kitchenware = new List<Kitchenware>
-           {
-               new Kitchenware{ Id = Guid.NewGuid(), Name="Knife", Quantity=1 }
-           },
-            Duration = 1,
-            Difficulty = 1,
-            Points = 1,
-            Finished = false,
-        });
-
-        t.Add(new Data.Models.Task
-        {
-            Id = Guid.NewGuid(),
-            Name = "Cut Carrot",
-            Description = "Chop the Carrots NOWWWWW",
-            Ingredients = new List<Ingredient>
-           {
-               new Ingredient{ Id = Guid.NewGuid(), Name="Carrot", Quantity=6 }
-           },
-
-            Kitchenware = new List<Kitchenware>
-           {
-               new Kitchenware{ Id = Guid.NewGuid(), Name="Knife", Quantity=1 }
-           },
-            Duration = 1,
-            Difficulty = 1,
-            Points = 1,
-            Finished = false,
-
-        });
-
-        var r_List = new List<Recipe>();
-
-        var r = new Recipe
-        {
-            Tasks = t,
-            Duration = 10,
-            Id = Guid.NewGuid()
-        };
-
-        r_List.Add(r);
-
-
-        var s = new CookingSession
-        {
-            Id = Guid.NewGuid(),
-            Date = Conversions.GetUnixTimeStamp(DateTime.Now),
-            Recipes = r_List,
-        };
-
-        var members = new List<UserDTO>();
-
-        foreach(var mem in s.Guests)
-        {
-            members.Add(Conversions.ToUserDTO(mem));
-        }
-
-        var session = LiveSessions.GetLiveSessions().StartCookingSession(s);
-
-        if (session != null)
-        {
-            return Ok(session.Id);
+            if (liveSession != null)
+            {
+                return Ok(liveSession.Id);
+            }
+            else
+            {
+                return new ContentResult() { Content = "Start session failed", StatusCode = 404 };
+            }
         }
         else
         {
-            return new ContentResult() { Content = "Start session failed", StatusCode = 404 };
+            return new ContentResult() { Content = "Couldn't find session", StatusCode = 404 };
         }
     }
 
@@ -118,14 +59,14 @@ public class LiveCookingSessionController : Controller
     }
 
     [HttpPost("join")]
-    public async Task<IActionResult> Join([FromQuery] string sessionId)
+    public async Task<IActionResult> Join([FromQuery] string sessionId, [FromQuery] string userId)
     {
-        // var user = await m_userManager.FindByIdAsync(userId);
+        var user = await m_userManager.FindByIdAsync(userId);
         var session = LiveSessions.GetLiveSessions().GetSessionById(Guid.Parse(sessionId));
 
         if (session != null)
         {
-            // session.Members.Add(user);
+            session.Members.Add(Conversions.ToUserDTO(user));
             return Ok();
         }
 

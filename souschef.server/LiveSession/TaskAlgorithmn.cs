@@ -16,20 +16,32 @@ namespace souschef.server.LiveSession
             var progress = CheckRecipeProgress(liveRecipes.Values.ToList());
             var maxRecipeTimeLeft = progress.Max();
 
-            progress.TryGetValue((Guid)user.CurrentRecipe!, out float userRecipeTimeLeft);
-
-            if (maxRecipeTimeLeft.Value - userRecipeTimeLeft <= 60)
+            if(user.CurrentRecipe != null)
             {
-                var nextTaskInQueue = GetNextUnfinishedTask(liveRecipes[(Guid)user.CurrentRecipe!].Tasks);
+                 progress.TryGetValue((Guid)user.CurrentRecipe, out float userRecipeTimeLeft);
 
-                if (nextTaskInQueue != null && SkillRatingVSTask(nextTaskInQueue, user))
-                    return nextTaskInQueue;
+                if (maxRecipeTimeLeft.Value - userRecipeTimeLeft <= 60)
+                {
+                    var nextTaskInQueue = GetNextUnfinishedTask(liveRecipes[(Guid)user.CurrentRecipe!].Tasks);
+
+                    if (nextTaskInQueue != null && SkillRatingVSTask(nextTaskInQueue, user))
+                        return nextTaskInQueue;
+                }
+                else
+                {
+                    var nextTaskInQueue = GetNextUnfinishedTask(liveRecipes[maxRecipeTimeLeft.Key].Tasks);
+
+                    if(nextTaskInQueue != null && SkillRatingVSTask(nextTaskInQueue, user))
+                    {
+                        return nextTaskInQueue;
+                    }
+                }
             }
             else
             {
                 var nextTaskInQueue = GetNextUnfinishedTask(liveRecipes[maxRecipeTimeLeft.Key].Tasks);
 
-                if(nextTaskInQueue != null && SkillRatingVSTask(nextTaskInQueue, user))
+                if (nextTaskInQueue != null && SkillRatingVSTask(nextTaskInQueue, user))
                 {
                     return nextTaskInQueue;
                 }
@@ -56,19 +68,24 @@ namespace souschef.server.LiveSession
 
         static bool SkillRatingVSTask(Data.Models.Task task, UserDTO user)
         {
-            return task.Difficulty <= user.SkillLevel;
+            Console.WriteLine("task.Difficulty " + task.Difficulty + " user.SkillLevel " + user.SkillLevel);
+            return task.Difficulty <= 5;
         }
 
         static Data.Models.Task? GetNextUnfinishedTask(List<Data.Models.Task> tasks)
         {
+            Console.WriteLine("tasks Count " + tasks.Count);
             var incompleTasks = tasks.Where(t => !t.Finished).ToList();
+            Console.WriteLine("incompleTasks Count " + incompleTasks.Count);
 
-            if (incompleTasks[0] != null)
-                return incompleTasks[0];
+            if (incompleTasks.Count > 0 && incompleTasks.First() != null)
+            {
+                Console.WriteLine("Returning Task);");
+                return incompleTasks.First();
+            }
             else
                 return null;
         }
-
-
     }
 }
+

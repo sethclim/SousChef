@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using souschef.server.Data;
@@ -11,9 +12,10 @@ using souschef.server.Data;
 namespace souschef.server.Migrations
 {
     [DbContext(typeof(PostGresDBContext))]
-    partial class PostGresDBContextModelSnapshot : ModelSnapshot
+    [Migration("20221214183835_TaskNameToTitle")]
+    partial class TaskNameToTitle
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -265,19 +267,17 @@ namespace souschef.server.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<float>("Quantity")
-                        .HasColumnType("real");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
 
                     b.Property<Guid?>("RecipeId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("TaskId")
                         .HasColumnType("uuid");
-
-                    b.Property<int>("Unit")
-                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
