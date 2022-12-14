@@ -10,7 +10,6 @@ namespace souschef.server.Data.Repository
 
         public RecipeRepository(PostGresDBContext context) { _context = context; }
 
-
         public IEnumerable<Recipe>? Recipes => _context.Recipes?
                .Include(c => c.Ingredients)
                .Include(c => c.Kitchenware)

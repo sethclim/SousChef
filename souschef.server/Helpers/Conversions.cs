@@ -23,11 +23,12 @@ namespace souschef.server.Helpers
             {
                 return new Data.Models.Task
                 {
-                    Id = Guid.NewGuid(),
+                    Id          = Guid.NewGuid(),
+                    Title       = _step.Title,
                     Description = _step.Instructions,
                     Ingredients = _step.Ingredients.ToList(),
                     Kitchenware = _step.KitchenWare.ToList(),
-                    Difficulty =  _step.Difficulty,
+                    Difficulty  = _step.Difficulty,
                 };
 
             }

@@ -24,13 +24,12 @@ public class LiveCookingSessionController : Controller
     [HttpGet("start")]
     public ActionResult Start()
     {
-
         var t = new List<Data.Models.Task>();
 
         t.Add(new Data.Models.Task
         {
             Id = Guid.NewGuid(),
-            Name = "Cut Onions",
+            Title = "Cut Onions",
             Description = "Chop the onions NOWWWWW",
             Ingredients = new List<Ingredient>
            {
@@ -50,7 +49,7 @@ public class LiveCookingSessionController : Controller
         t.Add(new Data.Models.Task
         {
             Id = Guid.NewGuid(),
-            Name = "Cut Carrot",
+            Title = "Cut Carrot",
             Description = "Chop the Carrots NOWWWWW",
             Ingredients = new List<Ingredient>
            {
@@ -79,7 +78,6 @@ public class LiveCookingSessionController : Controller
 
         r_List.Add(r);
 
-
         var s = new CookingSession
         {
             Id = Guid.NewGuid(),
@@ -95,6 +93,7 @@ public class LiveCookingSessionController : Controller
         }
 
         var session = LiveSessions.GetLiveSessions().StartCookingSession(s);
+
 
         if (session != null)
         {

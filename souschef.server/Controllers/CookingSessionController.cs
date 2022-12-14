@@ -11,9 +11,9 @@ namespace souschef.server.Controllers
     [Route("api/cookingsession")]
     public class CookingSessionController : Controller
     {
-        private readonly ICookingSessionRepository m_cookingSessionRepository;
+        private readonly ICookingSessionRepository    m_cookingSessionRepository;
         private readonly UserManager<ApplicationUser> m_userManager;
-        private readonly IRecipeRepository m_recipeRepository;
+        private readonly IRecipeRepository            m_recipeRepository;
 
         public CookingSessionController(ICookingSessionRepository _cookingSessionRepository, UserManager<ApplicationUser> _userManager, IRecipeRepository _recipeRepository)
         {
