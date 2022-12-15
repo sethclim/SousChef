@@ -28,11 +28,6 @@ public class LiveCookingSessionController : Controller
 
         Console.WriteLine("Recipe Count " + session!.Recipes?.Count);
 
-        if (session!.Recipes != null && session!.Recipes[0].Tasks != null)
-        {
-            Console.WriteLine("Tasks Count " + session!.Recipes[0].Tasks.Count);
-        }
-
         if(session != null)
         {
             var liveSession = LiveSessions.GetLiveSessions().StartCookingSession(session);
