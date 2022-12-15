@@ -18,22 +18,23 @@ namespace souschef.server.Helpers
             };
         }
 
-        public static Data.Models.Task? ToTask(Step _step)
+        public static Data.Models.Task? ToTask(TaskDTO _step)
         {
             if (_step.Ingredients != null && _step.KitchenWare != null)
             {
                 return new Data.Models.Task
                 {
-                    Id          = Guid.NewGuid(),
-                    Title       = _step.Title,
-                    Description = _step.Instructions,
-                    Ingredients = _step.Ingredients.ToList(),
-                    Kitchenware = _step.KitchenWare.ToList(),
-                    Difficulty  = _step.Difficulty,
-                    Order       = _step.Order,
-                    DependsOn   = _step.DependsOn,
-                    InProgress  = false,
-                    Finished    = false,
+                    Id           = Guid.NewGuid(),
+                    Title        = _step.Title,
+                    Description  = _step.Instructions,
+                    Ingredients  = _step.Ingredients.ToList(),
+                    Kitchenware  = _step.KitchenWare.ToList(),
+                    Difficulty   = _step.Difficulty,
+                    Order        = _step.Order,
+                    Duration     = _step.Duration,
+                    Dependencies = _step.Dependencies,
+                    InProgress   = false,
+                    Finished     = false,
                 };
 
             }

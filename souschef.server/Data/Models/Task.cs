@@ -15,11 +15,11 @@ namespace souschef.server.Data.Models
         public List<Ingredient>? Ingredients { get; set; }
         public List<Kitchenware>? Kitchenware { get; set; }
 
-        public int Duration { get; set; }
+        public float Duration { get; set; }
         public int Difficulty { get; set; }
 
         public int Order { get; set; }
-        public int[]? DependsOn { get; set; }
+        public int[]? Dependencies { get; set; }
 
         public int  Points { get; set; }
         public bool Finished { get; set; }

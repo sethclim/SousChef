@@ -23,16 +23,16 @@ namespace souschef.server.Controllers
         [HttpPost()]
         public IActionResult AddRecipe([FromBody]RecipeDTO _dto)
         {
-            if(_dto.OwnerId != null && _dto.Steps != null)
+            if(_dto.OwnerId != null && _dto.Tasks != null)
             {
                 var recipe = new Recipe()
                 {
                     Id = Guid.NewGuid(),
                     Name = _dto.Name,
-                    Duration = (int)_dto.Steps!.Sum(item => item.TimeEstimate),
+                    Duration = (int)_dto.Tasks!.Sum(item => item.Duration),
                     Serves = _dto.Serves,
                     Date = Conversions.GetUnixTimeStamp(DateTime.Now),
-                    Tasks = Array.ConvertAll(_dto.Steps, new Converter<Step, Data.Models.Task>(delegate (Step x) { return Conversions.ToTask(x)!; })).ToList(), //Fix Null Issue
+                    Tasks = Array.ConvertAll(_dto.Tasks, new Converter<TaskDTO, Data.Models.Task>(delegate (TaskDTO x) { return Conversions.ToTask(x)!; })).ToList(), //Fix Null Issue
                     OwnerId = Guid.Parse(_dto.OwnerId),
                     Difficulty = _dto.Difficulty,
                     Kitchenware = _dto.KitchenWare?.ToList(),
@@ -52,17 +52,17 @@ namespace souschef.server.Controllers
         [HttpPost("public-recipe")]
         public IActionResult AddPublicRecipe([FromBody] RecipeDTO _dto)
         {
-            if (_dto.Steps != null)
+            if (_dto.Tasks != null)
             {
 
                 var recipe = new Recipe()
                 {
                     Id = Guid.NewGuid(),
                     Name = _dto.Name,
-                    Duration = (int)_dto.Steps!.Sum(item => item.TimeEstimate),
+                    Duration = (int)_dto.Tasks!.Sum(item => item.Duration),
                     Serves = _dto.Serves,
                     Date = Conversions.GetUnixTimeStamp(DateTime.Now),
-                    Tasks = Array.ConvertAll(_dto.Steps, new Converter<Step, Data.Models.Task>(delegate (Step x) { return Conversions.ToTask(x)!; })).ToList(), //Fix Null Issue
+                    Tasks = Array.ConvertAll(_dto.Tasks, new Converter<TaskDTO, Data.Models.Task>(delegate (TaskDTO x) { return Conversions.ToTask(x)!; })).ToList(), //Fix Null Issue
                     OwnerId = null,
                     Difficulty = _dto.Difficulty,
                     Kitchenware = _dto.KitchenWare?.ToList(),
@@ -114,12 +114,12 @@ namespace souschef.server.Controllers
         [HttpPatch()]
         public ActionResult ModifyRecipe([FromBody] RecipeDTO _dto)
         {
-            if (_dto != null && _dto.OwnerId != null && _dto.Steps != null)
+            if (_dto != null && _dto.OwnerId != null && _dto.Tasks != null)
             {
                 var recipe = new Recipe()
                 {
                     Id = Guid.NewGuid(),
-                    Duration = (int)_dto.Steps!.Sum(item => item.TimeEstimate),
+                    Duration = (int)_dto.Tasks!.Sum(item => item.Duration),
                 };
 
                 m_recipeRepository.Modify(recipe);
