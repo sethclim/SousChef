@@ -84,6 +84,8 @@ namespace souschef.server.Data.LiveSession
                 if(res != null)
                 {
                     user.CurrentRecipe = res.Value.recipeId;
+                    Recipes[res.Value.recipeId].GetTask(res.Value.nextTask.Id).InProgress = true;
+
                     return res.Value.nextTask;
                 }
                 else

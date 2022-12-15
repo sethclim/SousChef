@@ -71,9 +71,8 @@ namespace souschef.server.LiveSession
 
         static Data.Models.Task? GetNextUnfinishedTask(List<Data.Models.Task> tasks)
         {
-            Console.WriteLine("tasks Count " + tasks.Count);
-            var incompleTasks = tasks.Where(t => !t.Finished).ToList();
-            Console.WriteLine("incompleTasks Count " + incompleTasks.Count);
+
+            var incompleTasks = tasks.Where(t => !t.Finished && !t.InProgress).OrderBy(t => t.Order).ToList();
 
             if (incompleTasks.Count > 0 && incompleTasks.First() != null)
             {
