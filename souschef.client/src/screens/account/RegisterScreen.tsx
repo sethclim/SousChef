@@ -2,13 +2,10 @@ import React, {useContext} from 'react';
 import {StyleSheet, Text} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {ApiUrls} from '../../api/constants/ApiConstants';
 import {Button, Card, Column, Input, Row, SafeArea} from '../../components';
 import {OpacityPressable, SpringPressable} from '../../components/pressable';
 import {AuthContext, ThemeContext} from '../../contexts/AppContext';
-import {usePost} from '../../hooks';
 import {
-  defaultHomeStackNavigatorParamList,
   RegisterScreenNavigationProp,
   RegisterScreenRouteProp,
 } from '../../navigation/types';
@@ -70,10 +67,12 @@ const RegisterScreen = ({
     // Successfully registered
     else {
       register({
-        userName: name,
-        email: email,
-        password: password,
-        passwordConfirm: passwordConfirm,
+        json: {
+          userName: name,
+          email: email,
+          password: password,
+          passwordConfirm: passwordConfirm,
+        },
       });
       // .then(() => {
       //   if (!error)

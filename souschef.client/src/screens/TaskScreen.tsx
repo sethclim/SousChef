@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {ThemeContext} from '../contexts/AppContext';
+import {AuthContext, ThemeContext} from '../contexts/AppContext';
 import {ApiUrls} from '../api/constants/ApiConstants';
 import {
   AccordionCard,
@@ -33,8 +33,10 @@ const TaskScreen = ({
   route: TaskScreenRouteProp;
 }) => {
   // Route
-  // const {sessionId} = route.params;
-  const sessionId = '4d9de020-74ba-4f7a-b38f-8aa9753b65ce'; // TEMPORARY (CHANGES EVERYTIME)
+  const {sessionId} = route.params;
+
+  // User
+  const {user} = useContext(AuthContext);
 
   // Theme
   const theme = useContext(ThemeContext);
@@ -50,18 +52,17 @@ const TaskScreen = ({
     data: taskData,
     loading: taskLoading,
     error: taskError,
-  } = useGet<Task>(`${ApiUrls.getTask}?sessionId=${sessionId}`, defaultTask);
+  } = useGet<Task>(ApiUrls.getTask, defaultTask);
+
   const {
     post: completeTask,
     loading: completeTaskLoading,
     error: completeTaskError,
-  } = usePost(
-    `${ApiUrls.completeTask}?sessionId=${sessionId}&taskId=${taskData?.id}`,
-  );
+  } = usePost(ApiUrls.completeTask);
 
   // OnMount
   useEffect(() => {
-    getTask();
+    getTask({sessionId: sessionId, userId: user?.id});
   }, []);
 
   // Methods
@@ -206,8 +207,13 @@ const TaskScreen = ({
                       horizontalResizing="fill"
                       verticalResizing="fill"
                       onPress={() => {
-                        completeTask();
-                        getTask();
+                        completeTask({
+                          query: {
+                            sessionId: sessionId,
+                            taskId: taskData?.id,
+                          },
+                        });
+                        getTask({sessionId: sessionId, userId: user?.id});
                       }}>
                       <IconButton
                         iconName="check"
@@ -216,7 +222,10 @@ const TaskScreen = ({
                         verticalResizing="fill"
                       />
                     </SpringPressable>
-                    <SpringPressable onPress={getTask}>
+                    <SpringPressable
+                      onPress={() =>
+                        getTask({sessionId: sessionId, userId: user?.id})
+                      }>
                       <CircularButton iconName="reload" />
                     </SpringPressable>
                   </Row>
@@ -325,8 +334,13 @@ const TaskScreen = ({
                       horizontalResizing="fill"
                       verticalResizing="fill"
                       onPress={() => {
-                        completeTask();
-                        getTask();
+                        completeTask({
+                          query: {
+                            sessionId: sessionId,
+                            taskId: taskData?.id,
+                          },
+                        });
+                        getTask({sessionId: sessionId, userId: user?.id});
                       }}>
                       <IconButton
                         iconName="check"
@@ -335,7 +349,10 @@ const TaskScreen = ({
                         verticalResizing="fill"
                       />
                     </SpringPressable>
-                    <SpringPressable onPress={getTask}>
+                    <SpringPressable
+                      onPress={() =>
+                        getTask({sessionId: sessionId, userId: user?.id})
+                      }>
                       <CircularButton iconName="reload" />
                     </SpringPressable>
                   </Row>

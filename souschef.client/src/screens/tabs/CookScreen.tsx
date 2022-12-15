@@ -1,13 +1,14 @@
 import React, {useContext, useEffect} from 'react';
 import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
-import {AuthContext, ThemeContext} from '../../contexts/AppContext';
-import {Button, Card, Column, Row, SafeArea} from '../../components';
-import {Theme} from '../../styles/type';
-import {CookScreenNavigationProp} from '../../navigation/types';
-import {SpringPressable} from '../../components/pressable';
-import {defaultRecipe, MealPlan, Recipe} from '../../api/responses';
-import {useGet} from '../../hooks';
+import {useSharedValue} from 'react-native-reanimated';
 import {ApiUrls} from '../../api/constants/ApiConstants';
+import {MealPlan} from '../../api/responses';
+import {Button, Card, Column, Row, SafeArea} from '../../components';
+import {SpringPressable} from '../../components/pressable';
+import {AuthContext, ThemeContext} from '../../contexts/AppContext';
+import {useGet, usePost} from '../../hooks';
+import {CookScreenNavigationProp} from '../../navigation/types';
+import {Theme} from '../../styles/type';
 
 const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
   // User
@@ -19,7 +20,7 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
 
   // Fields
   const [todayMealPlan, setTodayMealPlan] = React.useState<MealPlan[]>([]);
-  let mealPlanId: string | undefined;
+  const mealPlanID = useSharedValue('');
 
   // API Calls
   const {
@@ -28,10 +29,7 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
     success: mealPlansSuccess,
     loading: mealPlansLoading,
     error: mealPlansError,
-  } = useGet<MealPlan[]>(
-    `${ApiUrls.getTodaysMealPlans}?userId=${user?.id}`,
-    [],
-  );
+  } = useGet<MealPlan[]>(ApiUrls.getTodaysMealPlans, []);
 
   const {
     get: startMealPlan,
@@ -39,7 +37,15 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
     success: startMealPlanSuccess,
     loading: startMealPlanLoading,
     error: startMealPlanError,
-  } = useGet(`${ApiUrls.startMealPlan}?sessionId=${mealPlanId}`);
+  } = useGet(ApiUrls.startMealPlan);
+
+  const {
+    post: joinMealPlan,
+    data: joinMealPlanData,
+    success: joinMealPlanSuccess,
+    loading: joinMealPlanLoading,
+    error: joinMealPlanError,
+  } = usePost(ApiUrls.joinMealPlan);
 
   // OnMount
   useEffect(() => {
@@ -54,23 +60,28 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
   }, [mealPlans]);
 
   useEffect(() => {
-    if (startMealPlanSuccess)
-      navigation.navigate('Task', {sessionId: mealPlanId!});
-  }, [startMealPlanSuccess]);
+    if (joinMealPlanSuccess) {
+      navigation.navigate('Task', {sessionId: mealPlanID.value});
+    }
+  }, [joinMealPlanSuccess]);
 
   // Methods
   const onMount = () => {
-    getMealPlans(); // API Request
+    getMealPlans({userId: user?.id}); // API Request
   };
 
   // Methods
   const mealPlanPressed = (mealPlan: MealPlan) => {
-    mealPlanId = mealPlan.id;
-    startMealPlan();
+    mealPlanID.value = mealPlan.id;
+    startMealPlan({sessionId: mealPlanID.value}).then(success => {
+      if (success) {
+        joinMealPlan({query: {sessionId: mealPlanID.value, userId: user?.id}});
+      }
+    });
   };
 
   const joinSession = () => {
-    navigation.navigate('Task', {sessionId: mealPlanId!});
+    navigation.navigate('Task', {sessionId: mealPlanID.value});
   };
 
   return (

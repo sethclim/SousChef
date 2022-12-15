@@ -6,23 +6,28 @@ export const useGet = <T>(url: string, defaultData?: T) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>();
 
-  const get = async () => {
+  const get = async (query?: {}) => {
     try {
       setSuccess(false);
       setLoading(true);
-      const response = await fetch(url, {method: 'GET'});
+      const response = await fetch(url + '?' + new URLSearchParams(query), {
+        method: 'GET',
+      });
 
       if (response.ok) {
         setSuccess(true);
         setLoading(false);
         setData(await response.json());
+        return true;
       } else {
         setLoading(false);
         setError(await response.text());
+        return false;
       }
     } catch (error) {
       setLoading(false);
       setError(error);
+      return false;
     }
   };
 

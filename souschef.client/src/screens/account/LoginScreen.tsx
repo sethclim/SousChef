@@ -58,8 +58,10 @@ const LoginScreen = ({
     // Successfully log'd in
     else {
       login({
-        email: email,
-        password: password,
+        json: {
+          email: email,
+          password: password,
+        },
       });
     }
   };

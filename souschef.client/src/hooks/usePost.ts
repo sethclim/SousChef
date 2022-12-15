@@ -6,30 +6,36 @@ export const usePost = <T>(url: string, defaultData?: T) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>();
 
-  const post = async (json?: {}) => {
+  const post = async (params?: {json?: {}; query?: {}}) => {
     try {
       setSuccess(false);
       setLoading(true);
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        url + '?' + new URLSearchParams(params?.query),
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(params?.json),
         },
-        body: JSON.stringify(json),
-      });
+      );
 
       if (response.ok) {
         setSuccess(true);
         setLoading(false);
         setData(await response.json());
+        return true;
       } else {
         setLoading(false);
         setError(await response.text());
+        return false;
       }
     } catch (error) {
       setLoading(false);
       setError(error);
+      return false;
     }
   };
 
