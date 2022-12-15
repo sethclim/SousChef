@@ -198,4 +198,15 @@ public class UserController : Controller
         return Ok(new { message="success" });
     }
 
+    [HttpPost("set-user-skill")]
+    public async Task<ActionResult> SetUserSkill(string userId, int skill)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        user.SkillLevel = skill;
+
+        await _userManager.UpdateAsync(user);
+
+        return Ok();
+    }
+
 }
