@@ -108,6 +108,34 @@ public class LiveCookingSessionController : Controller
         return new ContentResult() { Content = "Invalid session ID", StatusCode = 404 };
     }
 
+    [HttpGet("re-roll-task")]
+    public ActionResult<Data.Models.Task> ReRollTask([FromQuery] string sessionId, [FromQuery] string userId, [FromQuery] string taskId)
+    {
+        var session = LiveSessions.GetLiveSessions().GetSessionById(Guid.Parse(sessionId));
+        if (session != null)
+        {
+            var user = session.GetUser(userId);
+
+            if(user.CurrentRecipe == null)
+                new ContentResult() { Content = "User Not Working On Anything", StatusCode = 404 };
+
+
+            // 1. Call Next Task while the task you had is inprogress!
+            var task = session.GetNextTask(userId);
+
+            // 2. Switch Old Task to not in progress to free it up 
+            session.Recipes[(Guid)user.CurrentRecipe!].GetTask(Guid.Parse(taskId)).InProgress = false;
+
+            if (task != null) 
+                return Ok(task);
+            return 
+                new ContentResult() { Content = "No more tasks available", StatusCode = 404 };
+        }
+
+        return new ContentResult() { Content = "Invalid session ID", StatusCode = 404 };
+    }
+
+
     [HttpPost("complete-task")]
     public IActionResult CompleteTask([FromQuery] string sessionId, [FromQuery] string userId, [FromQuery] string taskId)
     {
