@@ -78,6 +78,7 @@ namespace souschef.server.Controllers
             CookingSession cookingSession = new CookingSession
             {
                 Id = Guid.NewGuid(),
+                Name = cookingSessionDTO.Name,
                 Recipes = referecedRecipes,
                 Date = Conversions.GetUnixTimeStamp(DateTime.Now),
                 Host = host,
