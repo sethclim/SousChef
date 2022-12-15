@@ -75,7 +75,7 @@ namespace souschef.server.Controllers
             }
             else
             {
-                return new ContentResult() { Content = "Invalid Owner Id", StatusCode = 404 };
+                return new ContentResult() { Content = "Invalid Recipe", StatusCode = 404 };
             }
         }
 
