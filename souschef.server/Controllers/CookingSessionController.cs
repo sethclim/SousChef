@@ -11,9 +11,9 @@ namespace souschef.server.Controllers
     [Route("api/cookingsession")]
     public class CookingSessionController : Controller
     {
-        private readonly ICookingSessionRepository    m_cookingSessionRepository;
-        private readonly UserManager<ApplicationUser> m_userManager;
-        private readonly IRecipeRepository            m_recipeRepository;
+        private readonly ICookingSessionRepository     m_cookingSessionRepository;
+        private readonly UserManager<ApplicationUser>  m_userManager;
+        private readonly IRecipeRepository             m_recipeRepository;
 
         public CookingSessionController(ICookingSessionRepository _cookingSessionRepository, UserManager<ApplicationUser> _userManager, IRecipeRepository _recipeRepository)
         {
@@ -36,14 +36,12 @@ namespace souschef.server.Controllers
 
             List<CookingSession> todaysSessions = new();
 
+            Console.WriteLine("Session Number " + sessions?.Count());
+
             foreach (var session in sessions!)
             {
-                Console.WriteLine("SessionTime " + session.Date);
-                Console.WriteLine("Time        " + Conversions.GetUnixTimeStamp(DateTime.Now.Date));
-
                 if (session.Date >= Conversions.GetUnixTimeStamp(DateTime.Now.Date))
                 {
-                    Console.WriteLine("Its Today");
                     todaysSessions.Add(session);
                 }
             }
@@ -90,6 +88,5 @@ namespace souschef.server.Controllers
 
             return Ok();
         }
-
     }
 }

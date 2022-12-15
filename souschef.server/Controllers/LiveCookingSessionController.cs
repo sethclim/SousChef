@@ -109,15 +109,24 @@ public class LiveCookingSessionController : Controller
     }
 
     [HttpPost("complete-task")]
-    public IActionResult CompleteTask([FromQuery] string sessionId, [FromQuery] string recipeId, [FromQuery] string taskId)
+    public IActionResult CompleteTask([FromQuery] string sessionId, [FromQuery] string userId, [FromQuery] string taskId)
     {
         var session = LiveSessions.GetLiveSessions().GetSessionById(Guid.Parse(sessionId));
 
         if (session != null)
         {
-            session.Recipes[Guid.Parse(recipeId)].GetTask(Guid.Parse(taskId)).Finished = true;
-        
-            return Ok();
+            var u = session.GetUser(userId);
+            if(u.CurrentRecipe != null)
+            {
+                Guid id = (Guid)u.CurrentRecipe;
+                session.Recipes[id].GetTask(Guid.Parse(taskId)).Finished = true;
+                Console.WriteLine("rec " + session.Recipes[id].GetTask(Guid.Parse(taskId)).Finished);
+                return Ok();
+            }
+            else
+            {
+                return new ContentResult() { Content = "User is not currently working on a recipe", StatusCode = 404 };
+            }
         }
 
         return new ContentResult() { Content = "Invalid session ID", StatusCode = 404 };

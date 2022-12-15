@@ -71,10 +71,25 @@ namespace souschef.server.Data.LiveSession
 
             public Dictionary<Guid, LiveRecipe> Recipes = new();
 
+            public UserDTO GetUser(string userId)
+            {
+                return Members.Where(x => x.Id == userId).First();
+            }
+
             public Models.Task? GetNextTask(string userId)
             {
                 var user = Members.Where(x => x.Id == userId).First();
-                return TaskAlgorithmn.Entry(Recipes, user);
+                var res = TaskAlgorithmn.Entry(Recipes, user);
+
+                if(res != null)
+                {
+                    user.CurrentRecipe = res.Value.recipeId;
+                    return res.Value.nextTask;
+                }
+                else
+                {
+                    return null;
+                }
             }  
         }
 
