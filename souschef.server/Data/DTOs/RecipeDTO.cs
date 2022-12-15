@@ -18,11 +18,13 @@ namespace souschef.server.Data.DTOs
 
     public class Step
     {
-        public string? Title { get; set; }
+        public string? Title              { get; set; }
         public Ingredient[]? Ingredients  { get; set; }
         public Kitchenware[]? KitchenWare { get; set; }
         public string? Instructions       { get; set; }
         public int Difficulty             { get; set; }
+        public int Order                  { get; set; }
+        public int[]? DependsOn           { get; set; }
         public float TimeEstimate         { get; set; }
         public string? VideoURL           { get; set; }
     }
