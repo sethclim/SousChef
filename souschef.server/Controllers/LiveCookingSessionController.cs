@@ -135,7 +135,6 @@ public class LiveCookingSessionController : Controller
         return new ContentResult() { Content = "Invalid session ID", StatusCode = 404 };
     }
 
-
     [HttpPost("complete-task")]
     public IActionResult CompleteTask([FromQuery] string sessionId, [FromQuery] string userId, [FromQuery] string taskId)
     {
