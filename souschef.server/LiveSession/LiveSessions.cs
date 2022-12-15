@@ -33,7 +33,7 @@ namespace souschef.server.Data.LiveSession
         public LiveCookingSession? StartCookingSession(CookingSession cookingSession)
         {
 
-            if (cookingSession.Host == null || cookingSession.Guests == null || cookingSession.Recipes == null)
+            if (cookingSession.Host == null || cookingSession.Recipes == null)
                 return null;
 
             var recipes = new Dictionary<Guid, LiveRecipe>();
@@ -58,8 +58,10 @@ namespace souschef.server.Data.LiveSession
                 Recipes = recipes
             };
 
-            m_currentCookingSessions.Add(cookingSession.Id, session);
-            return session;
+            if (m_currentCookingSessions.TryAdd(cookingSession.Id, session))
+                return session;
+            else
+                return null;
         }
 
         public class LiveCookingSession
