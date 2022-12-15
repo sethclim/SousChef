@@ -26,8 +26,6 @@ public class LiveCookingSessionController : Controller
     { 
         var session = m_cookingSessionRepository.GetCookingSessionsById(Guid.Parse(sessionId));
 
-        Console.WriteLine("Controller Session " + session?.Recipes![0].Tasks.Count);
-
         if(session != null)
         {
             var liveSession = LiveSessions.GetLiveSessions().StartCookingSession(session);

@@ -17,32 +17,50 @@ namespace souschef.server.LiveSession
             var sort = liveRecipes.OrderBy(z => z.Value);
             var maxRecipeTimeLeft = progress.Max();
 
-            if(user.CurrentRecipe != null)
+            var recipeIDs = liveRecipes.Keys.ToArray();
+
+            if (user.CurrentRecipe != null)
             {
                  progress.TryGetValue((Guid)user.CurrentRecipe, out float userRecipeTimeLeft);
 
                 if (maxRecipeTimeLeft.Value - userRecipeTimeLeft <= 60)
                 {
-                    var nextTaskInQueue = GetNextUnfinishedTask(liveRecipes[(Guid)user.CurrentRecipe!].Tasks);
-                    if (nextTaskInQueue != null && SkillRatingVSTask(nextTaskInQueue, user))
-                        return ((Guid)user.CurrentRecipe, nextTaskInQueue);
+                    return TryGetTask(NewOrderSetOfRecipeIds((Guid)user.CurrentRecipe, recipeIDs), liveRecipes, user);
+
+                    //var nextTaskInQueue = GetNextUnfinishedTask(liveRecipes[(Guid)user.CurrentRecipe!].Tasks);
+                    //if (nextTaskInQueue != null && SkillRatingVSTask(nextTaskInQueue, user))
+                    //    return ((Guid)user.CurrentRecipe, nextTaskInQueue);
                 }
                 else
                 {
-                    var nextTaskInQueue = GetNextUnfinishedTask(liveRecipes[maxRecipeTimeLeft.Key].Tasks);
-                    if (nextTaskInQueue != null && SkillRatingVSTask(nextTaskInQueue, user))
-                        return (maxRecipeTimeLeft.Key, nextTaskInQueue);
+                    return TryGetTask(NewOrderSetOfRecipeIds(maxRecipeTimeLeft.Key, recipeIDs), liveRecipes, user);
                 }
             }
             else
             {
-                var nextTaskInQueue = GetNextUnfinishedTask(liveRecipes[maxRecipeTimeLeft.Key].Tasks);
+                return TryGetTask(NewOrderSetOfRecipeIds(maxRecipeTimeLeft.Key, recipeIDs), liveRecipes, user);
+                //var nextTaskInQueue = GetNextUnfinishedTask(liveRecipes[maxRecipeTimeLeft.Key].Tasks);
 
-                if (nextTaskInQueue != null && SkillRatingVSTask(nextTaskInQueue, user))
-                {
-                    return (maxRecipeTimeLeft.Key, nextTaskInQueue);
-                }
+                //if (nextTaskInQueue != null && SkillRatingVSTask(nextTaskInQueue, user))
+                //{
+                //    return (maxRecipeTimeLeft.Key, nextTaskInQueue);
+                //}
             }
+        }
+
+        private static (Guid recipeId, Data.Models.Task nextTask)? TryGetTask(Guid[] recipeIds, Dictionary<Guid, LiveRecipe> liveRecipes, UserDTO user)
+        {
+            var nextTaskInQueue = GetNextUnfinishedTask(liveRecipes[recipeIds[0]].Tasks);
+
+            if (nextTaskInQueue != null && SkillRatingVSTask(nextTaskInQueue, user))
+                return (recipeIds[0], nextTaskInQueue);
+
+            Guid[] newRecipeIds = recipeIds.Skip(1).ToArray();
+
+            if (newRecipeIds.Length <= 0)
+                return null;
+
+            TryGetTask(newRecipeIds, liveRecipes, user);
 
             return null;
         }
@@ -72,15 +90,77 @@ namespace souschef.server.LiveSession
         static Data.Models.Task? GetNextUnfinishedTask(List<Data.Models.Task> tasks)
         {
 
-            var incompleTasks = tasks.Where(t => !t.Finished && !t.InProgress).OrderBy(t => t.Order).ToList();
+            var incompleteTasks = tasks.Where(t => !t.Finished && !t.InProgress).OrderBy(t => t.Order).ToList();
 
-            if (incompleTasks.Count > 0 && incompleTasks.First() != null)
+            return CheckIncompleteTasks(incompleteTasks, tasks);
+        }
+
+        /// <summary>
+        /// Look for the next incomplete task that is ok to begin on
+        /// </summary>
+        /// <param name="incompleteTasks"></param>
+        /// <param name="tasks"></param>
+        /// <returns></returns>
+        static Data.Models.Task? CheckIncompleteTasks(List<Data.Models.Task> incompleteTasks, List<Data.Models.Task> tasks)
+        {
+            for (int i = 0; i < incompleteTasks.Count; i++)
             {
-                Console.WriteLine("Returning Task);");
-                return incompleTasks.First();
+                if(ScanForOkayToBeginStatus(incompleteTasks[i], tasks))
+                {
+                    return incompleteTasks[i];
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Check For no Dependencies or all Deps Fufilled 
+        /// </summary>
+        /// <param name="task"></param>
+        /// <param name="_tasks"></param>
+        /// <returns></returns>
+        static bool ScanForOkayToBeginStatus(Data.Models.Task task, List<Data.Models.Task> _tasks)
+        {
+            if(task.Dependencies!.Length <= 0)
+            {
+                return true;
             }
             else
-                return null;
+            {
+                for(int i = 0; i < task.Dependencies.Length; i++)
+                {
+                    var task_dep = _tasks.Where(t => t.Order == task.Dependencies[i]).First();
+
+                    if (!task_dep.Finished)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+        }
+
+        /// <summary>
+        /// Add My Id To The Start -> First One that will be tried in the Recursive Loop
+        /// </summary>
+        /// <param name="myID"></param>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        static Guid[] NewOrderSetOfRecipeIds(Guid myID, Guid[] ids)
+        {
+            Guid[] shallowCopyIds = (Guid[])ids.Clone();
+            shallowCopyIds.ToList().Remove(myID);
+
+            var newIds = new List<Guid>
+            {
+                myID
+            };
+
+            newIds.AddRange(shallowCopyIds);
+
+            return newIds.ToArray();
         }
     }
 }
