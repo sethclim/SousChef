@@ -12,7 +12,7 @@ using souschef.server.Data;
 namespace souschef.server.Migrations
 {
     [DbContext(typeof(PostGresDBContext))]
-    [Migration("20221215201647_RenamedDependsOnToDependecies")]
+    [Migration("20221215202250_RenamedDependsOnToDependecies")]
     partial class RenamedDependsOnToDependecies
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

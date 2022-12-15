@@ -4,7 +4,7 @@
 
 namespace souschef.server.Migrations
 {
-    public partial class OrderandDependsOnToTask : Migration
+    public partial class RenamedDependsOnToDependecies : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
