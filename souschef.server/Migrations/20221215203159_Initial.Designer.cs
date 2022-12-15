@@ -12,8 +12,8 @@ using souschef.server.Data;
 namespace souschef.server.Migrations
 {
     [DbContext(typeof(PostGresDBContext))]
-    [Migration("20221210204851_RemovedMealPlan")]
-    partial class RemovedMealPlan
+    [Migration("20221215203159_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -267,17 +267,19 @@ namespace souschef.server.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
+                    b.Property<float>("Quantity")
+                        .HasColumnType("real");
 
                     b.Property<Guid?>("RecipeId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("TaskId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Unit")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -364,26 +366,35 @@ namespace souschef.server.Migrations
                     b.Property<string>("AssigneeId")
                         .HasColumnType("text");
 
+                    b.Property<int[]>("Dependencies")
+                        .HasColumnType("integer[]");
+
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
                     b.Property<int>("Difficulty")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Duration")
-                        .HasColumnType("integer");
+                    b.Property<float>("Duration")
+                        .HasColumnType("real");
 
                     b.Property<bool>("Finished")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
+                    b.Property<bool>("InProgress")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Points")
                         .HasColumnType("integer");
 
                     b.Property<Guid?>("RecipeId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
