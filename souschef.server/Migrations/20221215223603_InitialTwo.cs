@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace souschef.server.Migrations
 {
-    public partial class Initial : Migration
+    public partial class InitialTwo : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -145,6 +145,7 @@ namespace souschef.server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
                     Date = table.Column<long>(type: "bigint", nullable: true),
                     OccasionType = table.Column<int>(type: "integer", nullable: true),
                     HostId = table.Column<string>(type: "text", nullable: true),

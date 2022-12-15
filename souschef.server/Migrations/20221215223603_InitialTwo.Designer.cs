@@ -12,8 +12,8 @@ using souschef.server.Data;
 namespace souschef.server.Migrations
 {
     [DbContext(typeof(PostGresDBContext))]
-    [Migration("20221215203159_Initial")]
-    partial class Initial
+    [Migration("20221215223603_InitialTwo")]
+    partial class InitialTwo
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -245,6 +245,9 @@ namespace souschef.server.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("HostId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.Property<int?>("OccasionType")
