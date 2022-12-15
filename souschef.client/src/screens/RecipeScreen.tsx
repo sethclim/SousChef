@@ -45,8 +45,8 @@ const floatingButtonComponent = (
       style={styles.floatingTop}>
       <SpringPressable onPress={() => setFavorite(!favorite)}>
         <CircularButton
-          bgColor="#fff"
-          color={theme.colors.danger}
+          bgColor={theme.colors.danger}
+          color="#fff"
           iconName={favorite ? 'heart' : 'heart-outline'}></CircularButton>
       </SpringPressable>
     </Row>
@@ -275,7 +275,7 @@ const RecipeScreen = ({
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-      <SafeArea bgColor="#111">
+      <SafeArea>
         <Column
           justifyContent="flex-start"
           horizontalResizing="fill"
@@ -285,13 +285,8 @@ const RecipeScreen = ({
             setFavorite,
           })}
           <Image
-            source={require('../res/default-recipe.jpg')}
+            source={require('../res/default-recipes/default-recipe.jpg')}
             style={stylesWithTheme.bannerImage}
-          />
-          <Image
-            blurRadius={4}
-            source={require('../res/default-recipe.jpg')}
-            style={stylesWithTheme.backgroundImage}
           />
           <BottomSheet ref={ref} onStateChange={onChange} zIndex={2}>
             {maximized ? (
@@ -313,9 +308,8 @@ const styles = (theme: Theme) =>
   StyleSheet.create({
     bannerImage: {
       width: '100%',
-      height: '40%',
+      height: '36%',
     },
-    backgroundImage: {width: '100%', height: '60%'},
     floatingTop: {
       position: 'absolute',
       top: 0,

@@ -12,6 +12,7 @@ export type Theme = {
     success: Color;
     danger: Color;
     text: Color;
+    pastel: {[key: string]: Color};
   };
   spacing: {
     s: number;

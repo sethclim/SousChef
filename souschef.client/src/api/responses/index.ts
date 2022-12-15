@@ -85,7 +85,7 @@ export interface MealPlan {
 
 export interface Task {
   id: string;
-  name: string;
+  title: string;
   description: string;
   ingredients: Ingredient[]; // Change to list of ingredients
   kitchenware: Kitchenware[]; // Change to list of kitchenware
@@ -98,7 +98,7 @@ export interface Task {
 
 export const defaultTask: Task = {
   id: '',
-  name: 'Default Task',
+  title: 'Default Task',
   description: 'Something went wrong',
   ingredients: [], // Change to list of ingredients
   kitchenware: [], // Change to list of kitchenware

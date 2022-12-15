@@ -90,13 +90,13 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
         justifyContent="flex-start"
         horizontalResizing="fill"
         verticalResizing="fill"
-        paddingVertical={theme.spacing.xl}
+        paddingVertical={theme.spacing.l}
         spacing={theme.spacing.m}>
-        <Column alignItems="flex-start" horizontalResizing="fill">
+        <Column horizontalResizing="fill" spacing={theme.spacing.s}>
           <Text style={stylesWithTheme.h1}>Today's Meal Plan</Text>
           {todayMealPlan.length == 0 ? (
             <Text style={stylesWithTheme.optional}>
-              No meal plan set for today
+              You have no meal plan set for today.
             </Text>
           ) : (
             <ScrollView
@@ -104,7 +104,7 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{
                 paddingHorizontal: theme.spacing.m,
-                paddingVertical: theme.spacing.m,
+                paddingVertical: theme.spacing.s,
               }}>
               <Row horizontalResizing="fill" spacing={theme.spacing.m}>
                 {todayMealPlan.map((mealPlan, i) => {
@@ -114,7 +114,7 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
                       onPress={() => mealPlanPressed(mealPlan)}>
                       <Card paddingHorizontal={0} paddingVertical={0}>
                         <Image
-                          source={require('../../res/default-recipe.jpg')}
+                          source={require('../../res/default-recipes/default-recipe.jpg')}
                           style={stylesWithTheme.mediumImage}></Image>
                         <Column
                           justifyContent="space-between"
@@ -169,7 +169,6 @@ const styles = (theme: Theme) =>
       fontSize: 28,
       fontWeight: 'bold',
       paddingHorizontal: theme.spacing.m,
-      paddingTop: theme.spacing.l,
     },
     h2: {color: theme.colors.text, fontSize: 20, fontWeight: 'bold'},
     h3: {color: theme.colors.text, fontSize: 14},
@@ -186,6 +185,9 @@ const styles = (theme: Theme) =>
       shadowRadius: 8,
     },
     imageOverlay: {
+      backgroundColor: '#0006',
+      padding: theme.spacing.s,
+      borderRadius: 8,
       position: 'absolute',
       top: 0,
       bottom: 0,
@@ -193,18 +195,13 @@ const styles = (theme: Theme) =>
       right: 0,
     },
     imageOverlayText: {
-      width: '100%',
       color: '#fff',
-      backgroundColor: '#0008',
-      padding: theme.spacing.s,
-      borderRadius: 8,
       fontSize: 18,
       textAlign: 'center',
       fontWeight: 'bold',
     },
     imageOverlayButtonContainer: {
       width: '100%',
-      padding: theme.spacing.s,
     },
     imageOverlayButton: {
       width: '100%',

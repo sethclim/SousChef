@@ -154,7 +154,7 @@ const HomeScreen = ({navigation}: {navigation: HomeScreenNavigationProp}) => {
                             paddingHorizontal={0}
                             paddingVertical={0}>
                             <Image
-                              source={require('../../res/default-recipe.jpg')}
+                              source={require('../../res/default-recipes/default-recipe.jpg')}
                               style={stylesWithTheme.mediumImage}></Image>
                             <Text style={stylesWithTheme.imageOverlay}>
                               {recipe.name}
@@ -227,7 +227,7 @@ const verticalRecipesComponent = (
                 style={styles.card}>
                 <Row justifyContent="flex-start" horizontalResizing="fill">
                   <Image
-                    source={require('../../res/default-recipe.jpg')}
+                    source={require('../../res/default-recipes/default-recipe.jpg')}
                     style={styles.smallImage}></Image>
                   <Column
                     justifyContent="space-between"
