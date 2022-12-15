@@ -1,4 +1,5 @@
-﻿using souschef.server.Data.DTOs;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+using souschef.server.Data.DTOs;
 
 using static souschef.server.Data.LiveSession.LiveSessions;
 
@@ -6,13 +7,12 @@ namespace souschef.server.LiveSession
 {
     public static class TaskAlgorithmn
     {
-        public static Data.Models.Task? Entry(Dictionary<Guid, LiveRecipe> liveRecipes, UserDTO user)
+        public static (Guid recipeId, Data.Models.Task nextTask)? Entry(Dictionary<Guid, LiveRecipe> liveRecipes, UserDTO user)
         {
             //user's last recipe chain and most far off are less then min off
             //stay on current task chain
             //if close opt for the same task stream the user was on before
             //else push for the one behind 
-           
             var progress = CheckRecipeProgress(liveRecipes.Values.ToList());
             var maxRecipeTimeLeft = progress.Max();
 
@@ -23,18 +23,14 @@ namespace souschef.server.LiveSession
                 if (maxRecipeTimeLeft.Value - userRecipeTimeLeft <= 60)
                 {
                     var nextTaskInQueue = GetNextUnfinishedTask(liveRecipes[(Guid)user.CurrentRecipe!].Tasks);
-
                     if (nextTaskInQueue != null && SkillRatingVSTask(nextTaskInQueue, user))
-                        return nextTaskInQueue;
+                        return ((Guid)user.CurrentRecipe, nextTaskInQueue);
                 }
                 else
                 {
                     var nextTaskInQueue = GetNextUnfinishedTask(liveRecipes[maxRecipeTimeLeft.Key].Tasks);
-
-                    if(nextTaskInQueue != null && SkillRatingVSTask(nextTaskInQueue, user))
-                    {
-                        return nextTaskInQueue;
-                    }
+                    if (nextTaskInQueue != null && SkillRatingVSTask(nextTaskInQueue, user))
+                        return (maxRecipeTimeLeft.Key, nextTaskInQueue);
                 }
             }
             else
@@ -43,7 +39,7 @@ namespace souschef.server.LiveSession
 
                 if (nextTaskInQueue != null && SkillRatingVSTask(nextTaskInQueue, user))
                 {
-                    return nextTaskInQueue;
+                    return (maxRecipeTimeLeft.Key, nextTaskInQueue);
                 }
             }
 
