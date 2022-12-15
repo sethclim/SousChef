@@ -13,4 +13,5 @@ export const ApiUrls = {
   joinMealPlan: `${liveCookingSession}/join`,
   getTask: `${liveCookingSession}/get-task`,
   completeTask: `${liveCookingSession}/complete-task`,
+  rerollTask: `${liveCookingSession}/re-roll-task`,
 };

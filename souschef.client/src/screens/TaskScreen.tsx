@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -191,6 +191,7 @@ const recipeButtonsComponent = (
   theme: Theme,
   onCompletePressed: () => void,
   onNewTaskPressed: () => void,
+  loading: boolean,
 ) => {
   return (
     <Row
@@ -202,6 +203,7 @@ const recipeButtonsComponent = (
         verticalResizing="fill"
         onPress={onCompletePressed}>
         <IconButton
+          loading={loading}
           iconName="check"
           text="Complete Task"
           horizontalResizing="fill"
@@ -209,7 +211,7 @@ const recipeButtonsComponent = (
         />
       </SpringPressable>
       <SpringPressable onPress={onNewTaskPressed}>
-        <CircularButton iconName="refresh" />
+        <CircularButton bgColor="#fb7558" color="#fff" iconName="refresh" />
       </SpringPressable>
     </Row>
   );
@@ -227,12 +229,15 @@ const TaskScreen = ({
 
   // User
   const {user} = useContext(AuthContext);
+  const isMounted = useRef(false);
 
   // Theme
   const theme = useContext(ThemeContext);
   const stylesWithTheme = styles(theme);
 
   // Fields
+  const [task, setTask] = useState<Task>();
+  const [outOfTask, setOutOfTask] = useState(false);
   const [maximized, setMaximized] = useState(false);
 
   // API Calls
@@ -240,38 +245,71 @@ const TaskScreen = ({
     get: getTask,
     data: taskData,
     loading: taskLoading,
+    success: taskSuccess,
     error: taskError,
   } = useGet<Task>(ApiUrls.getTask, defaultTask);
 
   const {
     post: completeTask,
-    success: completeTaskSuccess,
     loading: completeTaskLoading,
+    success: completeTaskSuccess,
     error: completeTaskError,
   } = usePost(ApiUrls.completeTask);
 
-  // OnMount
+  const {
+    get: rerollTask,
+    data: rerollTaskData,
+    loading: rerollTaskLoading,
+    success: rerollSuccess,
+    error: rerollTaskError,
+  } = useGet<Task>(ApiUrls.rerollTask, defaultTask);
+
   useEffect(() => {
-    getTask({sessionId: sessionId, userId: user?.id});
+    // First time mount
+    if (!isMounted.current) {
+      isMounted.current = true;
+      getTask({sessionId: sessionId, userId: user?.id});
+    }
   }, []);
 
   useEffect(() => {
-    if (completeTaskSuccess) getTask({sessionId: sessionId, userId: user?.id});
-  }, [completeTaskSuccess]);
+    if (isMounted.current) {
+      if (completeTaskError == 'Invalid session ID') {
+        navigation.goBack();
+      } else if (taskError == 'No more tasks available') {
+        setOutOfTask(true);
+      }
+    }
+  }, [completeTaskError, taskError]);
+
+  useEffect(() => {
+    if (isMounted.current) setTask(taskData);
+  }, [taskSuccess, rerollSuccess]);
+
+  useEffect(() => {
+    if (isMounted.current && rerollSuccess) setTask(rerollTaskData);
+  }, [rerollSuccess]);
 
   // Methods
   const completeTaskPressed = () => {
+    console.log('Complete Task Pressed');
     completeTask({
       query: {
         sessionId: sessionId,
         taskId: taskData?.id,
         userId: user?.id,
       },
+    }).then(success => {
+      console.log('Complete Task Returned: ' + success);
+      if (success) {
+        getTask({sessionId: sessionId, userId: user?.id});
+      }
     });
   };
 
   const newTaskPressed = () => {
-    getTask({sessionId: sessionId, userId: user?.id});
+    console.log('Reroll Task Pressed');
+    rerollTask({sessionId: sessionId, userId: user?.id, taskId: task?.id});
   };
 
   const onChange = (state: BottomSheetState) => {
@@ -289,46 +327,58 @@ const TaskScreen = ({
             <DefaultMeal style={stylesWithTheme.bannerIcon} />
           </View>
           <BottomSheet onStateChange={onChange} zIndex={2}>
-            {taskData && (
+            {outOfTask ? (
               <Column
-                justifyContent="flex-start"
                 horizontalResizing="fill"
                 verticalResizing="fill"
-                paddingHorizontal={theme.spacing.m}
-                spacing={theme.spacing.m}
-                style={{paddingBottom: theme.spacing.l}}>
-                {maximized && <Timer seconds={60} />}
-                <Text numberOfLines={2} style={stylesWithTheme.h1}>
-                  {taskData.title}
+                paddingHorizontal={theme.spacing.m}>
+                <Text style={stylesWithTheme.h1}>
+                  All task completed. Good job!
                 </Text>
-                {taskHighlightComponent(theme, stylesWithTheme, taskData)}
+              </Column>
+            ) : (
+              task && (
                 <Column
+                  justifyContent="flex-start"
                   horizontalResizing="fill"
                   verticalResizing="fill"
-                  spacing={theme.spacing.m}>
-                  {taskInstructionComponent(
-                    theme,
-                    stylesWithTheme,
-                    taskData.description,
-                  )}
-                  {maximized &&
-                    taskIngredientsComponent(theme, stylesWithTheme, taskData)}
-                  {maximized &&
-                    taskKitchenwareComponent(theme, stylesWithTheme, taskData)}
+                  paddingHorizontal={theme.spacing.m}
+                  spacing={theme.spacing.m}
+                  style={{paddingBottom: theme.spacing.l}}>
+                  {maximized && <Timer seconds={60} />}
+                  <Text numberOfLines={2} style={stylesWithTheme.h1}>
+                    {task.title}
+                  </Text>
+                  {taskHighlightComponent(theme, stylesWithTheme, task)}
+                  <Column
+                    horizontalResizing="fill"
+                    verticalResizing="fill"
+                    spacing={theme.spacing.m}>
+                    {taskInstructionComponent(
+                      theme,
+                      stylesWithTheme,
+                      task.description,
+                    )}
+                    {maximized &&
+                      taskIngredientsComponent(theme, stylesWithTheme, task)}
+                    {maximized &&
+                      taskKitchenwareComponent(theme, stylesWithTheme, task)}
+                  </Column>
+                  <Column
+                    justifyContent="flex-end"
+                    horizontalResizing="fill"
+                    paddingVertical={theme.spacing.l}
+                    spacing={theme.spacing.l}>
+                    {recipeButtonsComponent(
+                      theme,
+                      completeTaskPressed,
+                      newTaskPressed,
+                      completeTaskLoading,
+                    )}
+                    {estimatedMealComponent(theme, stylesWithTheme)}
+                  </Column>
                 </Column>
-                <Column
-                  justifyContent="flex-end"
-                  horizontalResizing="fill"
-                  paddingVertical={theme.spacing.l}
-                  spacing={theme.spacing.l}>
-                  {recipeButtonsComponent(
-                    theme,
-                    completeTaskPressed,
-                    newTaskPressed,
-                  )}
-                  {estimatedMealComponent(theme, stylesWithTheme)}
-                </Column>
-              </Column>
+              )
             )}
           </BottomSheet>
         </Column>

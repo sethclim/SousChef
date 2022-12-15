@@ -114,7 +114,7 @@ const RegisterScreen = ({
             )}
             <Input
               bgColor={theme.colors.foreground}
-              placeholder="Full name"
+              placeholder="Name"
               horizontalResizing="fill"
               onChangeText={value => {
                 setName(value);

@@ -91,6 +91,8 @@ export interface Task {
   kitchenware: Kitchenware[]; // Change to list of kitchenware
   duration: number;
   difficulty: DIFFICULTY;
+  order: number;
+  dependencies: number[];
   points: number;
   finished: boolean;
   assignee: string; // Change to User
@@ -104,6 +106,8 @@ export const defaultTask: Task = {
   kitchenware: [], // Change to list of kitchenware
   duration: 0,
   difficulty: DIFFICULTY.Easy,
+  order: -1,
+  dependencies: [],
   points: 0,
   finished: false,
   assignee: '', // Change to User

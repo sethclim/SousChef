@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
 import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {useSharedValue} from 'react-native-reanimated';
 import {ApiUrls} from '../../api/constants/ApiConstants';
@@ -73,6 +73,7 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
   // Methods
   const mealPlanPressed = (mealPlan: MealPlan) => {
     mealPlanID.value = mealPlan.id;
+    console.log('Meal Plan Pressed: ' + mealPlan.id);
     startMealPlan({sessionId: mealPlanID.value}).then(success => {
       if (success) {
         joinMealPlan({query: {sessionId: mealPlanID.value, userId: user?.id}});
