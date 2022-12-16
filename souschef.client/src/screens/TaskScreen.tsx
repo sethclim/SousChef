@@ -1,10 +1,16 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {ThemeContext} from '../contexts/AppContext';
 import {ApiUrls} from '../api/constants/ApiConstants';
 import {
-  AccordionCard,
+  COOKING_UNIT,
+  COOKING_UNIT_TO_STR,
+  defaultTask,
+  DIFFICULTY,
+  Task,
+} from '../api/responses';
+import {
   BottomSheet,
   Card,
   Column,
@@ -13,17 +19,203 @@ import {
   SafeArea,
   Timer,
 } from '../components';
+import {BottomSheetState} from '../components/BottomSheet';
 import CircularButton from '../components/CircularButton';
 import {OpacityPressable, SpringPressable} from '../components/pressable';
+import {AuthContext, ThemeContext} from '../contexts/AppContext';
+import {useGet, usePost} from '../hooks';
 import {
   TaskScreenNavigationProp,
   TaskScreenRouteProp,
 } from '../navigation/types';
+import DefaultMeal from '../res/default-recipe.svg';
 import {Theme} from '../styles/type';
-import {useGet, usePost} from '../hooks';
-import {defaultTask, DIFFICULTY, Task} from '../api/responses';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {BottomSheetState} from '../components/BottomSheet';
+
+const taskHighlightComponent = (theme: Theme, styles: any, task: Task) => {
+  return (
+    <Row horizontalResizing="fill" spacing={theme.spacing.m}>
+      <Row spacing={theme.spacing.s}>
+        <MaterialIcons name="timer" style={styles.icon} />
+        <Text style={styles.timerText}>{task.duration / 60} min</Text>
+      </Row>
+      <View style={styles.divider} />
+      <Row>
+        <MaterialIcons name="star" style={styles.starIcon} />
+        <MaterialIcons
+          name="star"
+          style={[
+            styles.starIcon,
+            task.difficulty < DIFFICULTY.Medium ? styles.starEmptyIcon : {},
+          ]}
+        />
+        <MaterialIcons
+          name="star"
+          style={[
+            styles.starIcon,
+            task.difficulty < DIFFICULTY.Hard ? styles.starEmptyIcon : {},
+          ]}
+        />
+      </Row>
+    </Row>
+  );
+};
+
+const taskInstructionComponent = (
+  theme: Theme,
+  styles: any,
+  description: string,
+) => {
+  return (
+    <Column
+      alignItems="flex-start"
+      horizontalResizing="fill"
+      spacing={theme.spacing.s}>
+      <Text style={styles.h2}>Instruction</Text>
+      <Row
+        justifyContent="flex-start"
+        horizontalResizing="fill"
+        paddingHorizontal={theme.spacing.s}
+        spacing={theme.spacing.s}>
+        <View style={styles.listBullet} />
+        <Text style={styles.listItem}>{description}</Text>
+      </Row>
+    </Column>
+  );
+};
+
+const taskIngredientsComponent = (theme: Theme, styles: any, task: Task) => {
+  const isEmpty = task.ingredients.length == 0;
+  const formatUnit = (_quantity: number, _unit: COOKING_UNIT): string => {
+    let measurement = _quantity.toString();
+    let unit;
+    if (_unit == COOKING_UNIT.None) unit = 'x';
+    else {
+      unit = ' ' + COOKING_UNIT_TO_STR[_unit];
+      if (_quantity > 1) unit += 's';
+    }
+    return measurement + unit;
+  };
+  return (
+    <Column
+      alignItems="flex-start"
+      horizontalResizing="fill"
+      spacing={theme.spacing.s}>
+      <Text style={styles.h2}>Ingredients</Text>
+      {task.ingredients.map((ingredient, i) => (
+        <Row
+          key={i}
+          justifyContent="flex-start"
+          horizontalResizing="fill"
+          paddingHorizontal={theme.spacing.s}
+          spacing={theme.spacing.s}>
+          <View style={styles.listBullet} />
+          <Text style={styles.listItem}>{ingredient.name}</Text>
+          <Text style={[styles.listItem, {fontWeight: 'bold'}]}>
+            {formatUnit(ingredient.quantity, ingredient.unit)}
+          </Text>
+        </Row>
+      ))}
+      {isEmpty && (
+        <Row
+          justifyContent="flex-start"
+          horizontalResizing="fill"
+          paddingHorizontal={theme.spacing.s}
+          spacing={theme.spacing.s}>
+          <View style={styles.listBullet} />
+          <Text style={styles.listItem}>None</Text>
+        </Row>
+      )}
+    </Column>
+  );
+};
+
+const taskKitchenwareComponent = (theme: Theme, styles: any, task: Task) => {
+  const isEmpty = task.kitchenware.length == 0;
+  return (
+    <Column
+      alignItems="flex-start"
+      horizontalResizing="fill"
+      spacing={theme.spacing.s}>
+      <Text style={styles.h2}>Kitchenware</Text>
+      {task.kitchenware.map((kw, i) => (
+        <Row
+          key={i}
+          justifyContent="flex-start"
+          horizontalResizing="fill"
+          paddingHorizontal={theme.spacing.s}
+          spacing={theme.spacing.s}>
+          <View style={styles.listBullet} />
+          <Text style={styles.listItem}>{kw.name}</Text>
+          <Text style={[styles.listItem, {fontWeight: 'bold'}]}>
+            {`${kw.quantity > 0 ? kw.quantity + 'x' : ''}`}
+          </Text>
+        </Row>
+      ))}
+      {isEmpty && (
+        <Row
+          justifyContent="flex-start"
+          horizontalResizing="fill"
+          paddingHorizontal={theme.spacing.s}
+          spacing={theme.spacing.s}>
+          <View style={styles.listBullet} />
+          <Text style={styles.listItem}>None</Text>
+        </Row>
+      )}
+    </Column>
+  );
+};
+
+const estimatedMealComponent = (theme: Theme, styles: any) => {
+  const estimatedMealTimeInSeconds = 0 * 3600 + 30 * 60 + 0; // hr + min + sec
+  return (
+    <Card>
+      <Row horizontalResizing="fill" justifyContent="space-between">
+        <Row spacing={theme.spacing.s}>
+          <MaterialIcons name="access-time" style={styles.timeIcon} />
+          <Text style={[{fontWeight: 'bold'}, styles.timeText]}>
+            Est. Meal Time:
+          </Text>
+          <Text style={styles.timeText}>
+            {estimatedMealTimeInSeconds / 60} min
+          </Text>
+        </Row>
+        <OpacityPressable>
+          <Text style={styles.viewMore}>View more</Text>
+        </OpacityPressable>
+      </Row>
+    </Card>
+  );
+};
+
+const recipeButtonsComponent = (
+  theme: Theme,
+  onCompletePressed: () => void,
+  onNewTaskPressed: () => void,
+  loading: boolean,
+) => {
+  return (
+    <Row
+      horizontalResizing="fill"
+      spacing={theme.spacing.m}
+      paddingHorizontal={theme.spacing.m}>
+      <SpringPressable
+        horizontalResizing="fill"
+        verticalResizing="fill"
+        onPress={onCompletePressed}>
+        <IconButton
+          loading={loading}
+          iconName="check"
+          text="Complete Task"
+          horizontalResizing="fill"
+          verticalResizing="fill"
+        />
+      </SpringPressable>
+      <SpringPressable onPress={onNewTaskPressed}>
+        <CircularButton bgColor="#fb7558" color="#fff" iconName="refresh" />
+      </SpringPressable>
+    </Row>
+  );
+};
 
 const TaskScreen = ({
   navigation,
@@ -33,342 +225,160 @@ const TaskScreen = ({
   route: TaskScreenRouteProp;
 }) => {
   // Route
-  // const {sessionId} = route.params;
-  const sessionId = '4d9de020-74ba-4f7a-b38f-8aa9753b65ce'; // TEMPORARY (CHANGES EVERYTIME)
+  const {sessionId} = route.params;
+
+  // User
+  const {user} = useContext(AuthContext);
+  const isMounted = useRef(false);
 
   // Theme
   const theme = useContext(ThemeContext);
   const stylesWithTheme = styles(theme);
 
   // Fields
+  const [task, setTask] = useState<Task>();
+  const [outOfTask, setOutOfTask] = useState(false);
   const [maximized, setMaximized] = useState(false);
-  const estimatedMealTimeInSeconds = 0 * 3600 + 30 * 60 + 0; // hr + min + sec
 
   // API Calls
   const {
     get: getTask,
     data: taskData,
     loading: taskLoading,
+    success: taskSuccess,
     error: taskError,
-  } = useGet<Task>(`${ApiUrls.getTask}?sessionId=${sessionId}`, defaultTask);
+  } = useGet<Task>(ApiUrls.getTask, defaultTask);
+
   const {
     post: completeTask,
     loading: completeTaskLoading,
+    success: completeTaskSuccess,
     error: completeTaskError,
-  } = usePost(
-    `${ApiUrls.completeTask}?sessionId=${sessionId}&taskId=${taskData?.id}`,
-  );
+  } = usePost(ApiUrls.completeTask);
 
-  // OnMount
+  const {
+    get: rerollTask,
+    data: rerollTaskData,
+    loading: rerollTaskLoading,
+    success: rerollSuccess,
+    error: rerollTaskError,
+  } = useGet<Task>(ApiUrls.rerollTask, defaultTask);
+
   useEffect(() => {
-    getTask();
+    // First time mount
+    if (!isMounted.current) {
+      isMounted.current = true;
+      getTask({sessionId: sessionId, userId: user?.id});
+    }
   }, []);
 
+  useEffect(() => {
+    if (isMounted.current) {
+      if (completeTaskError == 'Invalid session ID') {
+        navigation.goBack();
+      } else if (taskError == 'No more tasks available') {
+        setOutOfTask(true);
+      }
+    }
+  }, [completeTaskError, taskError]);
+
+  useEffect(() => {
+    if (isMounted.current && taskSuccess) setTask(taskData);
+  }, [taskSuccess]);
+
+  useEffect(() => {
+    if (isMounted.current && rerollSuccess) setTask(rerollTaskData);
+  }, [rerollSuccess]);
+
   // Methods
+  const completeTaskPressed = () => {
+    console.log('Complete Task Pressed');
+    completeTask({
+      query: {
+        sessionId: sessionId,
+        taskId: task?.id,
+        userId: user?.id,
+      },
+    }).then(success => {
+      console.log('Complete Task Returned: ' + success);
+      if (success) {
+        getTask({sessionId: sessionId, userId: user?.id});
+      }
+    });
+  };
+
+  const newTaskPressed = () => {
+    console.log('Reroll Task Pressed');
+    rerollTask({sessionId: sessionId, userId: user?.id, taskId: task?.id});
+  };
+
   const onChange = (state: BottomSheetState) => {
     setMaximized(state == BottomSheetState.Max);
   };
 
-  const viewMore = () => {
-    console.log('View More');
-  };
-
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-      <SafeArea bgColor="#111">
+      <SafeArea>
         <Column
           justifyContent="flex-start"
           horizontalResizing="fill"
           verticalResizing="fill">
-          <Image
-            source={require('../res/default-recipe.jpg')}
-            style={stylesWithTheme.bannerImage}
-          />
-          <Image
-            blurRadius={4}
-            source={require('../res/default-recipe.jpg')}
-            style={stylesWithTheme.backgroundImage}
-          />
+          <View style={[stylesWithTheme.bannerImage]}>
+            <DefaultMeal style={stylesWithTheme.bannerIcon} />
+          </View>
           <BottomSheet onStateChange={onChange} zIndex={2}>
-            {maximized ? (
+            {outOfTask ? (
               <Column
-                justifyContent="flex-start"
                 horizontalResizing="fill"
                 verticalResizing="fill"
-                paddingHorizontal={theme.spacing.m}
-                paddingVertical={theme.spacing.m}
-                spacing={theme.spacing.m}>
-                <Timer seconds={60} />
-                <Text numberOfLines={2} style={stylesWithTheme.h1}>
-                  {taskData!.name}
+                paddingHorizontal={theme.spacing.m}>
+                <Text style={stylesWithTheme.h1}>
+                  All task completed. Good job!
                 </Text>
-                <Row horizontalResizing="fill" spacing={theme.spacing.m}>
-                  <Row spacing={theme.spacing.s}>
-                    <MaterialIcons name="timer" style={stylesWithTheme.icon} />
-                    <Text style={stylesWithTheme.timerText}>
-                      {taskData!.duration / 60} min
-                    </Text>
-                  </Row>
-                  <View style={stylesWithTheme.divider} />
-                  <Row>
-                    <MaterialIcons
-                      name="star"
-                      style={stylesWithTheme.starIcon}
-                    />
-                    <MaterialIcons
-                      name="star"
-                      style={[
-                        stylesWithTheme.starIcon,
-                        taskData!.difficulty < DIFFICULTY.Medium
-                          ? stylesWithTheme.starEmptyIcon
-                          : {},
-                      ]}
-                    />
-                    <MaterialIcons
-                      name="star"
-                      style={[
-                        stylesWithTheme.starIcon,
-                        taskData!.difficulty < DIFFICULTY.Hard
-                          ? stylesWithTheme.starEmptyIcon
-                          : {},
-                      ]}
-                    />
-                  </Row>
-                </Row>
-                <Column
-                  justifyContent="flex-start"
-                  horizontalResizing="fill"
-                  verticalResizing="fill"
-                  spacing={theme.spacing.l}>
-                  {/* Instruction */}
-                  <Column
-                    alignItems="flex-start"
-                    horizontalResizing="fill"
-                    spacing={theme.spacing.s}>
-                    <Text style={stylesWithTheme.h2}>Instruction</Text>
-                    <Row
-                      justifyContent="flex-start"
-                      horizontalResizing="fill"
-                      paddingHorizontal={theme.spacing.s}
-                      spacing={theme.spacing.s}>
-                      <View style={stylesWithTheme.listBullet} />
-                      <Text style={stylesWithTheme.listItem}>
-                        {taskData!.description}
-                      </Text>
-                    </Row>
-                  </Column>
-                  {/* Ingredients */}
-                  <Column
-                    alignItems="flex-start"
-                    horizontalResizing="fill"
-                    spacing={theme.spacing.s}>
-                    <Text style={stylesWithTheme.h2}>Ingredients</Text>
-                    {taskData!.ingredients.map((ingredient, i) => (
-                      <Row
-                        key={i}
-                        justifyContent="flex-start"
-                        horizontalResizing="fill"
-                        paddingHorizontal={theme.spacing.s}
-                        spacing={theme.spacing.s}>
-                        <View style={stylesWithTheme.listBullet} />
-                        <Text style={stylesWithTheme.listItem}>
-                          {`${ingredient.quantity} ${ingredient.name}`}
-                        </Text>
-                      </Row>
-                    ))}
-                  </Column>
-                  {/* Kitchenware */}
-                  <Column
-                    alignItems="flex-start"
-                    horizontalResizing="fill"
-                    spacing={theme.spacing.s}>
-                    <Text style={stylesWithTheme.h2}>Kitchenware</Text>
-                    {taskData!.kitchenware.map((kitchenware, i) => (
-                      <Row
-                        key={i}
-                        justifyContent="flex-start"
-                        horizontalResizing="fill"
-                        paddingHorizontal={theme.spacing.s}
-                        spacing={theme.spacing.s}>
-                        <View style={stylesWithTheme.listBullet} />
-                        <Text style={stylesWithTheme.listItem}>
-                          {`${kitchenware.quantity}x ${kitchenware.name}`}
-                        </Text>
-                      </Row>
-                    ))}
-                  </Column>
-                  {/* Buttons */}
-                  <Row
-                    horizontalResizing="fill"
-                    spacing={theme.spacing.s}
-                    paddingHorizontal={theme.spacing.m}>
-                    <SpringPressable
-                      horizontalResizing="fill"
-                      verticalResizing="fill"
-                      onPress={() => {
-                        completeTask();
-                        getTask();
-                      }}>
-                      <IconButton
-                        iconName="check"
-                        text="Complete Task"
-                        horizontalResizing="fill"
-                        verticalResizing="fill"
-                      />
-                    </SpringPressable>
-                    <SpringPressable onPress={getTask}>
-                      <CircularButton iconName="reload" />
-                    </SpringPressable>
-                  </Row>
-                  {/* Estimated Meal Time */}
-                  <Card>
-                    <OpacityPressable
-                      horizontalResizing="fill"
-                      onPress={viewMore}>
-                      <Row
-                        horizontalResizing="fill"
-                        justifyContent="space-between">
-                        <Row spacing={theme.spacing.s}>
-                          <MaterialIcons
-                            name="access-time"
-                            style={stylesWithTheme.timeIcon}
-                          />
-                          <Text
-                            style={[
-                              {fontWeight: 'bold'},
-                              stylesWithTheme.timeText,
-                            ]}>
-                            Est. Meal Time:
-                          </Text>
-                          <Text style={stylesWithTheme.timeText}>
-                            {estimatedMealTimeInSeconds / 60} min
-                          </Text>
-                        </Row>
-                        <Text style={stylesWithTheme.viewMore}>View more</Text>
-                      </Row>
-                    </OpacityPressable>
-                  </Card>
-                </Column>
               </Column>
             ) : (
-              <Column
-                justifyContent="flex-start"
-                horizontalResizing="fill"
-                verticalResizing="fill"
-                paddingHorizontal={theme.spacing.m}
-                paddingVertical={theme.spacing.m}
-                spacing={theme.spacing.m}>
-                <Text numberOfLines={2} style={stylesWithTheme.h1}>
-                  {taskData!.name}
-                </Text>
-                <Row horizontalResizing="fill" spacing={theme.spacing.m}>
-                  <Row spacing={theme.spacing.s}>
-                    <MaterialIcons name="timer" style={stylesWithTheme.icon} />
-                    <Text style={stylesWithTheme.timerText}>
-                      {taskData!.duration / 60} min
-                    </Text>
-                  </Row>
-                  <View style={stylesWithTheme.divider} />
-                  <Row>
-                    <MaterialIcons
-                      name="star"
-                      style={stylesWithTheme.starIcon}
-                    />
-                    <MaterialIcons
-                      name="star"
-                      style={[
-                        stylesWithTheme.starIcon,
-                        taskData!.difficulty < DIFFICULTY.Medium
-                          ? stylesWithTheme.starEmptyIcon
-                          : {},
-                      ]}
-                    />
-                    <MaterialIcons
-                      name="star"
-                      style={[
-                        stylesWithTheme.starIcon,
-                        taskData!.difficulty < DIFFICULTY.Hard
-                          ? stylesWithTheme.starEmptyIcon
-                          : {},
-                      ]}
-                    />
-                  </Row>
-                </Row>
+              task && (
                 <Column
                   justifyContent="flex-start"
                   horizontalResizing="fill"
                   verticalResizing="fill"
-                  spacing={theme.spacing.l}>
-                  {/* Instruction */}
+                  paddingHorizontal={theme.spacing.m}
+                  spacing={theme.spacing.m}
+                  style={{paddingBottom: theme.spacing.l}}>
+                  {maximized && <Timer seconds={60} />}
+                  <Text numberOfLines={2} style={stylesWithTheme.h1}>
+                    {task.title}
+                  </Text>
+                  {taskHighlightComponent(theme, stylesWithTheme, task)}
                   <Column
-                    alignItems="flex-start"
                     horizontalResizing="fill"
-                    spacing={theme.spacing.s}>
-                    <Text style={stylesWithTheme.h2}>Instruction</Text>
-                    <Row
-                      justifyContent="flex-start"
-                      horizontalResizing="fill"
-                      paddingHorizontal={theme.spacing.s}
-                      spacing={theme.spacing.s}>
-                      <View style={stylesWithTheme.listBullet} />
-                      <Text style={stylesWithTheme.listItem}>
-                        {taskData!.description}
-                      </Text>
-                    </Row>
+                    verticalResizing="fill"
+                    spacing={theme.spacing.m}>
+                    {taskInstructionComponent(
+                      theme,
+                      stylesWithTheme,
+                      task.description,
+                    )}
+                    {maximized &&
+                      taskIngredientsComponent(theme, stylesWithTheme, task)}
+                    {maximized &&
+                      taskKitchenwareComponent(theme, stylesWithTheme, task)}
                   </Column>
-                  {/* Buttons */}
-                  <Row
+                  <Column
+                    justifyContent="flex-end"
                     horizontalResizing="fill"
-                    spacing={theme.spacing.s}
-                    paddingHorizontal={theme.spacing.m}>
-                    <SpringPressable
-                      horizontalResizing="fill"
-                      verticalResizing="fill"
-                      onPress={() => {
-                        completeTask();
-                        getTask();
-                      }}>
-                      <IconButton
-                        iconName="check"
-                        text="Complete Task"
-                        horizontalResizing="fill"
-                        verticalResizing="fill"
-                      />
-                    </SpringPressable>
-                    <SpringPressable onPress={getTask}>
-                      <CircularButton iconName="reload" />
-                    </SpringPressable>
-                  </Row>
-                  {/* Estimated Meal Time */}
-                  <Card>
-                    <OpacityPressable
-                      horizontalResizing="fill"
-                      onPress={viewMore}>
-                      <Row
-                        horizontalResizing="fill"
-                        justifyContent="space-between">
-                        <Row spacing={theme.spacing.s}>
-                          <MaterialIcons
-                            name="access-time"
-                            style={stylesWithTheme.timeIcon}
-                          />
-                          <Text
-                            style={[
-                              {fontWeight: 'bold'},
-                              stylesWithTheme.timeText,
-                            ]}>
-                            Est. Meal Time:
-                          </Text>
-                          <Text style={stylesWithTheme.timeText}>
-                            {estimatedMealTimeInSeconds / 60} min
-                          </Text>
-                        </Row>
-                        <Text style={stylesWithTheme.viewMore}>View more</Text>
-                      </Row>
-                    </OpacityPressable>
-                  </Card>
+                    paddingVertical={theme.spacing.l}
+                    spacing={theme.spacing.l}>
+                    {recipeButtonsComponent(
+                      theme,
+                      completeTaskPressed,
+                      newTaskPressed,
+                      completeTaskLoading,
+                    )}
+                    {estimatedMealComponent(theme, stylesWithTheme)}
+                  </Column>
                 </Column>
-              </Column>
+              )
             )}
           </BottomSheet>
         </Column>
@@ -380,10 +390,18 @@ const TaskScreen = ({
 const styles = (theme: Theme) =>
   StyleSheet.create({
     bannerImage: {
+      backgroundColor: '#809bce',
+      position: 'absolute',
+      justifyContent: 'center',
+      alignItems: 'center',
       width: '100%',
-      height: '40%',
+      height: '36%',
+      aspectRatio: 1,
     },
-    backgroundImage: {width: '100%', height: '60%'},
+    bannerIcon: {
+      width: 100,
+      height: 100,
+    },
     floatingTop: {
       position: 'absolute',
       top: 0,

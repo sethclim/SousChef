@@ -1,11 +1,15 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
-import {Dimensions, Image, StyleSheet, Text, View} from 'react-native';
+import React, {useContext, useRef, useState} from 'react';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import {GestureHandlerRootView, ScrollView} from 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {DIFFICULTY} from '../api/responses';
+import {
+  COOKING_UNIT,
+  COOKING_UNIT_TO_STR,
+  DIFFICULTY,
+  Recipe,
+} from '../api/responses';
 import {
   BottomSheet,
-  Button,
   CircularButton,
   Column,
   Row,
@@ -19,6 +23,232 @@ import {
   RecipeScreenRouteProp,
 } from '../navigation/types';
 import {Theme} from '../styles/type';
+
+// Render Sub-Components
+const floatingButtonComponent = (
+  theme: Theme,
+  styles: any,
+  {
+    favorite,
+    setFavorite,
+  }: {
+    favorite: boolean;
+    setFavorite: React.Dispatch<React.SetStateAction<boolean>>;
+  },
+): React.ReactNode => {
+  return (
+    <Row
+      horizontalResizing="fill"
+      justifyContent="flex-end"
+      paddingHorizontal={theme.spacing.m}
+      paddingVertical={theme.spacing.m}
+      style={styles.floatingTop}>
+      <SpringPressable onPress={() => setFavorite(!favorite)}>
+        <CircularButton
+          bgColor={theme.colors.danger}
+          color="#fff"
+          iconName={favorite ? 'heart' : 'heart-outline'}></CircularButton>
+      </SpringPressable>
+    </Row>
+  );
+};
+
+const bottomSheetBodyComponent = (
+  theme: Theme,
+  styles: any,
+  recipe: Recipe,
+  maximized: boolean,
+) => {
+  return (
+    <Column
+      justifyContent="flex-start"
+      horizontalResizing="fill"
+      verticalResizing="fill"
+      paddingHorizontal={theme.spacing.m}
+      paddingVertical={theme.spacing.m}
+      spacing={theme.spacing.m}>
+      <Text numberOfLines={2} style={styles.h1}>
+        {recipe.name}
+      </Text>
+      {recipeHighlightComponent(theme, styles, recipe)}
+      {recipeIngredientsComponent(theme, styles, recipe, maximized ? -1 : 3)}
+      {recipeKitchenwareComponent(theme, styles, recipe, maximized ? -1 : 3)}
+      {recipeStepsComponent(theme, styles, recipe)}
+    </Column>
+  );
+};
+
+const recipeHighlightComponent = (
+  theme: Theme,
+  styles: any,
+  recipe: Recipe,
+) => {
+  return (
+    <Row horizontalResizing="fill" spacing={theme.spacing.m}>
+      <Row spacing={theme.spacing.s}>
+        <MaterialIcons name="timer" style={styles.icon} />
+        <Text style={styles.timerText}>
+          {Math.round(recipe.duration / 60)} min
+        </Text>
+      </Row>
+      <View style={styles.divider} />
+      <Row>
+        <MaterialIcons name="star" style={styles.starIcon} />
+        <MaterialIcons
+          name="star"
+          style={[
+            styles.starIcon,
+            recipe.difficulty < DIFFICULTY.Medium ? styles.starEmptyIcon : {},
+          ]}
+        />
+        <MaterialIcons
+          name="star"
+          style={[
+            styles.starIcon,
+            recipe.difficulty < DIFFICULTY.Hard ? styles.starEmptyIcon : {},
+          ]}
+        />
+      </Row>
+      <View style={styles.divider} />
+      <Row spacing={theme.spacing.s}>
+        <MaterialIcons name="person" style={styles.icon} />
+        <Text style={styles.timerText}>{recipe.serves} Serving</Text>
+      </Row>
+    </Row>
+  );
+};
+
+const recipeIngredientsComponent = (
+  theme: Theme,
+  styles: any,
+  recipe: Recipe,
+  amount: number = -1,
+) => {
+  const isEmpty = recipe.ingredients.length == 0;
+  const ingredients =
+    amount > 0 ? recipe.ingredients.slice(0, amount) : recipe.ingredients;
+
+  const formatUnit = (_quantity: number, _unit: COOKING_UNIT): string => {
+    let measurement = _quantity.toString();
+    let unit;
+    if (_unit == COOKING_UNIT.None) unit = 'x';
+    else {
+      unit = ' ' + COOKING_UNIT_TO_STR[_unit];
+      if (_quantity > 1) unit += 's';
+    }
+    return measurement + unit;
+  };
+  return (
+    <Column
+      alignItems="flex-start"
+      horizontalResizing="fill"
+      spacing={theme.spacing.s}>
+      <Text style={styles.h2}>Ingredients</Text>
+      {ingredients.slice(0, amount).map((ingredient, i) => (
+        <Row
+          key={i}
+          justifyContent="flex-start"
+          horizontalResizing="fill"
+          paddingHorizontal={theme.spacing.s}
+          spacing={theme.spacing.s}>
+          <View style={styles.listBullet} />
+          <Text style={styles.listItem}>{ingredient.name}</Text>
+          <Text style={[styles.listItem, {fontWeight: 'bold'}]}>
+            {formatUnit(ingredient.quantity, ingredient.unit)}
+          </Text>
+        </Row>
+      ))}
+      {isEmpty ||
+        (amount > 0 && amount < recipe.ingredients.length && (
+          <Row
+            justifyContent="flex-start"
+            horizontalResizing="fill"
+            paddingHorizontal={theme.spacing.s}
+            spacing={theme.spacing.s}>
+            <View style={styles.listBullet} />
+            <Text style={styles.listItem}>
+              {recipe.ingredients.length == 0 ? 'none' : 'and more...'}
+            </Text>
+          </Row>
+        ))}
+    </Column>
+  );
+};
+
+const recipeKitchenwareComponent = (
+  theme: Theme,
+  styles: any,
+  recipe: Recipe,
+  amount: number = -1,
+) => {
+  const isEmpty = recipe.kitchenware.length == 0;
+  const kitchenware =
+    amount > 0 ? recipe.kitchenware.slice(0, amount) : recipe.kitchenware;
+  return (
+    <Column
+      alignItems="flex-start"
+      horizontalResizing="fill"
+      spacing={theme.spacing.s}>
+      <Text style={styles.h2}>Kitchenware</Text>
+      {kitchenware.map((kw, i) => (
+        <Row
+          key={i}
+          justifyContent="flex-start"
+          horizontalResizing="fill"
+          paddingHorizontal={theme.spacing.s}
+          spacing={theme.spacing.s}>
+          <View style={styles.listBullet} />
+          <Text style={styles.listItem}>{kw.name}</Text>
+          <Text style={[styles.listItem, {fontWeight: 'bold'}]}>
+            {`${kw.quantity > 0 ? kw.quantity + 'x' : ''}`}
+          </Text>
+        </Row>
+      ))}
+      {isEmpty ||
+        (amount > 0 && amount < recipe.kitchenware.length && (
+          <Row
+            justifyContent="flex-start"
+            horizontalResizing="fill"
+            paddingHorizontal={theme.spacing.s}
+            spacing={theme.spacing.s}>
+            <View style={styles.listBullet} />
+            <Text style={styles.listItem}>
+              {isEmpty ? 'none' : 'and more...'}
+            </Text>
+          </Row>
+        ))}
+    </Column>
+  );
+};
+
+const recipeStepsComponent = (theme: Theme, styles: any, recipe: Recipe) => {
+  return (
+    <Column
+      alignItems="flex-start"
+      horizontalResizing="fill"
+      spacing={theme.spacing.m}>
+      <Text style={styles.h2}>Steps</Text>
+      {recipe.tasks.map((task, i) => {
+        let backgroundColor = '#FBB148';
+        if (i % 3 == 1) backgroundColor = '#5ab885';
+        else if (i % 3 == 2) backgroundColor = '#80b2e0';
+        return (
+          <Row
+            key={i}
+            justifyContent="flex-start"
+            horizontalResizing="fill"
+            paddingHorizontal={theme.spacing.s}
+            spacing={theme.spacing.m}>
+            <Text style={[styles.listNumber, {backgroundColor}]}>{i + 1}</Text>
+            <Text key={i} style={styles.listItem}>
+              {task.description}
+            </Text>
+          </Row>
+        );
+      })}
+    </Column>
+  );
+};
 
 const RecipeScreen = ({
   navigation,
@@ -47,280 +277,27 @@ const RecipeScreen = ({
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-      <SafeArea bgColor="#111">
+      <SafeArea>
         <Column
           justifyContent="flex-start"
           horizontalResizing="fill"
           verticalResizing="fill">
-          <Row
-            horizontalResizing="fill"
-            justifyContent="flex-end"
-            paddingHorizontal={theme.spacing.m}
-            paddingVertical={theme.spacing.m}
-            style={stylesWithTheme.floatingTop}>
-            <SpringPressable onPress={() => setFavorite(!favorite)}>
-              <CircularButton
-                bgColor="#fff"
-                color={theme.colors.danger}
-                iconName={
-                  favorite ? 'heart' : 'heart-outline'
-                }></CircularButton>
-            </SpringPressable>
-          </Row>
+          {floatingButtonComponent(theme, stylesWithTheme, {
+            favorite,
+            setFavorite,
+          })}
           <Image
-            source={require('../res/default-recipe.jpg')}
+            source={require('../res/default-recipes/default-recipe.jpg')}
             style={stylesWithTheme.bannerImage}
-          />
-          <Image
-            blurRadius={4}
-            source={require('../res/default-recipe.jpg')}
-            style={stylesWithTheme.backgroundImage}
           />
           <BottomSheet ref={ref} onStateChange={onChange} zIndex={2}>
             {maximized ? (
-              <ScrollView>
-                <Column
-                  justifyContent="flex-start"
-                  horizontalResizing="fill"
-                  verticalResizing="fill"
-                  paddingHorizontal={theme.spacing.m}
-                  paddingVertical={theme.spacing.m}
-                  spacing={theme.spacing.m}>
-                  <Text numberOfLines={2} style={stylesWithTheme.h1}>
-                    {recipe.name}
-                  </Text>
-                  <Row horizontalResizing="fill" spacing={theme.spacing.m}>
-                    <Row spacing={theme.spacing.s}>
-                      <MaterialIcons
-                        name="timer"
-                        style={stylesWithTheme.icon}
-                      />
-                      <Text style={stylesWithTheme.timerText}>
-                        {recipe.duration / 60} min
-                      </Text>
-                    </Row>
-                    <View style={stylesWithTheme.divider} />
-                    <Row>
-                      <MaterialIcons
-                        name="star"
-                        style={stylesWithTheme.starIcon}
-                      />
-                      <MaterialIcons
-                        name="star"
-                        style={[
-                          stylesWithTheme.starIcon,
-                          recipe.difficulty < DIFFICULTY.Medium
-                            ? stylesWithTheme.starEmptyIcon
-                            : {},
-                        ]}
-                      />
-                      <MaterialIcons
-                        name="star"
-                        style={[
-                          stylesWithTheme.starIcon,
-                          recipe.difficulty < DIFFICULTY.Hard
-                            ? stylesWithTheme.starEmptyIcon
-                            : {},
-                        ]}
-                      />
-                    </Row>
-                    <View style={stylesWithTheme.divider} />
-                    <Row spacing={theme.spacing.s}>
-                      <MaterialIcons
-                        name="person"
-                        style={stylesWithTheme.icon}
-                      />
-                      <Text style={stylesWithTheme.timerText}>
-                        {recipe.serves} Serving
-                      </Text>
-                    </Row>
-                  </Row>
-                  {/* Ingredients */}
-                  <Column
-                    alignItems="flex-start"
-                    horizontalResizing="fill"
-                    spacing={theme.spacing.s}>
-                    <Text style={stylesWithTheme.h2}>Ingredients</Text>
-                    {recipe.ingredients.map((ingredient, i) => (
-                      <Row
-                        key={i}
-                        justifyContent="flex-start"
-                        horizontalResizing="fill"
-                        paddingHorizontal={theme.spacing.s}
-                        spacing={theme.spacing.s}>
-                        <View style={stylesWithTheme.listBullet} />
-                        <Text key={i} style={stylesWithTheme.listItem}>
-                          {`${ingredient.quantity} ${ingredient.name}`}
-                        </Text>
-                      </Row>
-                    ))}
-                  </Column>
-                  {/* Kitchenware */}
-                  <Column
-                    alignItems="flex-start"
-                    horizontalResizing="fill"
-                    spacing={theme.spacing.s}>
-                    <Text style={stylesWithTheme.h2}>Kitchenware</Text>
-                    {recipe.kitchenware.map((kw, i) => (
-                      <Row
-                        key={i}
-                        justifyContent="flex-start"
-                        horizontalResizing="fill"
-                        paddingHorizontal={theme.spacing.s}
-                        spacing={theme.spacing.s}>
-                        <View style={stylesWithTheme.listBullet} />
-                        <Text key={i} style={stylesWithTheme.listItem}>
-                          {`${kw.quantity}x ${kw.name}`}
-                        </Text>
-                      </Row>
-                    ))}
-                  </Column>
-                  {/* Tasks */}
-                  <Column
-                    alignItems="flex-start"
-                    horizontalResizing="fill"
-                    spacing={theme.spacing.s}>
-                    <Text style={stylesWithTheme.h2}>Steps</Text>
-                    {recipe.tasks.map((task, i) => {
-                      let backgroundColor = '#FBB148';
-                      if (i % 3 == 1) backgroundColor = '#5ab885';
-                      else if (i % 3 == 2) backgroundColor = '#80b2e0';
-                      return (
-                        <Row
-                          key={i}
-                          justifyContent="flex-start"
-                          horizontalResizing="fill"
-                          paddingHorizontal={theme.spacing.s}
-                          spacing={theme.spacing.m}>
-                          <Text
-                            style={[
-                              stylesWithTheme.listNumber,
-                              {backgroundColor},
-                            ]}>
-                            {i + 1}
-                          </Text>
-                          <Text key={i} style={stylesWithTheme.listItem}>
-                            {task.description}
-                          </Text>
-                        </Row>
-                      );
-                    })}
-                  </Column>
-                </Column>
+              <ScrollView
+                contentContainerStyle={{paddingBottom: theme.spacing.l}}>
+                {bottomSheetBodyComponent(theme, stylesWithTheme, recipe, true)}
               </ScrollView>
             ) : (
-              <Column
-                justifyContent="flex-start"
-                horizontalResizing="fill"
-                verticalResizing="fill"
-                paddingHorizontal={theme.spacing.m}
-                paddingVertical={theme.spacing.m}
-                spacing={theme.spacing.m}>
-                <Text numberOfLines={2} style={stylesWithTheme.h1}>
-                  {recipe.name}
-                </Text>
-                <Row horizontalResizing="fill" spacing={theme.spacing.m}>
-                  <Row spacing={theme.spacing.s}>
-                    <MaterialIcons name="timer" style={stylesWithTheme.icon} />
-                    <Text style={stylesWithTheme.timerText}>
-                      {recipe.duration / 60} min
-                    </Text>
-                  </Row>
-                  <View style={stylesWithTheme.divider} />
-                  <Row>
-                    <MaterialIcons
-                      name="star"
-                      style={stylesWithTheme.starIcon}
-                    />
-                    <MaterialIcons
-                      name="star"
-                      style={[
-                        stylesWithTheme.starIcon,
-                        recipe.difficulty < DIFFICULTY.Medium
-                          ? stylesWithTheme.starEmptyIcon
-                          : {},
-                      ]}
-                    />
-                    <MaterialIcons
-                      name="star"
-                      style={[
-                        stylesWithTheme.starIcon,
-                        recipe.difficulty < DIFFICULTY.Hard
-                          ? stylesWithTheme.starEmptyIcon
-                          : {},
-                      ]}
-                    />
-                  </Row>
-                  <View style={stylesWithTheme.divider} />
-                  <Row spacing={theme.spacing.s}>
-                    <MaterialIcons name="person" style={stylesWithTheme.icon} />
-                    <Text style={stylesWithTheme.timerText}>
-                      {recipe.serves} Serving
-                    </Text>
-                  </Row>
-                </Row>
-                {/* Ingredients */}
-                <Column
-                  alignItems="flex-start"
-                  horizontalResizing="fill"
-                  spacing={theme.spacing.s}>
-                  <Text style={stylesWithTheme.h2}>Ingredients</Text>
-                  {recipe.ingredients.slice(0, 3).map((ingredient, i) => (
-                    <Row
-                      key={i}
-                      justifyContent="flex-start"
-                      horizontalResizing="fill"
-                      paddingHorizontal={theme.spacing.s}
-                      spacing={theme.spacing.s}>
-                      <View style={stylesWithTheme.listBullet} />
-                      <Text style={stylesWithTheme.listItem}>
-                        {`${ingredient.quantity} ${ingredient.name}`}
-                      </Text>
-                    </Row>
-                  ))}
-                  {recipe.ingredients.length > 3 && (
-                    <Row
-                      justifyContent="flex-start"
-                      horizontalResizing="fill"
-                      paddingHorizontal={theme.spacing.s}
-                      spacing={theme.spacing.s}>
-                      <View style={stylesWithTheme.listBullet} />
-                      <Text style={stylesWithTheme.listItem}>and more...</Text>
-                    </Row>
-                  )}
-                </Column>
-                {/* Steps */}
-                <Column
-                  alignItems="flex-start"
-                  horizontalResizing="fill"
-                  spacing={theme.spacing.s}>
-                  <Text style={stylesWithTheme.h2}>Steps</Text>
-                  {recipe.tasks.map((task, i) => {
-                    let backgroundColor = '#FBB148';
-                    if (i % 3 == 1) backgroundColor = '#5ab885';
-                    else if (i % 3 == 2) backgroundColor = '#80b2e0';
-                    return (
-                      <Row
-                        key={i}
-                        justifyContent="flex-start"
-                        horizontalResizing="fill"
-                        paddingHorizontal={theme.spacing.s}
-                        spacing={theme.spacing.m}>
-                        <Text
-                          style={[
-                            stylesWithTheme.listNumber,
-                            {backgroundColor},
-                          ]}>
-                          {i + 1}
-                        </Text>
-                        <Text key={i} style={stylesWithTheme.listItem}>
-                          {task.description}
-                        </Text>
-                      </Row>
-                    );
-                  })}
-                </Column>
-              </Column>
+              bottomSheetBodyComponent(theme, stylesWithTheme, recipe, false)
             )}
           </BottomSheet>
         </Column>
@@ -333,9 +310,8 @@ const styles = (theme: Theme) =>
   StyleSheet.create({
     bannerImage: {
       width: '100%',
-      height: '40%',
+      height: '36%',
     },
-    backgroundImage: {width: '100%', height: '60%'},
     floatingTop: {
       position: 'absolute',
       top: 0,

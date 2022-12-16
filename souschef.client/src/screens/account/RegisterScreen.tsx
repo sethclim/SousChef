@@ -1,14 +1,11 @@
-import React, {useContext} from 'react';
+import React, {useContext, useRef} from 'react';
 import {StyleSheet, Text} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {ApiUrls} from '../../api/constants/ApiConstants';
 import {Button, Card, Column, Input, Row, SafeArea} from '../../components';
 import {OpacityPressable, SpringPressable} from '../../components/pressable';
 import {AuthContext, ThemeContext} from '../../contexts/AppContext';
-import {usePost} from '../../hooks';
 import {
-  defaultHomeStackNavigatorParamList,
   RegisterScreenNavigationProp,
   RegisterScreenRouteProp,
 } from '../../navigation/types';
@@ -22,12 +19,15 @@ const RegisterScreen = ({
   route: RegisterScreenRouteProp;
 }) => {
   // User
-  const {register, registerSuccess, registerError} = useContext(AuthContext);
+  const {register, registerSuccess, registerLoading, registerError} =
+    useContext(AuthContext);
+  const isMounted = useRef(false);
 
   // Theme
   const theme = useContext(ThemeContext);
   const stylesWithTheme = styles(theme);
 
+  // Fields
   const [name, setName] = React.useState<string>('');
   const [email, setEmail] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
@@ -35,20 +35,25 @@ const RegisterScreen = ({
   const [error, setError] = React.useState<string>('');
 
   React.useEffect(() => {
-    setName('');
-    setEmail('');
-    setPassword('');
-    setPasswordConfirm('');
-    setError('');
-    if (route.params.animationID === 1)
-      navigation.setOptions({animation: 'slide_from_right'});
-  }, [navigation]);
+    // Only when registering
+    if (isMounted.current) {
+      if (registerSuccess) {
+        navigation.replace('Login', {animationID: 1});
+      } else if (registerError) {
+        setError(`${registerError}`);
+      }
+    } else {
+      isMounted.current = true;
 
-  React.useEffect(() => {
-    if (registerSuccess) {
-      navigation.replace('Login', {animationID: 1});
-    } else if (registerError) {
-      setError(`${registerError}`);
+      // Clear fields
+      setName('');
+      setEmail('');
+      setPassword('');
+      setPasswordConfirm('');
+      setError('');
+
+      if (route.params.animationID === 1)
+        navigation.setOptions({animation: 'slide_from_right'});
     }
   }, [registerSuccess, registerError]);
 
@@ -70,16 +75,13 @@ const RegisterScreen = ({
     // Successfully registered
     else {
       register({
-        userName: name,
-        email: email,
-        password: password,
-        passwordConfirm: passwordConfirm,
+        json: {
+          userName: name,
+          email: email,
+          password: password,
+          passwordConfirm: passwordConfirm,
+        },
       });
-      // .then(() => {
-      //   if (!error)
-      //     navigation.replace('HomeStack', defaultHomeStackNavigatorParamList);
-      //   else setError(`${registerError}`);
-      // });
     }
   };
 
@@ -112,7 +114,7 @@ const RegisterScreen = ({
             )}
             <Input
               bgColor={theme.colors.foreground}
-              placeholder="Full name"
+              placeholder="Name"
               horizontalResizing="fill"
               onChangeText={value => {
                 setName(value);
@@ -151,6 +153,7 @@ const RegisterScreen = ({
               horizontalResizing="fill">
               <Button
                 bgColor={theme.colors.primary}
+                loading={registerLoading}
                 horizontalResizing="fill"
                 verticalResizing="fixed"
                 height={64}

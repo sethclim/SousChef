@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useRef} from 'react';
 import {StyleSheet, Text} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -20,7 +20,9 @@ const LoginScreen = ({
   route: LoginScreenRouteProp;
 }) => {
   // User
-  const {user, login, loginSuccess, loginError} = useContext(AuthContext);
+  const {user, login, loginSuccess, loginLoading, loginError} =
+    useContext(AuthContext);
+  const isMounted = useRef(false);
 
   // Theme
   const theme = useContext(ThemeContext);
@@ -31,22 +33,29 @@ const LoginScreen = ({
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
 
-  // On Mount
   React.useEffect(() => {
-    setEmail('');
-    setPassword('');
-    setError('');
-    if (route.params.animationID === 1)
-      navigation.setOptions({animation: 'slide_from_left'});
-  }, [navigation]);
-
-  React.useEffect(() => {
-    if (user) {
-      navigation.replace('HomeStack', defaultHomeStackNavigatorParamList);
-    } else if (loginError) {
-      setError(`${loginError}`);
+    // Only when user and/or loginError updates
+    if (isMounted.current) {
+      if (user) {
+        navigation.replace('HomeStack', defaultHomeStackNavigatorParamList);
+      } else if (loginError) {
+        setError(`${loginError}`);
+      }
     }
-  }, [user, loginSuccess, loginError]);
+    // First time mount
+    else {
+      isMounted.current = true;
+
+      // Clear fields
+      setEmail('');
+      setPassword('');
+      setError('');
+
+      if (route.params.animationID === 1) {
+        navigation.setOptions({animation: 'slide_from_left'});
+      }
+    }
+  }, [user, loginError]);
 
   // Methods
   const attemptLogin = () => {
@@ -58,8 +67,10 @@ const LoginScreen = ({
     // Successfully log'd in
     else {
       login({
-        email: email,
-        password: password,
+        json: {
+          email: email,
+          password: password,
+        },
       });
     }
   };
@@ -68,7 +79,9 @@ const LoginScreen = ({
 
   return (
     <SafeArea>
-      <KeyboardAwareScrollView contentContainerStyle={{flexGrow: 1}}>
+      <KeyboardAwareScrollView
+        keyboardShouldPersistTaps={'handled'}
+        contentContainerStyle={{flexGrow: 1}}>
         <Column
           horizontalResizing="fill"
           verticalResizing="fill"
@@ -115,6 +128,7 @@ const LoginScreen = ({
             <SpringPressable onPress={attemptLogin} horizontalResizing="fill">
               <Button
                 bgColor={theme.colors.danger}
+                loading={loginLoading}
                 horizontalResizing="fill"
                 verticalResizing="fixed"
                 height={64}

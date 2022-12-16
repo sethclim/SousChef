@@ -4,15 +4,17 @@ import {theme} from '../styles/theme';
 
 export type Auth = {
   user: User | undefined;
-  login: ({}: {email: string; password: string}) => void;
+  login: ({}: {json: {email: string; password: string}}) => void;
   loginSuccess: boolean;
   loginLoading: boolean;
   loginError: unknown;
   register: ({}: {
-    userName: string;
-    email: string;
-    password: string;
-    passwordConfirm: string;
+    json: {
+      userName: string;
+      email: string;
+      password: string;
+      passwordConfirm: string;
+    };
   }) => void;
   registerSuccess: boolean;
   registerLoading: boolean;
@@ -21,11 +23,11 @@ export type Auth = {
 
 export const defaultAuth: Auth = {
   user: undefined,
-  login: ({}) => {},
+  login: () => {},
   loginSuccess: false,
   loginLoading: false,
   loginError: null,
-  register: ({}) => {},
+  register: () => {},
   registerSuccess: false,
   registerLoading: false,
   registerError: null,

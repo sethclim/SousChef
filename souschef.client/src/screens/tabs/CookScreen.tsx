@@ -1,13 +1,14 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
 import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
-import {AuthContext, ThemeContext} from '../../contexts/AppContext';
-import {Button, Card, Column, Row, SafeArea} from '../../components';
-import {Theme} from '../../styles/type';
-import {CookScreenNavigationProp} from '../../navigation/types';
-import {SpringPressable} from '../../components/pressable';
-import {defaultRecipe, MealPlan, Recipe} from '../../api/responses';
-import {useGet} from '../../hooks';
+import {useSharedValue} from 'react-native-reanimated';
 import {ApiUrls} from '../../api/constants/ApiConstants';
+import {MealPlan} from '../../api/responses';
+import {Button, Card, Column, Row, SafeArea} from '../../components';
+import {SpringPressable} from '../../components/pressable';
+import {AuthContext, ThemeContext} from '../../contexts/AppContext';
+import {useGet, usePost} from '../../hooks';
+import {CookScreenNavigationProp} from '../../navigation/types';
+import {Theme} from '../../styles/type';
 
 const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
   // User
@@ -19,7 +20,7 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
 
   // Fields
   const [todayMealPlan, setTodayMealPlan] = React.useState<MealPlan[]>([]);
-  let mealPlanId: string | undefined;
+  const mealPlanID = useSharedValue('');
 
   // API Calls
   const {
@@ -28,10 +29,7 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
     success: mealPlansSuccess,
     loading: mealPlansLoading,
     error: mealPlansError,
-  } = useGet<MealPlan[]>(
-    `${ApiUrls.getTodaysMealPlans}?userId=${user?.id}`,
-    [],
-  );
+  } = useGet<MealPlan[]>(ApiUrls.getTodaysMealPlans, []);
 
   const {
     get: startMealPlan,
@@ -39,7 +37,15 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
     success: startMealPlanSuccess,
     loading: startMealPlanLoading,
     error: startMealPlanError,
-  } = useGet(`${ApiUrls.startMealPlan}?sessionId=${mealPlanId}`);
+  } = useGet(ApiUrls.startMealPlan);
+
+  const {
+    post: joinMealPlan,
+    data: joinMealPlanData,
+    success: joinMealPlanSuccess,
+    loading: joinMealPlanLoading,
+    error: joinMealPlanError,
+  } = usePost(ApiUrls.joinMealPlan);
 
   // OnMount
   useEffect(() => {
@@ -54,24 +60,28 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
   }, [mealPlans]);
 
   useEffect(() => {
-    if (startMealPlanSuccess)
-      navigation.navigate('Task', {sessionId: mealPlanId!});
-  }, [startMealPlanSuccess]);
+    if (joinMealPlanSuccess) {
+      navigation.navigate('Task', {sessionId: mealPlanID.value});
+    }
+  }, [joinMealPlanSuccess]);
 
   // Methods
   const onMount = () => {
-    getMealPlans(); // API Request
+    getMealPlans({userId: user?.id}); // API Request
   };
 
   // Methods
   const mealPlanPressed = (mealPlan: MealPlan) => {
-    mealPlanId = mealPlan.id;
-    startMealPlan();
+    mealPlanID.value = mealPlan.id;
+    console.log('Meal Plan Pressed: ' + mealPlan.id);
+    startMealPlan({sessionId: mealPlanID.value}).then(success => {
+      if (success) {
+        joinMealPlan({query: {sessionId: mealPlanID.value, userId: user?.id}});
+      }
+    });
   };
 
-  const joinSession = () => {
-    navigation.navigate('Task', {sessionId: mealPlanId!});
-  };
+  const joinSession = () => {};
 
   return (
     <SafeArea>
@@ -79,13 +89,13 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
         justifyContent="flex-start"
         horizontalResizing="fill"
         verticalResizing="fill"
-        paddingVertical={theme.spacing.xl}
+        paddingVertical={theme.spacing.l}
         spacing={theme.spacing.m}>
-        <Column alignItems="flex-start" horizontalResizing="fill">
+        <Column horizontalResizing="fill" spacing={theme.spacing.s}>
           <Text style={stylesWithTheme.h1}>Today's Meal Plan</Text>
           {todayMealPlan.length == 0 ? (
             <Text style={stylesWithTheme.optional}>
-              No meal plan set for today
+              You have no meal plan set for today.
             </Text>
           ) : (
             <ScrollView
@@ -93,7 +103,7 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{
                 paddingHorizontal: theme.spacing.m,
-                paddingVertical: theme.spacing.m,
+                paddingVertical: theme.spacing.s,
               }}>
               <Row horizontalResizing="fill" spacing={theme.spacing.m}>
                 {todayMealPlan.map((mealPlan, i) => {
@@ -103,7 +113,7 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
                       onPress={() => mealPlanPressed(mealPlan)}>
                       <Card paddingHorizontal={0} paddingVertical={0}>
                         <Image
-                          source={require('../../res/default-recipe.jpg')}
+                          source={require('../../res/default-recipes/default-recipe.jpg')}
                           style={stylesWithTheme.mediumImage}></Image>
                         <Column
                           justifyContent="space-between"
@@ -158,7 +168,6 @@ const styles = (theme: Theme) =>
       fontSize: 28,
       fontWeight: 'bold',
       paddingHorizontal: theme.spacing.m,
-      paddingTop: theme.spacing.l,
     },
     h2: {color: theme.colors.text, fontSize: 20, fontWeight: 'bold'},
     h3: {color: theme.colors.text, fontSize: 14},
@@ -175,6 +184,9 @@ const styles = (theme: Theme) =>
       shadowRadius: 8,
     },
     imageOverlay: {
+      backgroundColor: '#0006',
+      padding: theme.spacing.s,
+      borderRadius: 8,
       position: 'absolute',
       top: 0,
       bottom: 0,
@@ -182,18 +194,13 @@ const styles = (theme: Theme) =>
       right: 0,
     },
     imageOverlayText: {
-      width: '100%',
       color: '#fff',
-      backgroundColor: '#0008',
-      padding: theme.spacing.s,
-      borderRadius: 8,
       fontSize: 18,
       textAlign: 'center',
       fontWeight: 'bold',
     },
     imageOverlayButtonContainer: {
       width: '100%',
-      padding: theme.spacing.s,
     },
     imageOverlayButton: {
       width: '100%',
