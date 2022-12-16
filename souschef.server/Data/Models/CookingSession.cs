@@ -8,19 +8,18 @@ namespace souschef.server.Data.Models
         [Key]
         public Guid Id { get; set; }
 
-        public DateTime Date { get; set; }
+        public string? Name { get; set; }
 
-        public MealPlan? MealPlan { get; set; }
+        public long? Date { get; set; }
+
+        public int? OccasionType { get; set; }
+
+        public List<Recipe>? Recipes { get; set; }
 
         public List<ApplicationUser> Guests { get; set; } = new();
 
-        public ApplicationUser Host { get; set; }
+        public ApplicationUser? Host { get; set; }
 
         public Guid OwnerId { get; set; }
-
-        public CookingSession()
-        {
-            Id = Guid.NewGuid();
-        }
     }
 }

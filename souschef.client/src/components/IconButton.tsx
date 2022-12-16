@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {StyleSheet, Text} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ThemeContext} from '../contexts/AppContext';
 import {Color, Theme} from '../styles/type';
@@ -11,6 +11,7 @@ interface IIconButtonProps extends IFrameProps {
   iconName: string;
   color?: Color;
   size?: number;
+  loading?: boolean;
   textStyle?: object;
   iconStyle?: object;
 }
@@ -33,27 +34,38 @@ const IconButton: React.FC<IconButtonProps> = (propsIn: IIconButtonProps) => {
     size: 18,
     borderRadius: 128,
     elevation: 4,
+    loading: false,
   };
   const props = {...iconButtonDefaultProps, ...propsIn};
 
   return (
     <Row {...props}>
-      <MaterialCommunityIcon
-        name={props.iconName}
-        color={props.color}
-        style={{
-          fontSize: (props.size ?? 12) * 1.5,
-          ...props.iconStyle,
-        }}
-      />
-      <Text
-        style={{
-          color: props.color,
-          fontSize: props.size,
-          ...stylesWithTheme.buttonText,
-        }}>
-        {props.text}
-      </Text>
+      {props.loading ? (
+        <ActivityIndicator
+          size={'large'}
+          style={{height: 12}}
+          color={'#eeea'}
+        />
+      ) : (
+        <Row spacing={8}>
+          <MaterialCommunityIcon
+            name={props.iconName}
+            color={props.color}
+            style={{
+              fontSize: (props.size ?? 12) * 1.5,
+              ...props.iconStyle,
+            }}
+          />
+          <Text
+            style={{
+              color: props.color,
+              fontSize: props.size,
+              ...stylesWithTheme.buttonText,
+            }}>
+            {props.text}
+          </Text>
+        </Row>
+      )}
     </Row>
   );
 };

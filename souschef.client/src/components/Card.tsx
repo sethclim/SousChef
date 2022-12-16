@@ -15,7 +15,7 @@ const Card: React.FC<PropsWithChildren<CardProps>> = (propsIn: IStackProps) => {
     paddingVertical: theme.spacing.m,
     horizontalResizing: 'fill',
     verticalResizing: 'hug',
-    borderRadius: theme.spacing.m,
+    borderRadius: theme.spacing.s,
     elevation: 4,
   };
   const props = {...cardDefaultProps, ...propsIn};

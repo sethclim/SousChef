@@ -9,6 +9,14 @@ const palette: {[key: string]: Color} = {
   grey: '#2F394A',
 };
 
+const pastel: {[key: string]: Color} = {
+  bluegray: '#809bce',
+  iceblue: '#95b8d1',
+  aqua: '#b8e0d2',
+  lightorange: '#f0d5ba',
+  pink: '#eac4d5',
+};
+
 export const theme: Theme = {
   colors: {
     background: palette.white,
@@ -17,13 +25,14 @@ export const theme: Theme = {
     success: palette.green,
     danger: palette.red,
     text: palette.grey,
+    pastel: pastel,
   },
   spacing: {
     s: 8,
     m: 16,
     l: 24,
     xl: 48,
-    xxl: 96,
+    xxl: 64,
   },
   textVariants: {
     header: {

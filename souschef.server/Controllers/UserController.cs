@@ -82,18 +82,26 @@ public class UserController : Controller
         }
 
         //await _userManager.AddClaimAsync(user, new Claim("UserRole", "Admin"));
-        
-        
+
+
         //var jwt = JwtService.Generate(user.Id);
 
-    
+
         // Response.Cookies.Append("jwt", jwt, new CookieOptions
         // {
         //     HttpOnly = true,
         //     Expires = DateTime.Now.AddDays(30)
         // });
+
+        var userDTO = new UserDTO
+        {
+            Id         = user.Id,
+            Name       = user.UserName,
+            Email      = user.Email,
+            SkillLevel = user.SkillLevel
+        };
         
-        return Ok(user);
+        return Ok(userDTO);
     }
 
 
@@ -190,4 +198,14 @@ public class UserController : Controller
         return Ok(new { message="success" });
     }
 
+    [HttpPost("set-user-skill")]
+    public async Task<ActionResult> SetUserSkill(string userId, int skill)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        user.SkillLevel = skill;
+
+        await _userManager.UpdateAsync(user);
+
+        return Ok();
+    }
 }

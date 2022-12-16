@@ -18,8 +18,8 @@ const Timer: React.FC<TimerProps> = (propsIn: TimerProps) => {
   const timerDefaultProps: TimerProps = {
     seconds: 60,
     onFinished: () => {},
-    primaryColor: '#2E9DFB',
-    secondaryColor: '#92C9F8',
+    primaryColor: '#FFA740',
+    secondaryColor: '#FFD5A3',
   };
   const props = {...timerDefaultProps, ...propsIn};
 
@@ -28,7 +28,7 @@ const Timer: React.FC<TimerProps> = (propsIn: TimerProps) => {
       value={0}
       initialValue={props.seconds}
       maxValue={props.seconds}
-      radius={150}
+      radius={100}
       duration={(props.seconds ?? 60) * 1000}
       progressValueColor={theme.colors.text}
       progressValueStyle={{fontWeight: 'normal'}}
@@ -40,11 +40,10 @@ const Timer: React.FC<TimerProps> = (propsIn: TimerProps) => {
       inActiveStrokeWidth={16}
       progressFormatter={(value: number) => {
         'worklet';
-        let hours = String(Math.floor(value / 3600)).padStart(2, '0');
         value %= 3600;
         let minutes = String(Math.floor(value / 60)).padStart(2, '0');
         let seconds = String((value % 60).toFixed(0)).padStart(2, '0');
-        return `${hours} : ${minutes} : ${seconds}`; // 2 decimal places
+        return `${minutes} : ${seconds}`; // 2 decimal places
       }}
       onAnimationComplete={props.onFinished}
     />

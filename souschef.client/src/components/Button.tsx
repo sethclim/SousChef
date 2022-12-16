@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {StyleSheet, Text} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text} from 'react-native';
 import {Color, Theme} from '../styles/type';
 import Row from './primitives/Row';
 import {IFrameProps} from './primitives/Frame';
@@ -8,6 +8,7 @@ import {ThemeContext} from '../contexts/AppContext';
 interface IButtonProps extends IFrameProps {
   text: string;
   color?: Color;
+  loading?: boolean;
   textStyle?: object;
 }
 
@@ -23,6 +24,7 @@ const Button: React.FC<ButtonProps> = (propsIn: IButtonProps) => {
     text: 'Placeholder',
     color: '#fff',
     bgColor: '#3ddc84',
+    loading: false,
     paddingVertical: theme.spacing.m,
     paddingHorizontal: theme.spacing.m,
     borderRadius: 16,
@@ -31,16 +33,20 @@ const Button: React.FC<ButtonProps> = (propsIn: IButtonProps) => {
 
   return (
     <Row {...props}>
-      <Text
-        style={[
-          {
-            color: props.color,
-          },
-          stylesWithTheme.buttonText,
-          props.textStyle,
-        ]}>
-        {props.text}
-      </Text>
+      {props.loading ? (
+        <ActivityIndicator size={'large'} color={'#eee5'} />
+      ) : (
+        <Text
+          style={[
+            {
+              color: props.color,
+            },
+            stylesWithTheme.buttonText,
+            props.textStyle,
+          ]}>
+          {props.text}
+        </Text>
+      )}
     </Row>
   );
 };

@@ -7,8 +7,8 @@ import {
   FavoriteScreen,
   HomeScreen,
   ProfileScreen,
-  TaskScreen,
 } from '../screens';
+import CookScreen from '../screens/tabs/CookScreen';
 import {BottomTabNavigatorParamList} from './types';
 
 const BottomTab = createBottomTabNavigator<BottomTabNavigatorParamList>();
@@ -22,6 +22,7 @@ const BottomTabs = () => {
 
           if (route.name == 'Home') iconName = 'home-variant';
           else if (route.name == 'Favorite') iconName = 'heart';
+          else if (route.name == 'Cook') iconName = 'silverware-variant';
           else if (route.name == 'Calendar') iconName = 'calendar-blank';
           else if (route.name == 'Profile') iconName = 'account';
           else iconName = 'checkbox-blank-outline';
@@ -30,6 +31,7 @@ const BottomTabs = () => {
             <MaterialCommunityIcon name={iconName} size={size} color={color} />
           );
         },
+        tabBarHideOnKeyboard: true,
         tabBarActiveTintColor: '#2F394A',
         tabBarInactiveTintColor: '#CBCDD1',
         tabBarShowLabel: false,
@@ -56,6 +58,11 @@ const BottomTabs = () => {
         options={{headerShown: false}}
       />
       <BottomTab.Screen
+        name="Cook"
+        component={CookScreen}
+        options={{headerShown: false}}
+      />
+      <BottomTab.Screen
         name="Calendar"
         component={CalendarScreen}
         options={{headerShown: false}}
@@ -63,11 +70,6 @@ const BottomTabs = () => {
       <BottomTab.Screen
         name="Profile"
         component={ProfileScreen}
-        options={{headerShown: false}}
-      />
-      <BottomTab.Screen
-        name="Task"
-        component={TaskScreen}
         options={{headerShown: false}}
       />
     </BottomTab.Navigator>

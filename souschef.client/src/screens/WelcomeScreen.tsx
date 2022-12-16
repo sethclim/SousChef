@@ -22,11 +22,11 @@ const WelcomeScreen = ({
   return (
     <SafeArea>
       <Column
+        justifyContent={'space-between'}
         horizontalResizing="fill"
         verticalResizing="fill"
         paddingHorizontal={theme.spacing.m}
-        paddingVertical={theme.spacing.xl}
-        spacing={theme.spacing.xxl}>
+        paddingVertical={theme.spacing.xxl}>
         <Column horizontalResizing="fill">
           <View
             style={{

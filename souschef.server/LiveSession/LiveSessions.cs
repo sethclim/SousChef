@@ -1,12 +1,14 @@
 ﻿
+using souschef.server.Data.DTOs;
 using souschef.server.Data.Models;
+using souschef.server.Helpers;
+using souschef.server.LiveSession;
 
 namespace souschef.server.Data.LiveSession
 {
     public class LiveSessions
     {
         private static readonly LiveSessions m_instance = new();
-
         private readonly Dictionary<Guid, LiveCookingSession> m_currentCookingSessions;
 
         LiveSessions()
@@ -28,55 +30,83 @@ namespace souschef.server.Data.LiveSession
 
         public bool RemoveSessionById(Guid _sessionId) => m_currentCookingSessions.Remove(_sessionId);
 
-        public LiveCookingSession StartCookingSession(CookingSession _cookingSession)
+        public LiveCookingSession? StartCookingSession(CookingSession cookingSession)
         {
-            var d = new Dictionary<Guid, Models.Task>();
 
-            foreach (var t in _cookingSession.MealPlan!.Recipes[0]!.Tasks)
+            if (cookingSession.Host == null || cookingSession.Recipes == null)
+                return null;
+
+            var recipes = new Dictionary<Guid, LiveRecipe>();
+            var members = new List<UserDTO>();
+
+            foreach (var r in cookingSession.Recipes)
             {
-                d.Add(t.Id, t);
+                Console.WriteLine("cookingSession.Recipes " + r.Tasks.Count);
+                recipes.Add(r.Id, Conversions.ToLiveRecipe(r));
+            }
+
+            foreach (var mem in cookingSession.Guests)
+            {
+                members.Add(Conversions.ToUserDTO(mem));
             }
 
             var session = new LiveCookingSession()
             {
-                Id = _cookingSession.Id,
-                Host = _cookingSession.Host,
-                Members = _cookingSession.Guests!,
-                Tasks = d,
+                Id = cookingSession.Id,
+                Host = Conversions.ToUserDTO(cookingSession.Host),
+                Members = members,
+                Recipes = recipes
             };
 
-            Console.WriteLine(session.Tasks.Count + session.Tasks.First().Value.Description);
-
-            m_currentCookingSessions.Add(_cookingSession.Id, session);
-            return session;
+            if (m_currentCookingSessions.TryAdd(cookingSession.Id, session))
+                return session;
+            else
+                return null;
         }
 
         public class LiveCookingSession
         {
             public Guid? Id { get; set; }
-            public ApplicationUser? Host { get; set; }
+            public UserDTO? Host { get; set; }
 
-            public List<ApplicationUser> Members = new();
+            public List<UserDTO> Members = new();
 
-            public Dictionary<Guid, Models.Task> Tasks = new();
+            public Dictionary<Guid, LiveRecipe> Recipes = new();
 
-            private int currentTask = 0;
-
-            public Models.Task? GetNextTask()
+            public UserDTO GetUser(string userId)
             {
-                var l = Tasks.Values.ToList();
+                return Members.Where(x => x.Id == userId).First();
+            }
 
-                Models.Task? nextTask = null;
+            public Models.Task? GetNextTask(string userId)
+            {
+                var user = Members.Where(x => x.Id == userId).First();
+                var res = TaskAlgorithmn.Entry(Recipes, user);
 
-                if (currentTask < l.Count)
+                if(res != null)
                 {
-                    nextTask = l[currentTask];
-                    currentTask++;
+                    user.CurrentRecipe = res.Value.recipeId;
+                    Recipes[res.Value.recipeId].GetTask(res.Value.nextTask.Id).InProgress = true;
 
+                    return res.Value.nextTask;
                 }
+                else
+                {
+                    return null;
+                }
+            }  
+        }
 
-                return nextTask;
+        public class LiveRecipe
+        {
+            public Guid id;
+            public List<Models.Task> Tasks = new();
+
+            public Models.Task GetTask(Guid id)
+            {
+                return Tasks.Where(x => x.Id == id).First();
             }
         }
+
     }
 }

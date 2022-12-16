@@ -1,5 +1,25 @@
+import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import type {RouteProp} from '@react-navigation/native';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {defaultRecipe, Recipe} from '../api/responses';
+
+export type HomeStackNavigatorParamList = {
+  BottomTabs: BottomTabNavigatorParamList;
+  Recipe: {
+    recipe: Recipe;
+  };
+  Task: {
+    sessionId: string;
+  };
+};
+
+export type BottomTabNavigatorParamList = {
+  Home: undefined;
+  Favorite: undefined;
+  Cook: undefined;
+  Calendar: undefined;
+  Profile: undefined;
+};
 
 export type WelcomeStackNavigatorParamList = {
   Welcome: undefined;
@@ -9,24 +29,22 @@ export type WelcomeStackNavigatorParamList = {
   Register: {
     animationID: number;
   };
-  BottomTabs: BottomTabNavigatorParamList;
-};
-
-export type BottomTabNavigatorParamList = {
-  Home: undefined;
-  Favorite: undefined;
-  Calendar: undefined;
-  Profile: undefined;
-  Task: {
-    sessionId: string;
-  };
+  HomeStack: HomeStackNavigatorParamList;
 };
 
 export const defaultBottomTabNavigatorParamList: BottomTabNavigatorParamList = {
   Home: undefined,
   Favorite: undefined,
+  Cook: undefined,
   Calendar: undefined,
   Profile: undefined,
+};
+
+export const defaultHomeStackNavigatorParamList: HomeStackNavigatorParamList = {
+  BottomTabs: defaultBottomTabNavigatorParamList,
+  Recipe: {
+    recipe: defaultRecipe,
+  },
   Task: {
     sessionId: '',
   },
@@ -60,7 +78,32 @@ export type RegisterScreenRouteProp = RouteProp<
   'Register'
 >;
 
+export type HomeScreenNavigationProp = NativeStackNavigationProp<
+  HomeStackNavigatorParamList,
+  'Recipe'
+>;
+
+export type RecipeScreenNavigationProp = BottomTabNavigationProp<
+  HomeStackNavigatorParamList,
+  'BottomTabs'
+>;
+
+export type RecipeScreenRouteProp = RouteProp<
+  HomeStackNavigatorParamList,
+  'Recipe'
+>;
+
+export type CookScreenNavigationProp = NativeStackNavigationProp<
+  HomeStackNavigatorParamList,
+  'Task'
+>;
+
+export type TaskScreenNavigationProp = BottomTabNavigationProp<
+  HomeStackNavigatorParamList,
+  'BottomTabs'
+>;
+
 export type TaskScreenRouteProp = RouteProp<
-  BottomTabNavigatorParamList,
+  HomeStackNavigatorParamList,
   'Task'
 >;
