@@ -249,7 +249,7 @@ const verticalRecipesComponent = (
                       <Row spacing={theme.spacing.s}>
                         <MaterialIcons name="timer" style={styles.timerIcon} />
                         <Text style={styles.timerText}>
-                          {recipe.duration / 60} min
+                          {Math.round(recipe.duration / 60)} min
                         </Text>
                       </Row>
                       <Row>

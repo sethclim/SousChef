@@ -81,9 +81,7 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
     });
   };
 
-  const joinSession = () => {
-    navigation.navigate('Task', {sessionId: mealPlanID.value});
-  };
+  const joinSession = () => {};
 
   return (
     <SafeArea>

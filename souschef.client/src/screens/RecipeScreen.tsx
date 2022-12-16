@@ -87,7 +87,9 @@ const recipeHighlightComponent = (
     <Row horizontalResizing="fill" spacing={theme.spacing.m}>
       <Row spacing={theme.spacing.s}>
         <MaterialIcons name="timer" style={styles.icon} />
-        <Text style={styles.timerText}>{recipe.duration / 60} min</Text>
+        <Text style={styles.timerText}>
+          {Math.round(recipe.duration / 60)} min
+        </Text>
       </Row>
       <View style={styles.divider} />
       <Row>

@@ -283,8 +283,8 @@ const TaskScreen = ({
   }, [completeTaskError, taskError]);
 
   useEffect(() => {
-    if (isMounted.current) setTask(taskData);
-  }, [taskSuccess, rerollSuccess]);
+    if (isMounted.current && taskSuccess) setTask(taskData);
+  }, [taskSuccess]);
 
   useEffect(() => {
     if (isMounted.current && rerollSuccess) setTask(rerollTaskData);
@@ -296,7 +296,7 @@ const TaskScreen = ({
     completeTask({
       query: {
         sessionId: sessionId,
-        taskId: taskData?.id,
+        taskId: task?.id,
         userId: user?.id,
       },
     }).then(success => {
