@@ -14,8 +14,8 @@ namespace souschef.server.LiveSession
             //if close opt for the same task stream the user was on before
             //else push for the one behind 
             var progress = CheckRecipeProgress(liveRecipes.Values.ToList());
-        
-            var maxRecipeTimeLeft = progress.Max();
+
+            var maxRecipeTimeLeft = progress.OrderBy(d => d.Value).Last();
             var recipeIDs = liveRecipes.Keys.ToArray();
 
             if (user.CurrentRecipe != null)
