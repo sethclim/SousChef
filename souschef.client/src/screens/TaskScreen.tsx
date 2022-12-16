@@ -239,7 +239,8 @@ const TaskScreen = ({
   route: TaskScreenRouteProp;
 }) => {
   // Route
-  const {sessionId} = route.params;
+  // const {sessionId} = route.params;
+  const sessionId = "060aee6b-eab0-47f1-b2ab-801d00343948"
 
   // User
   const {user} = useContext(AuthContext);
