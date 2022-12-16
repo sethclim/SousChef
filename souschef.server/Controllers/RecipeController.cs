@@ -29,7 +29,7 @@ namespace souschef.server.Controllers
                 {
                     Id = Guid.NewGuid(),
                     Name = _dto.Name,
-                    Duration = (int)_dto.Tasks!.Sum(item => item.Duration),
+                    Duration = (float)_dto.Duration!,
                     Serves = _dto.Serves,
                     Date = Conversions.GetUnixTimeStamp(DateTime.Now),
                     Tasks = Array.ConvertAll(_dto.Tasks, new Converter<TaskDTO, Data.Models.Task>(delegate (TaskDTO x) { return Conversions.ToTask(x)!; })).ToList(), //Fix Null Issue
@@ -54,12 +54,11 @@ namespace souschef.server.Controllers
         {
             if (_dto.Tasks != null)
             {
-
                 var recipe = new Recipe()
                 {
                     Id = Guid.NewGuid(),
                     Name = _dto.Name,
-                    Duration = (int)_dto.Tasks!.Sum(item => item.Duration),
+                    Duration = (float)_dto.Duration!,
                     Serves = _dto.Serves,
                     Date = Conversions.GetUnixTimeStamp(DateTime.Now),
                     Tasks = Array.ConvertAll(_dto.Tasks, new Converter<TaskDTO, Data.Models.Task>(delegate (TaskDTO x) { return Conversions.ToTask(x)!; })).ToList(), //Fix Null Issue
@@ -71,7 +70,6 @@ namespace souschef.server.Controllers
 
                 m_recipeRepository.AddRecipe(recipe);
                 return Ok();
-
             }
             else
             {
@@ -119,7 +117,7 @@ namespace souschef.server.Controllers
                 var recipe = new Recipe()
                 {
                     Id = Guid.NewGuid(),
-                    Duration = (int)_dto.Tasks!.Sum(item => item.Duration),
+                    Duration = (float)_dto.Duration!,
                 };
 
                 m_recipeRepository.Modify(recipe);
