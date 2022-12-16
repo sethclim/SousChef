@@ -74,14 +74,26 @@ const CookScreen = ({navigation}: {navigation: CookScreenNavigationProp}) => {
   const mealPlanPressed = (mealPlan: MealPlan) => {
     mealPlanID.value = mealPlan.id;
     console.log('Meal Plan Pressed: ' + mealPlan.id);
-    startMealPlan({sessionId: mealPlanID.value}).then(success => {
+    startMealPlan({sessionId: mealPlan.id}).then(success => {
       if (success) {
-        joinMealPlan({query: {sessionId: mealPlanID.value, userId: user?.id}});
+        joinMealPlan({query: {sessionId: mealPlan.id, userId: user?.id}});
       }
     });
   };
 
-  const joinSession = () => {};
+  const joinSession = () => {
+    joinMealPlan({
+      query: {
+        sessionId: '6a1a8ec1-1117-44e7-a3d7-375c5277a9f4',
+        userId: user?.id,
+      },
+    }).then(success => {
+      if (success)
+        navigation.navigate('Task', {
+          sessionId: '6a1a8ec1-1117-44e7-a3d7-375c5277a9f4',
+        });
+    });
+  };
 
   return (
     <SafeArea>

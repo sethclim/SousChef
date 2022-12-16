@@ -1,6 +1,16 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {GestureHandlerRootView, ScrollView} from 'react-native-gesture-handler';
+import Animated, {
+  BounceIn,
+  BounceInDown,
+  FadeIn,
+  FadeInDown,
+  SlideInDown,
+  SlideInLeft,
+  SlideInUp,
+  SlideOutDown,
+} from 'react-native-reanimated';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {ApiUrls} from '../api/constants/ApiConstants';
 import {
@@ -32,11 +42,14 @@ import DefaultMeal from '../res/default-recipe.svg';
 import {Theme} from '../styles/type';
 
 const taskHighlightComponent = (theme: Theme, styles: any, task: Task) => {
+  let timeInMinutes = task.duration / 60;
   return (
     <Row horizontalResizing="fill" spacing={theme.spacing.m}>
       <Row spacing={theme.spacing.s}>
         <MaterialIcons name="timer" style={styles.icon} />
-        <Text style={styles.timerText}>{task.duration / 60} min</Text>
+        <Text style={styles.timerText}>
+          {timeInMinutes < 1 ? timeInMinutes.toFixed(2) : timeInMinutes} min
+        </Text>
       </Row>
       <View style={styles.divider} />
       <Row>
@@ -86,6 +99,7 @@ const taskInstructionComponent = (
 const taskIngredientsComponent = (theme: Theme, styles: any, task: Task) => {
   const isEmpty = task.ingredients.length == 0;
   const formatUnit = (_quantity: number, _unit: COOKING_UNIT): string => {
+    if (_quantity == -1) return '';
     let measurement = _quantity.toString();
     let unit;
     if (_unit == COOKING_UNIT.None) unit = 'x';
@@ -337,7 +351,62 @@ const TaskScreen = ({
                 </Text>
               </Column>
             ) : (
-              task && (
+              task &&
+              (maximized ? (
+                <ScrollView>
+                  <Column
+                    justifyContent="flex-start"
+                    horizontalResizing="fill"
+                    verticalResizing="fill"
+                    paddingHorizontal={theme.spacing.m}
+                    spacing={theme.spacing.m}
+                    style={{paddingBottom: theme.spacing.l}}>
+                    <Animated.View entering={FadeIn}>
+                      <Timer seconds={60} />
+                    </Animated.View>
+                    <Text numberOfLines={2} style={stylesWithTheme.h1}>
+                      {task.title}
+                    </Text>
+                    {taskHighlightComponent(theme, stylesWithTheme, task)}
+                    <Animated.View
+                      style={{alignSelf: 'stretch'}}
+                      entering={SlideInLeft.duration(300)}>
+                      {taskInstructionComponent(
+                        theme,
+                        stylesWithTheme,
+                        task.description,
+                      )}
+                    </Animated.View>
+                    <Animated.View
+                      style={{alignSelf: 'stretch'}}
+                      entering={SlideInLeft.duration(300).delay(100)}>
+                      {taskIngredientsComponent(theme, stylesWithTheme, task)}
+                    </Animated.View>
+                    <Animated.View
+                      style={{alignSelf: 'stretch'}}
+                      entering={SlideInLeft.duration(300).delay(100)}>
+                      {taskKitchenwareComponent(theme, stylesWithTheme, task)}
+                    </Animated.View>
+                    <Animated.View
+                      style={{alignSelf: 'stretch'}}
+                      entering={FadeInDown}>
+                      <Column
+                        justifyContent="flex-end"
+                        horizontalResizing="fill"
+                        paddingVertical={theme.spacing.l}
+                        spacing={theme.spacing.l}>
+                        {recipeButtonsComponent(
+                          theme,
+                          completeTaskPressed,
+                          newTaskPressed,
+                          completeTaskLoading,
+                        )}
+                        {estimatedMealComponent(theme, stylesWithTheme)}
+                      </Column>
+                    </Animated.View>
+                  </Column>
+                </ScrollView>
+              ) : (
                 <Column
                   justifyContent="flex-start"
                   horizontalResizing="fill"
@@ -345,7 +414,6 @@ const TaskScreen = ({
                   paddingHorizontal={theme.spacing.m}
                   spacing={theme.spacing.m}
                   style={{paddingBottom: theme.spacing.l}}>
-                  {maximized && <Timer seconds={60} />}
                   <Text numberOfLines={2} style={stylesWithTheme.h1}>
                     {task.title}
                   </Text>
@@ -353,32 +421,36 @@ const TaskScreen = ({
                   <Column
                     horizontalResizing="fill"
                     verticalResizing="fill"
-                    spacing={theme.spacing.m}>
-                    {taskInstructionComponent(
-                      theme,
-                      stylesWithTheme,
-                      task.description,
-                    )}
-                    {maximized &&
-                      taskIngredientsComponent(theme, stylesWithTheme, task)}
-                    {maximized &&
-                      taskKitchenwareComponent(theme, stylesWithTheme, task)}
-                  </Column>
-                  <Column
-                    justifyContent="flex-end"
-                    horizontalResizing="fill"
-                    paddingVertical={theme.spacing.l}
-                    spacing={theme.spacing.l}>
-                    {recipeButtonsComponent(
-                      theme,
-                      completeTaskPressed,
-                      newTaskPressed,
-                      completeTaskLoading,
-                    )}
-                    {estimatedMealComponent(theme, stylesWithTheme)}
+                    justifyContent="space-between">
+                    <Animated.View
+                      style={{alignSelf: 'stretch'}}
+                      entering={SlideInLeft.duration(300)}>
+                      {taskInstructionComponent(
+                        theme,
+                        stylesWithTheme,
+                        task.description,
+                      )}
+                    </Animated.View>
+                    <Animated.View
+                      style={{alignSelf: 'stretch'}}
+                      entering={FadeInDown}>
+                      <Column
+                        justifyContent="flex-end"
+                        horizontalResizing="fill"
+                        paddingVertical={theme.spacing.l}
+                        spacing={theme.spacing.l}>
+                        {recipeButtonsComponent(
+                          theme,
+                          completeTaskPressed,
+                          newTaskPressed,
+                          completeTaskLoading,
+                        )}
+                        {estimatedMealComponent(theme, stylesWithTheme)}
+                      </Column>
+                    </Animated.View>
                   </Column>
                 </Column>
-              )
+              ))
             )}
           </BottomSheet>
         </Column>
@@ -402,10 +474,11 @@ const styles = (theme: Theme) =>
       width: 100,
       height: 100,
     },
-    floatingTop: {
+    floatingBottom: {
       position: 'absolute',
-      top: 0,
-      width: '100%',
+      bottom: theme.spacing.m,
+      left: theme.spacing.s,
+      right: theme.spacing.s,
       zIndex: 1,
     },
     h1: {
